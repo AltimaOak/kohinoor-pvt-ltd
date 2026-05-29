@@ -1,26 +1,135 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  
+  /* Premium Palette */
+  --primary-sky: #38bdf8;
+  --light-blue: #e0f2fe;
+  --dark-navy: #0f172a;
+  --medium-navy: #1e293b;
+  --sky-glow: rgba(56, 189, 248, 0.15);
+  --sky-glow-intense: rgba(56, 189, 248, 0.4);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  --font-sans: var(--font-sans), sans-serif;
+  --font-display: var(--font-display), sans-serif;
+  
+  --color-sky-500: #38bdf8;
+  --color-sky-100: #e0f2fe;
+  --color-navy-950: #090d16;
+  --color-navy-900: #0f172a;
+  --color-navy-800: #1e293b;
+  --color-navy-700: #334155;
+  
+  /* Animations */
+  --animate-float-slow: float 8s ease-in-out infinite;
+  --animate-float-medium: float-medium 6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+  --animate-scroll-down: scroll-down 2s infinite;
+  --animate-rotate-slow: rotate-slow 25s linear infinite;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(1deg); }
+  }
+  @keyframes float-medium {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(-0.5deg); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.15; filter: blur(60px); }
+    50% { opacity: 0.35; filter: blur(80px); }
+  }
+  @keyframes scroll-down {
+    0% { transform: translateY(0); opacity: 0.2; }
+    50% { transform: translateY(6px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.2; }
+  }
+  @keyframes rotate-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 }
 
+/* Glassmorphism Classes */
+.glass-card {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04);
+}
+
+.glass-card-dark {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-navbar-scrolled {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+  box-shadow: 0 4px 30px rgba(15, 23, 42, 0.03);
+}
+
+/* Typography and Gradients */
+.text-gradient-sky {
+  background: linear-gradient(135deg, #0f172a 20%, #38bdf8 80%, #0369a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-sky-light {
+  background: linear-gradient(135deg, #ffffff 30%, #e0f2fe 70%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-radial-sky {
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.bg-gradient-radial-sky-dark {
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0) 70%);
+}
+
+/* Custom UI Polish */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
 }
