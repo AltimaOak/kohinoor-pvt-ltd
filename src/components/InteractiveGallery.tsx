@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Maximize2, X, Sparkles, Building, Coffee, Layers, Compass } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Maximize2, X, Building } from "lucide-react";
 
 type GalleryItem = {
   id: string;
@@ -17,115 +16,49 @@ type GalleryItem = {
 const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "gal-ext-1",
-    title: "Double Tower Horizon View",
+    title: "Kohinoor Tower 2 Entrance",
     category: "exterior",
     categoryLabel: "Exterior",
     src: "/images/tower_exterior.png",
-    description: "Sleek double-tower structures clad in double-glazed reflective energy glass under a glowing sky.",
+    description: "Real-world view of the modern glass facade and premium landscaped entry plaza at Kohinoor Tower 2.",
   },
   {
-    id: "gal-int-1",
-    title: "Kohinoor Grand Atrium",
-    category: "interior",
-    categoryLabel: "Interior",
-    src: "/images/lobby_entrance.png",
-    description: "12-meter high triple-volume atrium featuring white marble finishes and fluid architectural lines.",
+    id: "gal-ext-2",
+    title: "Corporate Walkway & Plaza",
+    category: "exterior",
+    categoryLabel: "Exterior",
+    src: "/images/walkway_plaza.png",
+    description: "Paved central walkway connecting the complex towers, flanked by green spaces and glass facades.",
   },
   {
-    id: "gal-lou-1",
-    title: "Zenith Helipad & Sky Lounge",
-    category: "lounge",
-    categoryLabel: "Sky Lounge",
-    src: "/images/sky_lounge.png",
-    description: "Suspended outdoor lounge platform presenting 360-degree skyline vistas and aviation services.",
+    id: "gal-ext-3",
+    title: "Complex East Promenade",
+    category: "exterior",
+    categoryLabel: "Exterior",
+    src: "/images/plaza_path.png",
+    description: "Beautifully-designed pathways and lush tropical landscaping throughout the business complex.",
   },
-  {
-    id: "gal-int-2",
-    title: "High-Tech Executive Offices",
-    category: "interior",
-    categoryLabel: "Interior",
-    src: "/images/office_interior.png",
-    description: "Ergonomic executive environments built with modular glass partitioners and integrated automation systems.",
-  },
-  {
-    id: "gal-ame-1",
-    title: "Oxygen Biophilic Gardens",
-    category: "amenities",
-    categoryLabel: "Amenities",
-    src: "/images/amenities_gardens.png",
-    description: "Lush tropical green walls and indoor cascades spanning the inter-tower connecting sky-bridge.",
-  },
-  {
-    id: "gal-lou-2",
-    title: "The Apex Michelin Observatory",
-    category: "lounge",
-    categoryLabel: "Sky Lounge",
-    src: "/images/amenities_dining.png",
-    description: "High-altitude fine dining and VIP social lounge overlooking the coastal district.",
-  },
-];
-
-const CATEGORIES = [
-  { id: "all", label: "All Showcase", icon: Layers },
-  { id: "exterior", label: "Architecture", icon: Building },
-  { id: "interior", label: "Interiors", icon: Compass },
-  { id: "lounge", label: "Sky Lounges", icon: Coffee },
-  { id: "amenities", label: "Amenities", icon: Sparkles },
 ];
 
 export default function InteractiveGallery() {
-  const [activeCategory, setActiveCategory] = useState("all");
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
-
-  const filteredItems = GALLERY_ITEMS.filter(
-    (item) => activeCategory === "all" || item.category === activeCategory
-  );
 
   return (
     <div className="w-full">
-      {/* Category Tabs */}
-      <div className="flex flex-wrap justify-center gap-3 mb-10">
-        {CATEGORIES.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = activeCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={cn(
-                "relative flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 focus:outline-none shadow-sm",
-                isActive
-                  ? "text-white"
-                  : "bg-white/80 border border-slate-200/50 text-navy-800 hover:text-sky-500 hover:border-sky-300"
-              )}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="galleryTabActive"
-                  className="absolute inset-0 bg-navy-900 rounded-full"
-                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                />
-              )}
-              <Icon className="w-3.5 h-3.5 relative z-10 shrink-0" />
-              <span className="relative z-10">{cat.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
       {/* Gallery Grid */}
       <motion.div
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <AnimatePresence mode="popLayout">
-          {filteredItems.map((item) => (
+          {GALLERY_ITEMS.map((item, idx) => (
             <motion.div
               layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
               key={item.id}
               onClick={() => setSelectedItem(item)}
               className="group cursor-pointer relative overflow-hidden rounded-3xl border border-slate-200/50 bg-white shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500"
@@ -229,10 +162,9 @@ export default function InteractiveGallery() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3 pt-6 mt-6 border-t border-slate-100 text-xs text-slate-400">
-                  <span className="font-bold text-sky-500">KOHINOOR</span>
-                  <span>•</span>
-                  <span>Premium Commercial Concept</span>
+                <div className="flex flex-col gap-1 pt-6 mt-6 border-t border-slate-100 text-[10px] text-slate-400">
+                  <span className="font-extrabold text-sky-600">KOHINOOR CITY OFFICE TOWERS</span>
+                  <span className="text-[8px] uppercase tracking-wide">INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II</span>
                 </div>
               </div>
             </motion.div>

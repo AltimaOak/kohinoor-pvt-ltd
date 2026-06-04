@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -14,51 +14,41 @@ import {
   CheckCircle2,
   Mail,
   Send,
-  MessageSquare
+  MessageSquare,
+  MapPin,
+  Phone,
+  Zap,
+  Shield,
+  Cpu,
+  Video,
+  ArrowUpDown,
+  Lock,
+  Car,
+  BatteryCharging,
+  Flame
 } from "lucide-react";
-import TowerShowcase from "@/components/TowerShowcase";
 import InteractiveGallery from "@/components/InteractiveGallery";
-import EventCountdown from "@/components/EventCountdown";
 
 export default function LandingPage() {
-  const [enquirySuccess, setEnquirySuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    interest: "Leasing - Zenith",
-    message: ""
-  });
-
-  const handleEnquiry = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name && formData.email) {
-      setEnquirySuccess(true);
-      setTimeout(() => {
-        setEnquirySuccess(false);
-        setFormData({ name: "", email: "", company: "", interest: "Leasing - Zenith", message: "" });
-      }, 5000);
-    }
-  };
 
   return (
     <div className="flex flex-col w-full pb-20 overflow-hidden">
       
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center pt-10 pb-20 px-6 md:px-12 max-w-7xl mx-auto w-full">
+      <section className="relative min-h-[92vh] flex items-center pt-24 pb-28 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Glow overlay */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-sky-200/10 blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-sky-200/5 blur-[120px] pointer-events-none" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center w-full relative z-10">
           {/* Hero Content (7 Columns) */}
           <div className="lg:col-span-7 flex flex-col gap-6 text-left">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-xs font-bold w-max"
+              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-xs font-bold w-max uppercase tracking-wider shadow-sm"
             >
-              <Sparkles className="w-4.5 h-4.5 text-sky-400" />
+              <Sparkles className="w-4 h-4 text-sky-400 animate-pulse" />
               <span>THE NEXT ERA OF COMMERCIAL REAL ESTATE</span>
             </motion.div>
 
@@ -69,10 +59,10 @@ export default function LandingPage() {
               className="text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-gradient-sky leading-[1.1]"
             >
               Where Business Meets <br className="hidden md:inline" />
-              <span className="text-sky-500 relative">
+              <span className="text-sky-500 relative inline-block mt-1">
                 Modern Excellence
                 {/* Underline decorative gradient */}
-                <span className="absolute left-0 right-0 -bottom-2 h-1 bg-gradient-to-r from-sky-400 to-sky-600 rounded-full" />
+                <span className="absolute left-0 right-0 -bottom-2.5 h-1.5 bg-gradient-to-r from-sky-400 to-sky-600 rounded-full shadow-sm" />
               </span>
             </motion.h1>
 
@@ -80,9 +70,9 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl"
+              className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl mt-2"
             >
-              Kohinoor Complex is a futuristic double-tower landmark redefining the corporate workspace. Uniting Tower Zenith and Tower Apex in a stunning glass-cladded masterclass, designed for world-class operational prestige.
+              KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II is a premier commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
             </motion.p>
 
             <motion.div
@@ -92,60 +82,35 @@ export default function LandingPage() {
               className="flex flex-wrap items-center gap-4 mt-4"
             >
               <Link
-                href="#towers"
-                className="group flex items-center gap-2 px-7 py-4 rounded-full bg-navy-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-sky-500 shadow-xl shadow-navy-900/10 hover:shadow-sky-500/20 transition-all duration-300"
+                href="#about"
+                className="group flex items-center gap-2.5 px-8 py-4.5 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-sky-500/20 hover:shadow-xl hover:shadow-sky-500/30 hover:scale-[1.03] hover:-translate-y-0.5 transition-all duration-300"
               >
-                <span>Explore Towers</span>
+                <span>About Us</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link
-                href="#contact"
-                className="px-7 py-4 rounded-full bg-white border border-slate-200 text-navy-800 font-bold text-xs uppercase tracking-wider hover:border-sky-300 hover:text-sky-500 shadow-sm transition-colors"
-              >
-                Schedule Private Tour
-              </Link>
-            </motion.div>
-
-            {/* Quick trust metrics */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="grid grid-cols-3 gap-6 pt-10 border-t border-slate-200/60 max-w-lg mt-4"
-            >
-              {[
-                { metric: "LEED Platinum", label: "Eco-Efficiency" },
-                { metric: "86 Floors", label: "Across 2 Towers" },
-                { metric: "40+ Amenities", label: "Premium Services" },
-              ].map((item, i) => (
-                <div key={i} className="flex flex-col gap-1">
-                  <span className="text-md md:text-lg font-black text-navy-900">{item.metric}</span>
-                  <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">{item.label}</span>
-                </div>
-              ))}
             </motion.div>
           </div>
 
-          {/* Hero Visual Showcase: High-Fidelity twin towers concept image (5 Columns) */}
+          {/* Hero Visual Showcase: Real Tower 2 photo (5 Columns) */}
           <div className="lg:col-span-5 flex justify-center items-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              initial={{ opacity: 0, scale: 0.93, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 100, damping: 20 }}
-              className="relative w-full max-w-[320px] aspect-[1/1.3] rounded-3xl border border-white/60 glass-card p-3 shadow-2xl overflow-hidden flex flex-col justify-end group"
+              className="relative w-full max-w-[340px] aspect-[1/1.3] rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_20px_50px_rgba(15,23,42,0.06)] hover:border-sky-300 hover:shadow-[0_25px_60px_rgba(56,189,248,0.15)] transition-all duration-500 overflow-hidden flex flex-col justify-end group"
             >
-              <div className="absolute inset-0 bg-gradient-radial-sky opacity-60 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-gradient-radial-sky opacity-40 pointer-events-none z-10" />
 
-              {/* The high-res concept art image */}
-              <div className="absolute inset-2 rounded-2xl overflow-hidden bg-slate-100 relative h-[82%]">
+              {/* The real photo of the tower entrance */}
+              <div className="absolute inset-4 rounded-2xl overflow-hidden bg-slate-50 h-[80%] border border-slate-100">
                 {/* Fallback stylized gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-200/40 flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-sky-100/50 flex items-center justify-center p-4">
                   <Building2 className="w-12 h-12 text-sky-300 opacity-40 animate-pulse" />
                 </div>
                 
                 <img
                   src="/images/tower_exterior.png"
-                  alt="Kohinoor Twin Towers Concept Art"
+                  alt="Kohinoor Tower 2 Real Exterior"
                   className="w-full h-full object-cover relative z-10 group-hover:scale-105 transition-transform duration-700"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
@@ -154,10 +119,10 @@ export default function LandingPage() {
               </div>
 
               {/* Float visual highlight overlay info */}
-              <div className="relative z-20 p-4 mt-2 rounded-xl bg-white/80 backdrop-blur-md border border-white/80 shadow-md flex items-center justify-between gap-3">
+              <div className="relative z-20 p-4 rounded-2xl bg-white border border-slate-100 shadow-md flex items-center justify-between gap-3">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] uppercase tracking-widest font-extrabold text-sky-600">Landmark Site</span>
-                  <h4 className="text-xs font-bold text-navy-900">Kohinoor Twin Towers</h4>
+                  <span className="text-[9px] uppercase tracking-widest font-bold text-sky-500">Landmark Site</span>
+                  <h4 className="text-xs font-bold text-navy-900">Kohinoor City Office Towers</h4>
                 </div>
                 <Building2 className="w-5 h-5 text-sky-500 shrink-0" />
               </div>
@@ -166,64 +131,50 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. DUAL TOWERS INTERACTIVE SHOWCASE */}
-      <section id="towers" className="py-24 border-t border-slate-200/50 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-4xl">
-            <div className="flex flex-col gap-3">
-              <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1">
-                <Building2 className="w-4.5 h-4.5 text-sky-400" />
-                Architectural Inception
-              </span>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-                Two Towers. Perfect Synergy.
-              </h2>
-            </div>
-            <p className="text-slate-600 text-sm max-w-md leading-relaxed">
-              Hover over the sections on the tower blueprints below to inspect the functional splits between corporate offices, retail spaces, helipads, and oxygen gardens.
-            </p>
-          </div>
 
-          <TowerShowcase />
-        </div>
-      </section>
 
       {/* 3. ABOUT PREVIEW SECTION */}
-      <section className="py-24 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      <section id="about" className="py-28 md:py-32 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         {/* Left Side: Text Columns (7 Columns) */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1">
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-7 flex flex-col gap-6"
+        >
+          <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
             <Award className="w-4.5 h-4.5 text-sky-400" />
-            Commercial Leadership
+            Establishment & Location
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-            Designed for Modern Operational Excellence
+            Kohinoor Business Park & Offices
           </h2>
-          <p className="text-slate-600 text-sm leading-relaxed">
-            Every square inch of the Kohinoor Complex has been engineered with architectural integrity and sustainable responsibility. From structural dampening networks to triple-redundant solar energy systems, we have constructed a landmark destination that empowers international commercial giants.
+          <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+            Kohinoor Business Park in Kurla West, Mumbai is a premier commercial destination that satisfactorily caters to the demands of its customer base. Built on a core belief of customer centricity, the business park has established long-term relationships and built an outstanding reputation.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0">
-                <Compass className="w-5 h-5 text-sky-500" />
+            <div className="flex gap-4 group">
+              <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
+                <Compass className="w-5 h-5 text-sky-500 group-hover:text-white transition-colors" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-sm font-bold text-navy-900">Prime Financial Zone</h4>
-                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
-                  Located central to key transportation corridors, international airports, and five-star business hotels.
+                <h4 className="text-sm font-bold text-navy-900">Kurla West Commercial Hub</h4>
+                <p className="text-slate-500 text-xs mt-1.5 leading-relaxed">
+                  Ideally situated in Kurla West, Mumbai, providing prime business accessibility and connectivity.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-sky-500" />
+            <div className="flex gap-4 group">
+              <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
+                <CheckCircle2 className="w-5 h-5 text-sky-500 group-hover:text-white transition-colors" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-sm font-bold text-navy-900">Eco-Friendly Cladding</h4>
-                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
-                  Utilizing state-of-the-art double-glazed thermal paneling that reduces solar heating loads by 42%.
+                <h4 className="text-sm font-bold text-navy-900">Customer Centricity</h4>
+                <p className="text-slate-500 text-xs mt-1.5 leading-relaxed">
+                  Prioritizing a positive customer experience and top-notch quality for all business operations.
                 </p>
               </div>
             </div>
@@ -238,257 +189,231 @@ export default function LandingPage() {
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Side: Showcase Cards (5 Columns) */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="p-6 rounded-3xl border border-slate-200/50 bg-white shadow-md flex items-start gap-4">
-            <div className="p-3 bg-sky-500/10 rounded-2xl text-sky-600 font-extrabold text-sm shrink-0">
-              LEED
+        <div className="lg:col-span-5 flex flex-col gap-5">
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="p-6 rounded-[28px] border border-slate-200/50 bg-white/70 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:border-sky-300/40 hover:-translate-y-0.5 transition-all duration-300 flex items-start gap-5 group"
+          >
+            <div className="p-3 bg-sky-500/10 border border-sky-400/20 rounded-2xl text-sky-600 font-bold text-xs uppercase tracking-wider shrink-0">
+              B2B
             </div>
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm font-bold text-navy-900">LEED Platinum Standard</h4>
+              <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">Seamless Jd Mart Portal</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Highest international rating for energy efficiency, ventilation, and sustainable materials.
+                Featured catalogue of Business Center Services, Commercial Hubs, and premium Business Centres.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="p-6 rounded-3xl border border-slate-200/50 bg-white shadow-md flex items-start gap-4 translate-x-0 md:translate-x-6 transition-transform">
-            <div className="p-3 bg-sky-500/10 rounded-2xl text-sky-600 font-extrabold text-sm shrink-0">
-              SMART
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="p-6 rounded-[28px] border border-slate-200/50 bg-white/70 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:border-sky-300/40 hover:-translate-y-0.5 transition-all duration-300 flex items-start gap-5 group"
+          >
+            <div className="p-3 bg-sky-500/10 border border-sky-400/20 rounded-2xl text-sky-600 font-bold text-xs uppercase tracking-wider shrink-0">
+              TRUST
             </div>
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm font-bold text-navy-900">AI Atrium Automation</h4>
+              <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">100+ Reviews</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Integrated air purification, biometric checkpoints, and automatic building management.
+                Strong reputation built on trust, quality offerings, and long-term customer relationships.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 4. SERVICES PREVIEW SECTION */}
-      <section className="py-24 border-t border-slate-200/50 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-4xl">
-            <div className="flex flex-col gap-3">
-              <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">LANDMARK UTILITIES</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-                Premium Building Amenities
-              </h2>
-            </div>
-            <p className="text-slate-600 text-sm max-w-md leading-relaxed">
-              Curated hospitality and technical infrastructures that fuel modern global businesses and ensure absolute security, redundancy, and elite comfort.
+      {/* 4. CORE AMENITIES GRID */}
+      <section className="py-28 md:py-32 border-y border-slate-200/50 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16 w-full">
+          <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
+            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">Utility & Security Grids</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
+              Core Building Amenities
+            </h2>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Equipped with modern safety control checkpoints, automated energy feeds, and state-of-the-art building management networks.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
-              {
-                title: "VVIP Aviation Hub",
-                desc: "Equipped private landing pad at Tower Zenith peak with private lounges and dedicated flight scheduling agents.",
-                tag: "Helipads"
-              },
-              {
-                title: "Unified Automation",
-                desc: "Integrated building networks allowing custom climate, biometric clearance, and automated lighting profiles per tenant.",
-                tag: "Smart Tech"
-              },
-              {
-                title: "Advanced Data Core",
-                desc: "Triple-redundant underground fiber-optics, dedicated tenant servers, and advanced cooling structures.",
-                tag: "Server Core"
-              }
-            ].map((service, i) => (
-              <div
-                key={i}
-                className="p-8 rounded-3xl border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl transition-all duration-300 flex flex-col justify-between gap-6 group"
-              >
-                <div className="flex flex-col gap-3">
-                  <span className="px-3 py-1 rounded-full bg-slate-50 border border-slate-200/40 text-[9px] font-extrabold uppercase tracking-widest text-slate-400 w-max group-hover:text-sky-500 group-hover:border-sky-300 transition-colors">
-                    {service.tag}
-                  </span>
-                  <h4 className="text-md font-bold text-navy-900 mt-2">{service.title}</h4>
-                  <p className="text-slate-600 text-xs leading-relaxed">{service.desc}</p>
-                </div>
-                <Link
-                  href="/services"
-                  className="flex items-center gap-1 text-xs font-extrabold text-sky-600 uppercase tracking-widest hover:text-navy-900 transition-colors group-hover:translate-x-1"
+              { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and biometric checks" },
+              { label: "BMS", icon: Cpu, desc: "Building Management System smart telemetry" },
+              { label: "CCTV", icon: Video, desc: "High-definition security surveillance networks" },
+              { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
+              { label: "Boom Barriers", icon: Lock, desc: "Automated RFID vehicular gate control systems" },
+              { label: "Visitors Parking", icon: Car, desc: "Dedicated subterranean guest parking decks" },
+              { label: "Power", icon: Zap, desc: "Dual grid feeds for consistent electricity" },
+              { label: "Power Backup", icon: BatteryCharging, desc: "Heavy generator backup activation in 0.4s" },
+              { label: "Fire Fighting Equipment", icon: Flame, desc: "Advanced localized sprinkler & detector grids" },
+            ].map((item, idx) => {
+              const IconComp = item.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.05 }}
+                  className="p-6 rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center gap-4 group"
                 >
-                  <span>Explore Service Details</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            ))}
+                  <div className="w-12 h-12 rounded-2xl bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-350 shrink-0">
+                    <IconComp className="w-6 h-6 stroke-[2]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">{item.label}</h4>
+                    <p className="text-[10px] text-slate-500 leading-normal">{item.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* 5. INTERACTIVE GALLERY SECTION */}
-      <section className="py-24 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
+      <section className="py-28 md:py-32 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
         <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
           <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">COMPLEX SHOWCASE</span>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
             Visual Landmark Quality
           </h2>
           <p className="text-slate-600 text-sm leading-relaxed">
-            Tour the architectural grandeur, executive spaces, lush vertical biophilia, and high-altitude sky terraces that compose our double towers.
+            View real-world photographs of our office towers, entry plazas, and central walkways.
           </p>
         </div>
 
         <InteractiveGallery />
       </section>
 
-      {/* 6. EVENTS PREVIEW & COUNTDOWN SECTION */}
-      <section className="py-24 border-t border-slate-200/50 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12">
-          <div className="flex flex-col gap-3 max-w-xl">
-            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">Business Community</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-              Summit & Networking Mixers
-            </h2>
-          </div>
-
-          <EventCountdown />
-        </div>
-      </section>
-
       {/* 7. LEASING ENQUIRY & CONTACT SECTION */}
-      <section id="contact" className="py-24 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-        {/* Contact Info Column (5 Columns) */}
-        <div className="lg:col-span-5 flex flex-col gap-8">
-          <div className="flex flex-col gap-3">
-            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1">
+      <section id="contact" className="py-28 md:py-32 max-w-5xl mx-auto px-6 md:px-12 w-full">
+        <div className="flex flex-col gap-12 text-center items-center">
+          <div className="flex flex-col gap-3 items-center">
+            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
               <Mail className="w-4.5 h-4.5 text-sky-400" />
               Corporate Relations
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-              Leasing & Private Audits
+              Contact & Address
             </h2>
-            <p className="text-slate-600 text-sm leading-relaxed mt-2">
-              Interested in establishing your headquarters or acquiring commercial space in Tower Zenith or Tower Apex? Reach out directly to our commercial relations team to arrange an exclusive private walk-through.
+            <p className="text-slate-600 text-sm leading-relaxed mt-2 max-w-lg">
+              Interested in establishing your headquarters or acquiring commercial space? Reach out directly to our team.
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 text-sm text-slate-600">
-            <div className="p-4 border border-slate-200/40 bg-white/50 rounded-2xl flex flex-col shadow-sm">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Representative Office</span>
-              <span className="text-xs font-bold text-navy-900 mt-1">Tower Zenith, Level 32, Suite 3201</span>
-            </div>
-            <div className="p-4 border border-slate-200/40 bg-white/50 rounded-2xl flex flex-col shadow-sm">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Leasing Hotline</span>
-              <span className="text-xs font-bold text-sky-600 mt-1">+1 (555) 019-2831</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Contact Form Column (7 Columns) */}
-        <div className="lg:col-span-7">
-          <div className="glass-card border border-white/60 p-8 md:p-10 rounded-3xl shadow-xl">
-            {enquirySuccess ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-10 flex flex-col items-center gap-5"
-              >
-                <div className="w-12 h-12 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-600 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mt-4 text-left">
+            {/* Column 1: Site Address */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="p-8 rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between gap-6 hover:shadow-xl hover:border-sky-300 transition-all duration-300 relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
+              <div className="flex flex-col gap-4">
+                <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0">
+                  <MapPin className="w-6 h-6" />
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  <h3 className="text-lg font-bold text-navy-900">Enquiry Submitted</h3>
-                  <p className="text-slate-600 text-xs max-w-sm">
-                    Thank you. Your request has been logged. An executive relations partner will reach out via corporate email within 24 operational hours.
-                  </p>
+                <div>
+                  <span className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold">Physical Site Address</span>
+                  <h4 className="text-lg font-black text-navy-900 mt-2">Kohinoor Office Towers</h4>
+                  <a
+                    href="https://maps.app.goo.gl/9LrPP3YqcKRDdi2t5"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-slate-600 mt-2 hover:text-sky-500 transition-colors block leading-relaxed"
+                  >
+                    KOHINOOR CITY OFFICE TOWERS, Landmark Ave,<br />
+                    Business District, Tower B, Level 18
+                  </a>
                 </div>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleEnquiry} className="flex flex-col gap-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-extrabold text-navy-800">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Adrian Carter"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-200 focus:border-sky-500 rounded-xl focus:bg-white focus:outline-none transition-all text-slate-800"
-                    />
-                  </div>
+              </div>
+            </motion.div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-extrabold text-navy-800">
-                      Corporate Email
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="e.g. adrian@corp.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-200 focus:border-sky-500 rounded-xl focus:bg-white focus:outline-none transition-all text-slate-800"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-extrabold text-navy-800">
-                      Company Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Apex Ventures"
-                      value={formData.company}
-                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-200 focus:border-sky-500 rounded-xl focus:bg-white focus:outline-none transition-all text-slate-800"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-extrabold text-navy-800">
-                      I am interested in...
-                    </label>
-                    <select
-                      value={formData.interest}
-                      onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
-                      className="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-200 focus:border-sky-500 rounded-xl focus:bg-white focus:outline-none transition-all text-slate-800"
-                    >
-                      <option>Leasing - Zenith Offices</option>
-                      <option>Leasing - Apex Incubators</option>
-                      <option>Acquisition - Penthouse Spaces</option>
-                      <option>Partnership - Retail Arcade</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] uppercase tracking-wider font-extrabold text-navy-800">
-                    Additional Requirements
-                  </label>
-                  <textarea
-                    rows={4}
-                    required
-                    placeholder="List specific operational requirements, sizing details, or dates..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-200 focus:border-sky-500 rounded-xl focus:bg-white focus:outline-none transition-all text-slate-800"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="group relative flex items-center justify-center gap-2 overflow-hidden w-full py-4 mt-2 rounded-xl bg-navy-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-sky-500 transition-colors shadow-lg"
+            {/* Column 2: Devendra Sali */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="p-8 rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col gap-6 hover:-translate-y-1.5 hover:shadow-xl hover:border-sky-400/30 transition-all duration-300 relative group"
+            >
+              <div>
+                <span className="text-[9px] font-black uppercase text-sky-500 tracking-widest px-2.5 py-1 rounded-md bg-sky-500/5 border border-sky-400/10">Property & Facility</span>
+                <h4 className="text-xl font-black text-navy-900 mt-4 leading-none">Devendra Sali</h4>
+                <p className="text-xs text-slate-500 font-semibold mt-1.5">Property Manager</p>
+              </div>
+              <div className="flex flex-col gap-3.5 pt-4 border-t border-slate-200/50">
+                <a
+                  href="tel:8657902806"
+                  className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
                 >
-                  <Send className="w-4 h-4 shrink-0" />
-                  <span>Send Enquiry</span>
-                </button>
-              </form>
-            )}
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
+                    <Phone className="w-4.5 h-4.5" />
+                  </div>
+                  <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors">8657902806</span>
+                </a>
+                <a
+                  href="mailto:devendra.sali@kohinoorcommercial2.in"
+                  className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
+                    <Mail className="w-4.5 h-4.5" />
+                  </div>
+                  <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all">
+                    devendra.sali@kohinoorcommercial2.in
+                  </span>
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Column 3: Roshan Patil */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="p-8 rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col gap-6 hover:-translate-y-1.5 hover:shadow-xl hover:border-emerald-400/30 transition-all duration-300 relative group"
+            >
+              <div>
+                <span className="text-[9px] font-black uppercase text-emerald-600 tracking-widest px-2.5 py-1 rounded-md bg-emerald-500/5 border border-emerald-400/10">Security & Safety</span>
+                <h4 className="text-xl font-black text-navy-900 mt-4 leading-none">Roshan Patil</h4>
+                <p className="text-xs text-slate-500 font-semibold mt-1.5">Security Manager</p>
+              </div>
+              <div className="flex flex-col gap-3.5 pt-4 border-t border-slate-200/50">
+                <a
+                  href="tel:8657902808"
+                  className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
+                    <Phone className="w-4.5 h-4.5" />
+                  </div>
+                  <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors">8657902808</span>
+                </a>
+                <a
+                  href="mailto:roshan.patil@kohinoorcommercial2.in"
+                  className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
+                    <Mail className="w-4.5 h-4.5" />
+                  </div>
+                  <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all">
+                    roshan.patil@kohinoorcommercial2.in
+                  </span>
+                </a>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

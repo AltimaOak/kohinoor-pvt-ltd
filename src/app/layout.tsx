@@ -27,23 +27,22 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Kohinoor Complex | Premium Dual-Tower Commercial Destination",
+  title: "KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II",
   description:
-    "Welcome to Kohinoor Complex, a futuristic dual-tower corporate landmark where business meets modern excellence. Offering state-of-the-art office spaces, sky lounges, helipads, and smart-automation facilities.",
+    "Welcome to KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II, a premier commercial destination offering state-of-the-art workspaces and facilities.",
   keywords: [
-    "Kohinoor Complex",
-    "Commercial Real Estate",
-    "Futuristic Office Space",
-    "Luxury Corporate Offices",
-    "Towers Zenith and Apex",
-    "Smart Commercial Towers",
+    "Kohinoor City",
+    "Kohinoor City Office Towers",
+    "Industrial Estate",
+    "Premises Co-Op Society Ltd",
+    "Commercial II",
   ],
-  authors: [{ name: "Kohinoor Landmark Group" }],
+  authors: [{ name: "KOHINOOR CITY" }],
   robots: "index, follow",
   openGraph: {
-    title: "Kohinoor Complex | Futuristic Commercial Landmarks",
+    title: "KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II",
     description:
-      "Explore Kohinoor Complex, featuring Tower Zenith and Tower Apex. State-of-the-art corporate offices designed for modern operational excellence.",
+      "Explore KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II. Premium commercial and corporate office spaces designed for modern business operations.",
     type: "website",
     locale: "en_US",
   },
