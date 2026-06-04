@@ -1,8 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, ArrowRight, Globe, Building2 } from "lucide-react";
+import { Mail, MapPin, ArrowRight, Globe, Building2 } from "lucide-react";
+import { getDb } from "@/app/actions";
 
-export default function Footer() {
+export default async function Footer() {
+  const db = await getDb();
+  const contacts = db.contacts;
+  const managerEmails = Array.from(new Set(contacts.managers.map(m => m.email)));
   return (
     <footer className="relative border-t border-slate-800 bg-[#0F172A] pt-24 pb-12 overflow-hidden text-slate-400">
       {/* Decorative Blur Dot */}
@@ -39,7 +43,7 @@ export default function Footer() {
             <div className="flex items-center gap-3 mt-2">
               {[
                 { icon: Globe, href: "#" },
-                { icon: Mail, href: "mailto:devendra.sali@kohinoorcommercial2.in" },
+                { icon: Mail, href: managerEmails.length > 0 ? `mailto:${managerEmails[0]}` : "#" },
                 { icon: Building2, href: "/" }
               ].map((soc, i) => {
                 const Icon = soc.icon;
@@ -91,26 +95,26 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-0.5" />
                 <a
-                  href="https://maps.app.goo.gl/9LrPP3YqcKRDdi2t5"
+                  href={contacts.siteAddressMapLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="leading-relaxed hover:text-sky-400 transition-colors"
+                  className="leading-relaxed hover:text-sky-400 transition-colors whitespace-pre-line"
                 >
-                  KOHINOOR CITY OFFICE TOWERS, Landmark Ave,<br />
-                  Business District, Tower B, Level 18
+                  {contacts.siteAddress}
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <Mail className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-1" />
-                <div className="flex flex-col gap-1.5">
-                  <a href="mailto:devendra.sali@kohinoorcommercial2.in" className="hover:text-sky-400 transition-colors">
-                    devendra.sali@kohinoorcommercial2.in
-                  </a>
-                  <a href="mailto:roshan.patil@kohinoorcommercial2.in" className="hover:text-sky-400 transition-colors">
-                    roshan.patil@kohinoorcommercial2.in
-                  </a>
-                </div>
-              </li>
+              {managerEmails.length > 0 && (
+                <li className="flex items-start gap-3">
+                  <Mail className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-1" />
+                  <div className="flex flex-col gap-1.5">
+                    {managerEmails.map((email, idx) => (
+                      <a key={idx} href={`mailto:${email}`} className="hover:text-sky-400 transition-colors">
+                        {email}
+                      </a>
+                    ))}
+                  </div>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -124,6 +128,10 @@ export default function Footer() {
             <span className="hover:text-sky-400 cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-sky-400 cursor-pointer transition-colors">Terms of Lease</span>
             <span className="hover:text-sky-400 cursor-pointer transition-colors">Security Standards</span>
+            <span className="text-slate-700">|</span>
+            <Link href="/admin" className="hover:text-sky-400 cursor-pointer transition-colors">
+              Admin Portal
+            </Link>
           </div>
         </div>
       </div>

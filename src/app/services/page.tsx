@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Zap,
   Check,
   Compass,
   Shield,
@@ -12,45 +11,28 @@ import {
   ArrowUpDown,
   Lock,
   Car,
+  Zap,
   BatteryCharging,
-  Flame,
-  Heart,
-  Activity
+  Flame
 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
-
-type ServiceItem = {
-  id: string;
-  title: string;
-  icon: React.ComponentType<any>;
-  shortDesc: string;
-  longDesc: string;
-  features: string[];
-  glowColor: string;
-};
-
-const SERVICES: ServiceItem[] = [
-  {
-    id: "svc-ambulance",
-    title: "Ambulance",
-    icon: Activity,
-    shortDesc: "24/7 standby emergency medical transit services for all occupants.",
-    longDesc: "Health and emergency response capabilities are fully integrated at the premises. The business park provides a dedicated, standby ambulance service 24/7 to ensure zero-delay medical transit and emergency support for all occupants and visitors.",
-    features: ["24/7 Emergency Dispatch", "Life Support Equipment On Board", "Trained Response Paramedics"],
-    glowColor: "from-rose-500/20 to-red-600/30",
-  },
-  {
-    id: "svc-medical-camp",
-    title: "Medical Camp",
-    icon: Heart,
-    shortDesc: "Qualified visiting doctors present on the 2nd and 4th Wednesday of every month.",
-    longDesc: "Dedicated health camps are conducted on-site to promote occupant wellness and checkups. The business park hosts visiting professional medical doctors on the second and fourth Wednesday of every month, providing free health consultations, basic testing, and medical guidance.",
-    features: ["Visiting Doctors (2nd & 4th Wednesday)", "General Checkups & Consultations", "Health & Wellness Guidance"],
-    glowColor: "from-sky-400/20 to-sky-500/30",
-  },
-];
+import { getDb, ServiceItem } from "@/app/actions";
 
 export default function ServicesPage() {
+  const [services, setServices] = useState<ServiceItem[]>([]);
+
+  useEffect(() => {
+    async function loadServices() {
+      try {
+        const data = await getDb();
+        setServices(data.services);
+      } catch (err) {
+        console.error("Failed to load services:", err);
+      }
+    }
+    loadServices();
+  }, []);
 
   return (
     <div className="flex flex-col w-full pb-20 overflow-hidden">
@@ -93,8 +75,8 @@ export default function ServicesPage() {
       {/* 2. SERVICES GRID */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-          {SERVICES.map((svc, index) => {
-            const Icon = svc.icon;
+          {services.map((svc, index) => {
+            const Icon = (LucideIcons as any)[svc.iconName] || LucideIcons.HelpCircle;
 
             return (
               <motion.div

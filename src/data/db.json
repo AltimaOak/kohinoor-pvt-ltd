@@ -1,0 +1,124 @@
+{
+  "events": [
+    {
+      "id": "evt-blood-donation",
+      "title": "Annual Corporate Blood Donation Drive",
+      "desc": "Partnering with the Red Cross Society to host a voluntary blood donation camp for all residents.",
+      "iconName": "Droplet"
+    },
+    {
+      "id": "evt-rangoli",
+      "title": "Grand Diwali Rangoli Competition",
+      "desc": "An inter-corporate artistic showdown celebrating the festival of lights with sustainable designs.",
+      "iconName": "Sparkles"
+    },
+    {
+      "id": "evt-independence",
+      "title": "Independence Day Cultural Gathering",
+      "desc": "Commemorating the national flag hoisting with cultural performances and community high-tea.",
+      "iconName": "Gift"
+    },
+    {
+      "id": "evt-yoga",
+      "title": "International Yoga Day Workshop",
+      "desc": "A revitalizing morning mindfulness and wellness session designed for working professionals.",
+      "iconName": "Heart"
+    },
+    {
+      "id": "evt-holi",
+      "title": "Eco-Friendly Holi Milan Celebration",
+      "desc": "Welcoming the festival of colors with dry organic colors, traditional music, and sweets.",
+      "iconName": "Activity"
+    },
+    {
+      "id": "evt-health",
+      "title": "Occupant Eye & General Health Checkup",
+      "desc": "A free diagnostic screening camp in partnership with local multi-specialty hospitals.",
+      "iconName": "Heart"
+    },
+    {
+      "id": "evt-plantation",
+      "title": "Green Canopy Monsoon Plantation",
+      "desc": "A collaborative tenant green drive planting native saplings around the business park.",
+      "iconName": "Compass"
+    }
+  ],
+  "services": [
+    {
+      "id": "svc-ambulance",
+      "title": "Ambulance",
+      "shortDesc": "24/7 standby emergency medical transit services for all occupants.",
+      "longDesc": "Health and emergency response capabilities are fully integrated at the premises. The business park provides a dedicated, standby ambulance service 24/7 to ensure zero-delay medical transit and emergency support for all occupants and visitors.",
+      "features": [
+        "24/7 Emergency Dispatch",
+        "Life Support Equipment On Board",
+        "Trained Response Paramedics"
+      ],
+      "iconName": "Activity",
+      "glowColor": "from-rose-500/20 to-red-600/30"
+    },
+    {
+      "id": "svc-medical-camp",
+      "title": "Medical Camp",
+      "shortDesc": "Qualified visiting doctors present on the 2nd and 4th Wednesday of every month.",
+      "longDesc": "Dedicated health camps are conducted on-site to promote occupant wellness and checkups. The business park hosts visiting professional medical doctors on the second and fourth Wednesday of every month, providing free health consultations, basic testing, and medical guidance.",
+      "features": [
+        "Visiting Doctors (2nd & 4th Wednesday)",
+        "General Checkups & Consultations",
+        "Health & Wellness Guidance"
+      ],
+      "iconName": "Heart",
+      "glowColor": "from-sky-400/20 to-sky-500/30"
+    }
+  ],
+  "photos": [
+    {
+      "id": "gal-ext-1",
+      "title": "Kohinoor Tower 2 Entrance",
+      "category": "exterior",
+      "categoryLabel": "Exterior",
+      "src": "/images/tower_exterior.png",
+      "description": "Real-world view of the modern glass facade and premium landscaped entry plaza at Kohinoor Tower 2."
+    },
+    {
+      "id": "gal-ext-2",
+      "title": "Corporate Walkway & Plaza",
+      "category": "exterior",
+      "categoryLabel": "Exterior",
+      "src": "/images/walkway_plaza.png",
+      "description": "Paved central walkway connecting the complex towers, flanked by green spaces and glass facades."
+    },
+    {
+      "id": "gal-ext-3",
+      "title": "Complex East Promenade",
+      "category": "exterior",
+      "categoryLabel": "Exterior",
+      "src": "/images/plaza_path.png",
+      "description": "Beautifully-designed pathways and lush tropical landscaping throughout the business complex."
+    }
+  ],
+  "contacts": {
+    "siteAddress": "KOHINOOR CITY OFFICE TOWERS, Landmark Ave, Business District, Tower B, Level 18",
+    "siteAddressMapLink": "https://maps.app.goo.gl/9LrPP3YqcKRDdi2t5",
+    "managers": [
+      {
+        "id": "mgr-devendra",
+        "name": "Devendra Sali",
+        "role": "Property Manager",
+        "category": "Property & Facility",
+        "phone": "8657902806",
+        "email": "devendra.sali@kohinoorcommercial2.in",
+        "colorTheme": "sky"
+      },
+      {
+        "id": "mgr-roshan",
+        "name": "Roshan Patil",
+        "role": "Security Manager",
+        "category": "Security & Safety",
+        "phone": "8657902808",
+        "email": "roshan.patil@kohinoorcommercial2.in",
+        "colorTheme": "emerald"
+      }
+    ]
+  }
+}

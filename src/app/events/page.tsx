@@ -1,62 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  Compass,
-  Sparkles,
-  Droplet,
-  Gift,
-  Heart,
-  Activity
-} from "lucide-react";
-
-const EVENTS = [
-  {
-    id: "evt-blood-donation",
-    title: "Annual Corporate Blood Donation Drive",
-    desc: "Partnering with the Red Cross Society to host a voluntary blood donation camp for all residents.",
-    icon: Droplet,
-  },
-  {
-    id: "evt-rangoli",
-    title: "Grand Diwali Rangoli Competition",
-    desc: "An inter-corporate artistic showdown celebrating the festival of lights with sustainable designs.",
-    icon: Sparkles,
-  },
-  {
-    id: "evt-independence",
-    title: "Independence Day Cultural Gathering",
-    desc: "Commemorating the national flag hoisting with cultural performances and community high-tea.",
-    icon: Gift,
-  },
-  {
-    id: "evt-yoga",
-    title: "International Yoga Day Workshop",
-    desc: "A revitalizing morning mindfulness and wellness session designed for working professionals.",
-    icon: Heart,
-  },
-  {
-    id: "evt-holi",
-    title: "Eco-Friendly Holi Milan Celebration",
-    desc: "Welcoming the festival of colors with dry organic colors, traditional music, and sweets.",
-    icon: Activity,
-  },
-  {
-    id: "evt-health",
-    title: "Occupant Eye & General Health Checkup",
-    desc: "A free diagnostic screening camp in partnership with local multi-specialty hospitals.",
-    icon: Heart,
-  },
-  {
-    id: "evt-plantation",
-    title: "Green Canopy Monsoon Plantation",
-    desc: "A collaborative tenant green drive planting native saplings around the business park.",
-    icon: Compass,
-  },
-];
+import { Compass } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+import { getDb, EventItem } from "@/app/actions";
 
 export default function EventsPage() {
+  const [events, setEvents] = useState<EventItem[]>([]);
+
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        const data = await getDb();
+        setEvents(data.events);
+      } catch (err) {
+        console.error("Failed to load events:", err);
+      }
+    }
+    loadEvents();
+  }, []);
+
   return (
     <div className="flex flex-col w-full pb-24 overflow-hidden">
       
@@ -98,8 +62,8 @@ export default function EventsPage() {
       {/* 2. EVENTS GRID */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {EVENTS.map((evt, idx) => {
-            const Icon = evt.icon;
+          {events.map((evt, idx) => {
+            const Icon = (LucideIcons as any)[evt.iconName] || LucideIcons.HelpCircle;
             return (
               <motion.div
                 initial={{ opacity: 0, y: 15 }}

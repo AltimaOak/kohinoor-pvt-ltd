@@ -1,47 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Maximize2, X, Building } from "lucide-react";
-
-type GalleryItem = {
-  id: string;
-  title: string;
-  category: "exterior" | "interior" | "lounge" | "amenities";
-  categoryLabel: string;
-  src: string;
-  description: string;
-};
-
-const GALLERY_ITEMS: GalleryItem[] = [
-  {
-    id: "gal-ext-1",
-    title: "Kohinoor Tower 2 Entrance",
-    category: "exterior",
-    categoryLabel: "Exterior",
-    src: "/images/tower_exterior.png",
-    description: "Real-world view of the modern glass facade and premium landscaped entry plaza at Kohinoor Tower 2.",
-  },
-  {
-    id: "gal-ext-2",
-    title: "Corporate Walkway & Plaza",
-    category: "exterior",
-    categoryLabel: "Exterior",
-    src: "/images/walkway_plaza.png",
-    description: "Paved central walkway connecting the complex towers, flanked by green spaces and glass facades.",
-  },
-  {
-    id: "gal-ext-3",
-    title: "Complex East Promenade",
-    category: "exterior",
-    categoryLabel: "Exterior",
-    src: "/images/plaza_path.png",
-    description: "Beautifully-designed pathways and lush tropical landscaping throughout the business complex.",
-  },
-];
+import { getDb, PhotoItem } from "@/app/actions";
 
 export default function InteractiveGallery() {
-  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+  const [galleryItems, setGalleryItems] = useState<PhotoItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<PhotoItem | null>(null);
+
+  useEffect(() => {
+    async function loadPhotos() {
+      try {
+        const data = await getDb();
+        setGalleryItems(data.photos);
+      } catch (err) {
+        console.error("Failed to load photos:", err);
+      }
+    }
+    loadPhotos();
+  }, []);
 
   return (
     <div className="w-full">
@@ -51,7 +29,7 @@ export default function InteractiveGallery() {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <AnimatePresence mode="popLayout">
-          {GALLERY_ITEMS.map((item, idx) => (
+          {galleryItems.map((item, idx) => (
             <motion.div
               layout
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
