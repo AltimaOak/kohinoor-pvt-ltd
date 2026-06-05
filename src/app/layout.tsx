@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackgroundGlow from "@/components/BackgroundGlow";
+import SmoothScroll from "@/components/SmoothScroll";
 
 // Load Google Fonts for premium typography
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -56,22 +57,24 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${outfit.variable} h-full antialiased scroll-smooth`}
+      className={`${plusJakartaSans.variable} ${outfit.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-navy-900 selection:bg-sky-500/20 selection:text-sky-900">
-        {/* Ambient scrolling glowing backdrops */}
-        <BackgroundGlow />
+      <body className="min-h-screen flex flex-col font-sans bg-slate-50 text-navy-900 selection:bg-sky-500/20 selection:text-sky-900">
+        <SmoothScroll>
+          {/* Ambient scrolling glowing backdrops */}
+          <BackgroundGlow />
 
-        {/* Global Navigation */}
-        <Navbar />
+          {/* Global Navigation */}
+          <Navbar />
 
-        {/* Main Content Area */}
-        <main className="flex-grow pt-[72px] md:pt-[76px]">
-          {children}
-        </main>
+          {/* Main Content Area */}
+          <main className="flex-grow pt-[72px] md:pt-[76px]">
+            {children}
+          </main>
 
-        {/* Global Footer */}
-        <Footer />
+          {/* Global Footer */}
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );

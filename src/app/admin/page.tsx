@@ -194,7 +194,7 @@ export default function AdminPage() {
   };
 
   // Image Upload handler
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit") => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event") => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -217,8 +217,22 @@ export default function AdminPage() {
             src: res.url!,
             description: ""
           });
-        } else {
+        } else if (forEdit === "edit") {
           setEditingPhoto((prev) => prev ? { ...prev, src: res.url! } : null);
+        } else if (forEdit === "event") {
+          setEditingEvent((prev) => {
+            if (!prev) return null;
+            const currentImages = prev.images || [];
+            if (currentImages.length >= 5) {
+              return prev;
+            }
+            const newImages = [...currentImages, res.url!];
+            return {
+              ...prev,
+              images: newImages,
+              imageSrc: newImages[0]
+            };
+          });
         }
       } else {
         showToast("error", res.error || "Image upload failed");
@@ -655,7 +669,9 @@ export default function AdminPage() {
                         id: "",
                         title: "",
                         desc: "",
-                        iconName: "Sparkles"
+                        iconName: "Calendar",
+                        imageSrc: "",
+                        images: []
                       });
                     }}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all"
@@ -688,49 +704,15 @@ export default function AdminPage() {
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="md:col-span-2 flex flex-col gap-1.5">
-                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Event Title</label>
-                        <input
-                          type="text"
-                          value={editingEvent.title}
-                          onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
-                          placeholder="e.g. Annual Blood Donation Drive"
-                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1.5 justify-end">
-                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Selected Icon Preview</span>
-                        <div className="flex items-center gap-2 px-4.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl max-w-max">
-                          <IconPreview name={editingEvent.iconName} className="w-5.5 h-5.5 text-sky-500 stroke-[2.5]" />
-                          <span className="text-xs font-bold text-slate-700">{editingEvent.iconName}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose a visual icon (Click to select)</label>
-                      <div className="grid grid-cols-6 sm:grid-cols-10 gap-2 border border-slate-200/80 p-3.5 rounded-2xl bg-slate-50 max-h-36 overflow-y-auto">
-                        {POPULAR_ICONS.map((ico) => {
-                          const isSelected = editingEvent.iconName === ico;
-                          return (
-                            <button
-                              key={ico}
-                              type="button"
-                              onClick={() => setEditingEvent({ ...editingEvent, iconName: ico })}
-                              className={`p-2.5 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
-                                isSelected
-                                  ? "bg-sky-500 border-sky-500 text-white shadow-md shadow-sky-500/10 scale-105"
-                                  : "bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-navy-900"
-                              }`}
-                              title={ico}
-                            >
-                              <IconPreview name={ico} className="w-4.5 h-4.5 stroke-[2]" />
-                            </button>
-                          );
-                        })}
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Event Title</label>
+                      <input
+                        type="text"
+                        value={editingEvent.title}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
+                        placeholder="e.g. Annual Blood Donation Drive"
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                      />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
@@ -742,6 +724,117 @@ export default function AdminPage() {
                         rows={3}
                         className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 resize-none leading-relaxed"
                       />
+                    </div>
+
+                    {/* Event Photos Manager (Optional, Max 5) */}
+                    <div className="flex flex-col gap-3">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
+                        Event Photos (Optional, Max 5)
+                      </label>
+                      
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, "event")}
+                        className="hidden"
+                        id="event-file-upload"
+                      />
+
+                      {/* Display grid of current photos */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                        {(editingEvent.images || []).map((img, i) => (
+                          <div key={i} className="aspect-[16/10] w-full border border-slate-200 bg-slate-100 rounded-2xl overflow-hidden relative group">
+                            <img
+                              src={img}
+                              alt={`Event photo ${i + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newImages = (editingEvent.images || []).filter((_, idx) => idx !== i);
+                                setEditingEvent({
+                                  ...editingEvent,
+                                  images: newImages,
+                                  imageSrc: newImages[0] || ""
+                                });
+                              }}
+                              className="absolute inset-0 bg-navy-950/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            >
+                              <div className="p-2 rounded-full bg-rose-500 hover:bg-rose-600 text-white transition-colors">
+                                <Trash2 className="w-4 h-4" />
+                              </div>
+                            </button>
+                          </div>
+                        ))}
+
+                        {/* Visual upload card - only show if less than 5 images */}
+                        {(editingEvent.images || []).length < 5 && (
+                          <div
+                            onClick={() => document.getElementById("event-file-upload")?.click()}
+                            className="border-2 border-dashed border-slate-200 hover:border-sky-400 hover:bg-sky-500/5 rounded-2xl aspect-[16/10] text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1 bg-slate-50/50"
+                          >
+                            {uploadingImage ? (
+                              <Loader2 className="w-5 h-5 animate-spin text-sky-500" />
+                            ) : (
+                              <Upload className="w-5 h-5 text-sky-500" />
+                            )}
+                            <span className="text-[10px] font-bold text-navy-900">Upload Photo</span>
+                            <span className="text-[8px] text-slate-400">{(editingEvent.images || []).length}/5 uploaded</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Manual Image URL Appending */}
+                      {(editingEvent.images || []).length < 5 && (
+                        <div className="flex flex-col gap-2 p-4 border border-slate-200 rounded-2xl bg-white mt-2">
+                          <label className="text-[9px] font-bold uppercase text-slate-400">Or append a web image link</label>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              id="event-manual-url-input"
+                              placeholder="Paste URL e.g. https://images.unsplash.com/..."
+                              className="px-4.5 py-2.5 border border-slate-200 rounded-xl text-xs flex-grow focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  const val = e.currentTarget.value.trim();
+                                  if (val) {
+                                    const currentImages = editingEvent.images || [];
+                                    const newImages = [...currentImages, val];
+                                    setEditingEvent({
+                                      ...editingEvent,
+                                      images: newImages,
+                                      imageSrc: newImages[0]
+                                    });
+                                    e.currentTarget.value = "";
+                                  }
+                                }
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const input = document.getElementById("event-manual-url-input") as HTMLInputElement;
+                                const val = input?.value.trim();
+                                if (val) {
+                                  const currentImages = editingEvent.images || [];
+                                  const newImages = [...currentImages, val];
+                                  setEditingEvent({
+                                    ...editingEvent,
+                                    images: newImages,
+                                    imageSrc: newImages[0]
+                                  });
+                                  input.value = "";
+                                }
+                              }}
+                              className="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold transition-colors"
+                            >
+                              Add URL
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex justify-end gap-3 pt-2">
@@ -778,9 +871,30 @@ export default function AdminPage() {
                         className="bg-white border border-slate-200/50 p-6 rounded-[28px] shadow-sm flex items-start justify-between gap-6 group hover:border-sky-300/65 transition-all duration-300"
                       >
                         <div className="flex items-start gap-5">
-                          <div className="w-12 h-12 bg-sky-500/5 border border-sky-400/20 rounded-2xl flex items-center justify-center shrink-0 text-sky-500">
-                            <IconPreview name={evt.iconName} className="w-5.5 h-5.5 stroke-[2]" />
-                          </div>
+                          {evt.images && evt.images.length > 0 ? (
+                            <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
+                              <img src={evt.images[0]} alt={evt.title} className="w-full h-full object-cover" />
+                              {evt.images.length > 1 && (
+                                <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-navy-950/80 border border-white/10 text-[7px] font-bold text-white leading-none">
+                                  {evt.images.length} Photos
+                                </div>
+                              )}
+                              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
+                                <IconPreview name={evt.iconName} className="w-3.5 h-3.5 stroke-[2.5]" />
+                              </div>
+                            </div>
+                          ) : evt.imageSrc ? (
+                            <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
+                              <img src={evt.imageSrc} alt={evt.title} className="w-full h-full object-cover" />
+                              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
+                                <IconPreview name={evt.iconName} className="w-3.5 h-3.5 stroke-[2.5]" />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 bg-sky-500/5 border border-sky-400/20 rounded-2xl flex items-center justify-center shrink-0 text-sky-500">
+                              <IconPreview name={evt.iconName} className="w-5.5 h-5.5 stroke-[2]" />
+                            </div>
+                          )}
                           <div className="flex flex-col gap-1.5">
                             <h4 className="text-sm font-extrabold text-navy-900 group-hover:text-sky-600 transition-colors leading-snug">
                               {evt.title}

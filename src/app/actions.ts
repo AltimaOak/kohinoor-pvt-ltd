@@ -17,6 +17,8 @@ export interface EventItem {
   title: string;
   desc: string;
   iconName: string;
+  imageSrc?: string;
+  images?: string[];
 }
 
 export interface ServiceItem {
