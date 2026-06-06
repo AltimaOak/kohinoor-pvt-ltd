@@ -59,7 +59,7 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ type: "spring", damping: 25 }}
-          className="p-8 rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 relative overflow-hidden group"
+          className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 relative overflow-hidden group"
         >
           <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-sky-500/5 blur-[40px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
           <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0 text-sky-500">
@@ -76,7 +76,7 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ type: "spring", damping: 25 }}
-          className="p-8 rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 relative overflow-hidden group"
+          className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 relative overflow-hidden group"
         >
           <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-sky-500/5 blur-[40px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
           <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0 text-sky-500">
@@ -109,7 +109,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="p-8 rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
+              className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
               <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
@@ -129,7 +129,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="p-8 rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
+              className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
               <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
@@ -149,7 +149,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="p-8 rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
+              className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
               <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">

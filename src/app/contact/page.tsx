@@ -88,7 +88,7 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="flex items-start gap-4 p-5 bg-white border border-slate-200/40 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
+                className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-200/40 rounded-[20px] sm:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
               >
                 <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
                   <MapPin className="w-5 h-5" />
@@ -112,7 +112,7 @@ export default function ContactPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="flex items-start gap-4 p-5 bg-white border border-slate-200/40 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
+                  className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-200/40 rounded-[20px] sm:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
                 >
                   <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
                     <Mail className="w-5 h-5" />
@@ -147,7 +147,7 @@ export default function ContactPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    className={`p-8 rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col gap-6 text-left hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 relative group ${
+                    className={`p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col gap-6 text-left hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 relative group ${
                       mgr.colorTheme === "emerald"
                         ? "hover:border-emerald-400/30"
                         : mgr.colorTheme === "amber"

@@ -140,7 +140,7 @@ export default function EventsPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 key={evt.id}
-                className="rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.02)] h-full"
+                className="rounded-[20px] sm:rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.02)] h-full"
               >
                 {/* Carousel or single photo header */}
                 {evt.images && evt.images.length > 0 ? (
@@ -156,7 +156,7 @@ export default function EventsPage() {
                   </div>
                 ) : null}
 
-                <div className="p-6 flex flex-col gap-4 flex-grow">
+                <div className="p-5 sm:p-6 flex flex-col gap-4 flex-grow">
                   <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 text-sky-500 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0">
                     <Icon className="w-5 h-5 stroke-[2]" />
                   </div>
