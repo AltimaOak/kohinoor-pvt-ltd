@@ -120,5 +120,75 @@
         "colorTheme": "emerald"
       }
     ]
-  }
+  },
+  "doctors": [
+    {
+      "id": "dr-amit-verma",
+      "name": "Dr. Amit Verma",
+      "specialty": "M.D. General Medicine",
+      "schedule": "2nd Wednesday (10:00 AM - 4:00 PM)",
+      "phone": "+918657902810",
+      "email": "dr.amit.verma@kohinoorcommercial2.in",
+      "avatarColor": "bg-sky-500/10 text-sky-600 border-sky-400/20"
+    },
+    {
+      "id": "dr-neha-kapoor",
+      "name": "Dr. Neha Kapoor",
+      "specialty": "D.N.B. Cardiology & General Wellness",
+      "schedule": "4th Wednesday (10:00 AM - 4:00 PM)",
+      "phone": "+918657902812",
+      "email": "dr.neha.kapoor@kohinoorcommercial2.in",
+      "avatarColor": "bg-rose-500/10 text-rose-600 border-rose-400/20"
+    }
+  ],
+  "bookings": [
+    {
+      "doctorId": "dr-amit-verma",
+      "doctorName": "Dr. Amit Verma",
+      "userName": "Adrian Carter",
+      "userEmail": "adrian@corp.com",
+      "userPhone": "8657902810",
+      "date": "2026-06-10",
+      "time": "14:00",
+      "message": "Periodic general wellness screening and review.",
+      "id": "bk-1780737090029",
+      "createdAt": "2026-06-06T09:11:30.029Z"
+    },
+    {
+      "doctorId": "dr-amit-verma",
+      "doctorName": "Dr. Amit Verma",
+      "userName": "Tanmay Mhatre",
+      "userEmail": "tanmaymhatre167@gmail.com",
+      "userPhone": "9372025677",
+      "date": "2026-06-23",
+      "time": "10:00",
+      "message": "severe Chest Pain checkup",
+      "id": "bk-1780738487785",
+      "createdAt": "2026-06-06T09:34:47.785Z"
+    },
+    {
+      "doctorId": "dr-neha-kapoor",
+      "doctorName": "Dr. Neha Kapoor",
+      "userName": "Tanmay Mhatre",
+      "userEmail": "tanmaymhatre167@gmail.com",
+      "userPhone": "7854265122",
+      "date": "2026-06-16",
+      "time": "15:06",
+      "message": "Headache",
+      "id": "bk-1780738600913",
+      "createdAt": "2026-06-06T09:36:40.913Z"
+    },
+    {
+      "doctorId": "dr-amit-verma",
+      "doctorName": "Dr. Amit Verma",
+      "userName": "tanmay nivrutti mhatre",
+      "userEmail": "tanmaymhatre167@gmail.com",
+      "userPhone": "9785214638",
+      "date": "2026-06-13",
+      "time": "20:00",
+      "message": "Full body checkup",
+      "id": "bk-1780744999116",
+      "createdAt": "2026-06-06T11:23:19.116Z"
+    }
+  ]
 }

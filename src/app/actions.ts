@@ -56,11 +56,36 @@ export interface ContactsData {
   managers: ManagerItem[];
 }
 
+export interface DoctorItem {
+  id: string;
+  name: string;
+  specialty: string;
+  schedule: string;
+  phone: string;
+  email: string;
+  avatarColor: string;
+}
+
+export interface BookingItem {
+  id: string;
+  doctorId: string;
+  doctorName: string;
+  userName: string;
+  userEmail: string;
+  userPhone: string;
+  date: string;
+  time: string;
+  message: string;
+  createdAt: string;
+}
+
 export interface DatabaseSchema {
   events: EventItem[];
   services: ServiceItem[];
   photos: PhotoItem[];
   contacts: ContactsData;
+  doctors?: DoctorItem[];
+  bookings?: BookingItem[];
 }
 
 // Ensure database file exists
@@ -78,6 +103,8 @@ async function ensureDbExists() {
         siteAddressMapLink: "",
         managers: [],
       },
+      doctors: [],
+      bookings: [],
     };
     await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
     await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
@@ -184,5 +211,40 @@ export async function uploadPhotoAction(formData: FormData): Promise<{ success: 
   } catch (error) {
     console.error("Error during file upload:", error);
     return { success: false, error: "Failed to save uploaded file" };
+  }
+}
+
+// Appointment Booking server action
+export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "createdAt">): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    const newBooking: BookingItem = {
+      ...booking,
+      id: `bk-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    if (!db.bookings) {
+      db.bookings = [];
+    }
+    db.bookings.push(newBooking);
+    
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    
+    const doctor = db.doctors?.find(d => d.id === booking.doctorId);
+    const doctorEmail = doctor ? doctor.email : "clinic@kohinoorcommercial2.in";
+    
+    // Simulate sending email to doctor
+    console.log(`\n========================================`);
+    console.log(`[EMAIL DISPATCH] Outgoing Mail`);
+    console.log(`To Doctor: ${booking.doctorName} <${doctorEmail}>`);
+    console.log(`Cc Occupant: ${booking.userName} <${booking.userEmail}>`);
+    console.log(`Subject: Confirmed Appointment Request - ${booking.userName}`);
+    console.log(`Body:\nDear ${booking.doctorName},\n\nYou have a new medical appointment scheduled.\n\nDetails:\n- Occupant: ${booking.userName}\n- Phone: ${booking.userPhone}\n- Email: ${booking.userEmail}\n- Date: ${booking.date}\n- Time: ${booking.time}\n- Reason/Notes: ${booking.message}\n\nThis is a system-generated request dispatched via the Kohinoor Services Hub.`);
+    console.log(`========================================\n`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating appointment:", error);
+    return { success: false, error: "Failed to submit booking" };
   }
 }
