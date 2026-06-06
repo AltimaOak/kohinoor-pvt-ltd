@@ -49,98 +49,70 @@ export default function LandingPage() {
     <div className="flex flex-col w-full pb-20 overflow-hidden">
       
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[92vh] flex items-center pt-24 pb-28 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
-        {/* Glow overlay */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-sky-200/5 blur-[120px] pointer-events-none" />
+      <section className="relative min-h-[92vh] w-full flex items-center overflow-hidden">
+        {/* Background Image - Sharp and Un-blurred */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/images/hero_bg.jpg"
+            alt="Kohinoor Towers Complex"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Subtle dark gradient overlay for text readability without blur */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-transparent lg:bg-gradient-to-r lg:from-slate-950/95 lg:via-slate-950/60 lg:to-transparent" />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center w-full relative z-10">
-          {/* Hero Content (7 Columns) */}
-          <div className="lg:col-span-7 flex flex-col gap-6 text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-xs font-bold w-max uppercase tracking-wider shadow-sm"
-            >
-              <Sparkles className="w-4 h-4 text-sky-400 animate-pulse" />
-              <span>THE NEXT ERA OF COMMERCIAL REAL ESTATE</span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-gradient-sky leading-[1.1]"
-            >
-              Where Business Meets <br className="hidden md:inline" />
-              <span className="text-sky-500 relative inline-block mt-1">
-                Modern Excellence
-                {/* Underline decorative gradient */}
-                <span className="absolute left-0 right-0 -bottom-2.5 h-1.5 bg-gradient-to-r from-sky-400 to-sky-600 rounded-full shadow-sm" />
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl mt-2"
-            >
-              KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II is a premier commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-4 mt-4"
-            >
-              <Link
-                href="#about"
-                className="group flex items-center gap-2.5 px-8 py-4.5 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-sky-500/20 hover:shadow-xl hover:shadow-sky-500/30 hover:scale-[1.03] hover:-translate-y-0.5 transition-all duration-300"
+        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pt-28 pb-10 relative z-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center w-full">
+            {/* Hero Content (8 Columns) - sitting over the dark overlay */}
+            <div className="lg:col-span-8 flex flex-col gap-6 text-left max-w-2xl">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-sky-400/30 bg-sky-500/10 text-sky-400 text-xs font-bold w-max uppercase tracking-wider shadow-sm"
               >
-                <span>About Us</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
-          </div>
+                <Sparkles className="w-4 h-4 text-sky-400 animate-pulse" />
+                <span>THE NEXT ERA OF COMMERCIAL REAL ESTATE</span>
+              </motion.div>
 
-          {/* Hero Visual Showcase: Real Tower 2 photo (5 Columns) */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.93, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 100, damping: 20 }}
-              className="relative w-full max-w-[340px] aspect-[1/1.3] rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_20px_50px_rgba(15,23,42,0.06)] hover:border-sky-300 hover:shadow-[0_25px_60px_rgba(56,189,248,0.15)] transition-all duration-500 overflow-hidden flex flex-col justify-end group"
-            >
-              <div className="absolute inset-0 bg-gradient-radial-sky opacity-40 pointer-events-none z-10" />
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-gradient-sky-light leading-[1.1]"
+              >
+                Where Business Meets <br className="hidden md:inline" />
+                <span className="text-sky-400 relative inline-block mt-1">
+                  Modern Excellence
+                  {/* Underline decorative gradient */}
+                  <span className="absolute left-0 right-0 -bottom-2.5 h-1.5 bg-gradient-to-r from-sky-400 to-sky-600 rounded-full shadow-sm" />
+                </span>
+              </motion.h1>
 
-              {/* The real photo of the tower entrance */}
-              <div className="absolute inset-4 rounded-2xl overflow-hidden bg-slate-50 h-[80%] border border-slate-100">
-                {/* Fallback stylized gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-sky-100/50 flex items-center justify-center p-4">
-                  <Building2 className="w-12 h-12 text-sky-300 opacity-40 animate-pulse" />
-                </div>
-                
-                <img
-                  src="/images/tower_exterior.png"
-                  alt="Kohinoor Tower 2 Real Exterior"
-                  className="w-full h-full object-cover relative z-10 group-hover:scale-105 transition-transform duration-700"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-              </div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl mt-2"
+              >
+                KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II is a premier commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
+              </motion.p>
 
-              {/* Float visual highlight overlay info */}
-              <div className="relative z-20 p-4 rounded-2xl bg-white border border-slate-100 shadow-md flex items-center justify-between gap-3">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] uppercase tracking-widest font-bold text-sky-500">Landmark Site</span>
-                  <h4 className="text-xs font-bold text-navy-900">Kohinoor City Office Towers</h4>
-                </div>
-                <Building2 className="w-5 h-5 text-sky-500 shrink-0" />
-              </div>
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-wrap items-center gap-4 mt-4"
+              >
+                <Link
+                  href="#about"
+                  className="group flex items-center gap-2.5 px-8 py-4.5 rounded-full bg-gradient-to-r from-sky-50 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-sky-500/20 hover:shadow-xl hover:shadow-sky-500/30 hover:scale-[1.03] hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <span>About Us</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -148,7 +120,7 @@ export default function LandingPage() {
 
 
       {/* 3. ABOUT PREVIEW SECTION */}
-      <section id="about" className="py-28 md:py-32 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      <section id="about" className="pt-10 md:pt-12 pb-28 md:pb-32 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         {/* Left Side: Text Columns (7 Columns) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -207,23 +179,6 @@ export default function LandingPage() {
 
         {/* Right Side: Showcase Cards (5 Columns) */}
         <div className="lg:col-span-5 flex flex-col gap-5">
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="p-6 rounded-[28px] border border-slate-200/50 bg-white/70 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:border-sky-300/40 hover:-translate-y-0.5 transition-all duration-300 flex items-start gap-5 group"
-          >
-            <div className="p-3 bg-sky-500/10 border border-sky-400/20 rounded-2xl text-sky-600 font-bold text-xs uppercase tracking-wider shrink-0">
-              B2B
-            </div>
-            <div className="flex flex-col gap-1">
-              <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">Seamless Jd Mart Portal</h4>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Featured catalogue of Business Center Services, Commercial Hubs, and premium Business Centres.
-              </p>
-            </div>
-          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 30 }}

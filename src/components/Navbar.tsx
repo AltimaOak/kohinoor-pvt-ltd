@@ -40,6 +40,8 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  const isNavbarLightText = scrolled || pathname === "/";
+
   return (
     <>
       <header
@@ -61,7 +63,7 @@ export default function Navbar() {
             <div className="flex flex-col max-w-[280px]">
               <span className={cn(
                 "text-xs font-extrabold tracking-tight transition-colors duration-300 leading-tight",
-                scrolled ? "text-white" : "text-navy-900"
+                isNavbarLightText ? "text-white" : "text-navy-900"
               )}>
                 KOHINOOR CITY OFFICE TOWERS
               </span>
@@ -81,7 +83,7 @@ export default function Navbar() {
                   href={item.href}
                   className={cn(
                     "relative px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-300 rounded-full focus:outline-none group",
-                    scrolled
+                    isNavbarLightText
                       ? isActive
                         ? "text-sky-400"
                         : "text-slate-300 hover:text-white"
@@ -96,7 +98,7 @@ export default function Navbar() {
                       layoutId="activeNavIndicator"
                       className={cn(
                         "absolute inset-0 rounded-full border shadow-sm shadow-sky-500/5",
-                        scrolled
+                        isNavbarLightText
                           ? "bg-sky-500/20 border-sky-400/40"
                           : "bg-sky-500/10 border-sky-400/30"
                       )}
@@ -118,7 +120,7 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={cn(
               "md:hidden p-2 rounded-lg hover:bg-sky-500/5 transition-colors focus:outline-none",
-              scrolled
+              isNavbarLightText
                 ? "text-slate-300 hover:text-white"
                 : "text-navy-800 hover:text-sky-500"
             )}
