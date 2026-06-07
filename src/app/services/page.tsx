@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
@@ -13,7 +14,14 @@ import {
   Car,
   Zap,
   BatteryCharging,
-  Flame
+  Flame,
+  Sparkles,
+  Ticket,
+  Clock,
+  CalendarRange,
+  PhoneCall,
+  MessageSquare,
+  QrCode
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -170,6 +178,210 @@ export default function ServicesPage() {
               </motion.div>
             );
           })}
+        </div>
+      </section>
+
+      {/* 2.5. TRANQUIL OASIS PREMIUM SERVICE SECTION */}
+      <section className="relative py-20 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_bottom_left,rgba(56,189,248,0.06),transparent_50%)]">
+        {/* Decorative backdrop elements */}
+        <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-sky-200/5 blur-[70px] pointer-events-none" />
+        <div className="absolute top-10 left-1/3 w-96 h-96 rounded-full bg-indigo-200/5 blur-[90px] pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto">
+          {/* Section Header */}
+          <div className="flex flex-col gap-4 text-center md:text-left mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider mx-auto md:mx-0">
+              <Sparkles className="w-3.5 h-3.5 text-sky-500 animate-pulse" />
+              <span>Premium Wellness Service</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
+              Tranquil Oasis
+            </h2>
+            <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
+              Step away from the corporate rush. Re-energize your mind and body with our premium robotic massage chair therapy, designed specifically to reduce fatigue and elevate your cognitive focus.
+            </p>
+          </div>
+
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+            
+            {/* Left Column: Details & CTA */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="lg:col-span-7 bg-white border border-slate-200/50 rounded-[28px] p-6 md:p-8 lg:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-sky-300 transition-all duration-500 flex flex-col justify-between relative overflow-hidden group"
+            >
+              {/* Subtle hover gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-sky-500/[0.01] pointer-events-none" />
+              
+              <div className="flex flex-col gap-8">
+                
+                {/* Header of card with Special Offer Badge */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-400/20 text-sky-500 flex items-center justify-center shrink-0">
+                      <Flame className="w-6 h-6 stroke-[2]" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-navy-900 leading-tight">Robot Massage Chair Session</h3>
+                      <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
+                    </div>
+                  </div>
+                  
+                  {/* Badge */}
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
+                    <Ticket className="w-3.5 h-3.5" />
+                    Special Offer
+                  </span>
+                </div>
+
+                {/* Offer Price Highlight (₹100 only) */}
+                <div className="p-6 rounded-2xl bg-gradient-to-r from-sky-500/10 to-indigo-500/[0.02] border border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-sky-600">Limited-Time Pricing</span>
+                    <span className="text-slate-500 text-xs">Unlock a premium session at an exclusive corporate rate:</span>
+                  </div>
+                  <div className="flex items-baseline gap-1 text-sky-600 shrink-0">
+                    <span className="text-xl font-bold">₹</span>
+                    <span className="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-navy-900 to-sky-600">100</span>
+                    <span className="text-sm font-semibold text-slate-400">/ Session</span>
+                  </div>
+                </div>
+
+                {/* Specifications Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
+                    <div className="w-9 h-9 rounded-lg bg-sky-500/5 text-sky-500 flex items-center justify-center shrink-0 border border-sky-500/10">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Duration</span>
+                      <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
+                    <div className="w-9 h-9 rounded-lg bg-sky-500/5 text-sky-500 flex items-center justify-center shrink-0 border border-sky-500/10">
+                      <CalendarRange className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Timings</span>
+                      <span className="text-xs font-bold text-navy-800">8:30 AM – 8:00 PM</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Therapy Description (Text Only) */}
+                <div className="flex flex-col gap-3 p-5 border border-slate-100 rounded-2xl bg-slate-50/50">
+                  <h4 className="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-sky-500" />
+                    Zero-Gravity Robotic Therapy
+                  </h4>
+                  <p className="text-slate-600 text-xs leading-relaxed">
+                    Equipped with multi-point body tracking rollers, gentle lumbar heating, customized airbag compression, and zero-gravity recline modes for complete physical decompression and cognitive rejuvenation.
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Call to Action Row */}
+              <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 pt-6 border-t border-slate-100 w-full">
+                
+                {/* Phone Call Trigger */}
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0">
+                    <PhoneCall className="w-4.5 h-4.5 animate-pulse" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Direct Booking</span>
+                    <a href="tel:8879002525" className="text-sm font-black text-navy-900 hover:text-sky-500 font-mono transition-colors">
+                      8879002525
+                    </a>
+                  </div>
+                </div>
+
+                {/* Prominent CTA button */}
+                <a
+                  href={`https://wa.me/918879002525?text=${encodeURIComponent(
+                    "Hello, I would like to book a 20-minute Tranquil Oasis Massage Chair session at Kohinoor City Office Towers."
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-3.5 px-8 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-extrabold text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(56,189,248,0.3)] hover:shadow-[0_6px_25px_rgba(56,189,248,0.4)] hover:-translate-y-0.5 cursor-pointer text-center"
+                >
+                  <MessageSquare className="w-4 h-4 fill-current" />
+                  <span>Book Now</span>
+                </a>
+              </div>
+
+            </motion.div>
+
+            {/* Right Column: Dynamic QR Booking Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+              className="lg:col-span-5 flex flex-col justify-center relative group"
+            >
+              {/* Outer Glow Backing */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-sky-400/20 to-indigo-500/10 rounded-[36px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              
+              <div className="relative w-full max-w-sm sm:max-w-md mx-auto bg-gradient-to-br from-navy-950 to-slate-900 border border-slate-800 text-white rounded-[32px] p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-xl group-hover:shadow-2xl transition-all duration-500 min-h-[360px] overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-[40px] pointer-events-none" />
+                
+                <div className="flex flex-col items-center gap-4 w-full">
+                  <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-400/20 text-sky-400 flex items-center justify-center">
+                    <QrCode className="w-6 h-6 stroke-[2]" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-extrabold tracking-tight">Scan to Book on Mobile</h4>
+                    <p className="text-xs text-slate-400 mt-2 leading-relaxed max-w-[240px] mx-auto">
+                      Scan the QR code with your phone camera to book a session instantly via WhatsApp.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="my-6 p-6 bg-white/95 rounded-[24px] shadow-2xl flex items-center justify-center min-h-[180px] min-w-[180px] border border-sky-500/15 relative overflow-hidden group/qr">
+                  {/* Glowing backdrop inside QR container */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-indigo-500/5 pointer-events-none" />
+
+                  {/* Camera view finder corner marks */}
+                  <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-sky-400/60 rounded-tl pointer-events-none" />
+                  <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-sky-400/60 rounded-tr pointer-events-none" />
+                  <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-sky-400/60 rounded-bl pointer-events-none" />
+                  <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-sky-400/60 rounded-br pointer-events-none" />
+
+                  {/* QR Image Wrapper */}
+                  <div className="relative overflow-hidden rounded-xl p-1 bg-white">
+                    {/* Laser Scanner Line */}
+                    <div className="absolute inset-x-0 h-0.5 bg-sky-400 shadow-[0_0_8px_#38bdf8] animate-scan-laser pointer-events-none" />
+                    
+                    <Image
+                      src="/images/tranquil_oasis_qr.png"
+                      alt="Scan to book Tranquil Oasis"
+                      width={140}
+                      height={140}
+                      className="rounded-lg object-contain transition-transform duration-350 group-hover/qr:scale-[1.03]"
+                      priority
+                    />
+                  </div>
+                </div>
+
+                <div className="w-full">
+                  <span className="text-[10px] uppercase font-bold text-sky-400 tracking-widest block">
+                    Quick Booking Access
+                  </span>
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    Pre-filled chat will open on your phone
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
         </div>
       </section>
 
