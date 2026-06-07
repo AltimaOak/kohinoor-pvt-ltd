@@ -40,7 +40,9 @@ import {
   HelpCircle,
   MapPin,
   Mail,
-  Phone
+  Phone,
+  Leaf,
+  ShoppingBag
 } from "lucide-react";
 import {
   getDb,
@@ -53,7 +55,9 @@ import {
   EventItem,
   ServiceItem,
   PhotoItem,
-  ManagerItem
+  ManagerItem,
+  PlantItem,
+  PlantOrder
 } from "@/app/actions";
 import * as LucideIcons from "lucide-react";
 
@@ -87,7 +91,7 @@ export default function AdminPage() {
 
   // Database state
   const [db, setDb] = useState<DatabaseSchema | null>(null);
-  const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts">("events");
+  const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts" | "nursery">("events");
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -98,6 +102,8 @@ export default function AdminPage() {
   const [isAddingService, setIsAddingService] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<PhotoItem | null>(null);
   const [isAddingPhoto, setIsAddingPhoto] = useState(false);
+  const [editingPlant, setEditingPlant] = useState<PlantItem | null>(null);
+  const [isAddingPlant, setIsAddingPlant] = useState(false);
 
   // Temporary feature text for services input
   const [newFeatureText, setNewFeatureText] = useState("");
@@ -194,7 +200,7 @@ export default function AdminPage() {
   };
 
   // Image Upload handler
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event") => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event" | "plant") => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -219,6 +225,8 @@ export default function AdminPage() {
           });
         } else if (forEdit === "edit") {
           setEditingPhoto((prev) => prev ? { ...prev, src: res.url! } : null);
+        } else if (forEdit === "plant") {
+          setEditingPlant((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
         } else if (forEdit === "event") {
           setEditingEvent((prev) => {
             if (!prev) return null;
@@ -447,6 +455,69 @@ export default function AdminPage() {
     await saveDatabase(db);
   };
 
+  // ==========================================
+  // NURSERY OPERATIONS
+  // ==========================================
+  const handleUpdateNurseryField = (field: "description" | "location" | "timing" | "contact", value: string) => {
+    if (!db || !db.nursery) return;
+    setDb({
+      ...db,
+      nursery: {
+        ...db.nursery,
+        [field]: value
+      }
+    });
+  };
+
+  const handleSaveNurseryInfo = async () => {
+    if (!db || !db.nursery) return;
+    await saveDatabase(db);
+  };
+
+  const handleSavePlant = async () => {
+    if (!db || !db.nursery || !editingPlant) return;
+    if (!editingPlant.name || !editingPlant.description || editingPlant.price <= 0 || editingPlant.quantity < 0) {
+      showToast("error", "Please fill in all plant fields correctly");
+      return;
+    }
+
+    let updatedPlants = [...db.nursery.plants];
+    if (isAddingPlant) {
+      updatedPlants.push({
+        ...editingPlant,
+        id: `plant-${Date.now()}`
+      });
+    } else {
+      updatedPlants = updatedPlants.map((p) =>
+        p.id === editingPlant.id ? editingPlant : p
+      );
+    }
+
+    const updatedNursery = {
+      ...db.nursery,
+      plants: updatedPlants
+    };
+
+    const success = await saveDatabase({ ...db, nursery: updatedNursery });
+    if (success) {
+      setEditingPlant(null);
+      setIsAddingPlant(false);
+    }
+  };
+
+  const handleDeletePlant = async (id: string) => {
+    if (!db || !db.nursery) return;
+    if (!confirm("Are you sure you want to delete this plant from the catalog?")) return;
+
+    const updatedPlants = db.nursery.plants.filter((p) => p.id !== id);
+    const updatedNursery = {
+      ...db.nursery,
+      plants: updatedPlants
+    };
+
+    await saveDatabase({ ...db, nursery: updatedNursery });
+  };
+
   // Render Spinner during load
   if (loading) {
     return (
@@ -621,6 +692,7 @@ export default function AdminPage() {
               { id: "services", label: "Healthcare & Services", icon: Briefcase, color: "text-rose-500 bg-rose-50" },
               { id: "photos", label: "Interactive Gallery", icon: ImageIcon, color: "text-sky-500 bg-sky-50" },
               { id: "contacts", label: "Contacts & Directory", icon: PhoneCall, color: "text-emerald-500 bg-emerald-50" },
+              { id: "nursery", label: "Plant Nursery", icon: Leaf, color: "text-green-500 bg-green-50" }
             ].map((tab) => {
               const TabIcon = tab.icon;
               const isSelected = activeTab === tab.id;
@@ -633,6 +705,7 @@ export default function AdminPage() {
                     setEditingEvent(null);
                     setEditingService(null);
                     setEditingPhoto(null);
+                    setEditingPlant(null);
                   }}
                   className={`flex items-center gap-3.5 px-4.5 py-4 rounded-2xl w-full text-left transition-all ${
                     isSelected
@@ -1629,6 +1702,397 @@ export default function AdminPage() {
                   </div>
 
                 </div>
+              </div>
+            )}
+
+            {/* ==============================================================
+                NURSERY TAB CONTENT
+                ============================================================== */}
+            {activeTab === "nursery" && db && db.nursery && (
+              <div className="flex flex-col gap-6">
+                
+                {/* Nursery Metadata section */}
+                <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                  <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+                    <div className="flex flex-col gap-0.5">
+                      <h2 className="text-lg font-black text-navy-900 leading-none">Plant Nursery Information</h2>
+                      <p className="text-xs text-slate-500">Update general location, operating timings and desc details.</p>
+                    </div>
+                    <button
+                      onClick={handleSaveNurseryInfo}
+                      className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/15 transition-all"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Details</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Nursery Description</label>
+                      <textarea
+                        value={db.nursery.description}
+                        onChange={(e) => handleUpdateNurseryField("description", e.target.value)}
+                        rows={3}
+                        placeholder="Detailed brief describing the nursery..."
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 resize-none leading-relaxed font-semibold text-slate-700"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Location</label>
+                      <input
+                        type="text"
+                        value={db.nursery.location}
+                        onChange={(e) => handleUpdateNurseryField("location", e.target.value)}
+                        placeholder="e.g. Ground Floor, Tower B Plaza"
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 font-semibold text-slate-700"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Operating Hours</label>
+                      <input
+                        type="text"
+                        value={db.nursery.timing}
+                        onChange={(e) => handleUpdateNurseryField("timing", e.target.value)}
+                        placeholder="e.g. 9:00 AM - 6:00 PM (Monday - Saturday)"
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 font-semibold text-slate-700"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contact Number</label>
+                      <input
+                        type="text"
+                        value={db.nursery.contact}
+                        onChange={(e) => handleUpdateNurseryField("contact", e.target.value)}
+                        placeholder="e.g. +91 8657902809"
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 font-semibold text-slate-700"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plants Catalog section */}
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                  <div className="flex flex-col gap-0.5">
+                    <h2 className="text-lg font-black text-navy-900 leading-none">Plant Stock & Catalog</h2>
+                    <p className="text-xs text-slate-500">Manage plant specifications, prices, images and quantities.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsAddingPlant(true);
+                      setEditingPlant({
+                        id: "",
+                        name: "",
+                        description: "",
+                        price: 100,
+                        imageSrc: "",
+                        quantity: 10
+                      });
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/15 transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Plant</span>
+                  </button>
+                </div>
+
+                {/* Add/Edit Plant Form */}
+                {editingPlant && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white border border-emerald-300 p-8 rounded-3xl shadow-md flex flex-col gap-6"
+                  >
+                    <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-600 flex items-center gap-2">
+                        {isAddingPlant ? <Plus className="w-4.5 h-4.5" /> : <Edit className="w-4.5 h-4.5" />}
+                        <span>{isAddingPlant ? "Add New Plant Specification" : "Edit Plant Details"}</span>
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setEditingPlant(null);
+                          setIsAddingPlant(false);
+                        }}
+                        className="text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                      
+                      {/* Form inputs column (8 cols) */}
+                      <div className="md:col-span-8 flex flex-col gap-5">
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div className="flex flex-col gap-1.5 sm:col-span-2">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Plant Name</label>
+                            <input
+                              type="text"
+                              value={editingPlant.name}
+                              onChange={(e) => setEditingPlant({ ...editingPlant, name: e.target.value })}
+                              placeholder="e.g. Snake Plant"
+                              className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+                          
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Price (₹)</label>
+                            <input
+                              type="number"
+                              min={0}
+                              value={editingPlant.price}
+                              onChange={(e) => setEditingPlant({ ...editingPlant, price: parseInt(e.target.value) || 0 })}
+                              placeholder="e.g. 250"
+                              className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Stock Quantity</label>
+                            <input
+                              type="number"
+                              min={0}
+                              value={editingPlant.quantity}
+                              onChange={(e) => setEditingPlant({ ...editingPlant, quantity: parseInt(e.target.value) || 0 })}
+                              placeholder="e.g. 20"
+                              className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Image Upload/Link field */}
+                        <div className="flex flex-col gap-3">
+                          <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Plant Image</label>
+                          
+                          <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={(e) => handleImageUpload(e, "plant")}
+                            className="hidden"
+                            id="plant-file-upload"
+                          />
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {/* Visual upload card */}
+                            <div
+                              onClick={() => document.getElementById("plant-file-upload")?.click()}
+                              className="border-2 border-dashed border-slate-200 hover:border-emerald-400 hover:bg-emerald-500/5 rounded-2xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 bg-slate-50/50"
+                            >
+                              <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-400/20 text-emerald-600 flex items-center justify-center">
+                                {uploadingImage ? (
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                  <Upload className="w-5 h-5" />
+                                )}
+                              </div>
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-xs font-bold text-navy-900">Upload plant image</span>
+                                <span className="text-[9px] text-slate-400">PNG, JPG, JPEG up to 5MB</span>
+                              </div>
+                            </div>
+
+                            {/* Custom URL card */}
+                            <div className="flex flex-col justify-center gap-2.5 p-5 border border-slate-200 rounded-2xl bg-white">
+                              <span className="text-[9px] font-bold uppercase text-slate-400">Or use a custom photo path/link</span>
+                              <input
+                                type="text"
+                                value={editingPlant.imageSrc}
+                                onChange={(e) => setEditingPlant({ ...editingPlant, imageSrc: e.target.value })}
+                                placeholder="/images/my_plant.png or http://..."
+                                className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 text-slate-700 font-semibold"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Plant Description</label>
+                          <textarea
+                            value={editingPlant.description}
+                            onChange={(e) => setEditingPlant({ ...editingPlant, description: e.target.value })}
+                            placeholder="Describe plant lighting needs, air purifying qualities, potting guidelines..."
+                            rows={3}
+                            className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 resize-none leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Image Preview column (4 cols) */}
+                      <div className="md:col-span-4 flex flex-col gap-2">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Plant Image Preview</label>
+                        <div className="aspect-[4/3] w-full border border-slate-200 bg-slate-100 rounded-2xl overflow-hidden flex items-center justify-center relative shadow-inner">
+                          {editingPlant.imageSrc ? (
+                            <img
+                              src={editingPlant.imageSrc}
+                              alt="Plant preview"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "";
+                                showToast("error", "Image source URL/path is invalid");
+                              }}
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center text-slate-400 text-center gap-2 p-4">
+                              <Leaf className="w-10 h-10 text-slate-300 opacity-80" />
+                              <span className="text-[9px] font-bold uppercase tracking-wide">No image uploaded/linked</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 mt-2">
+                      <button
+                        onClick={() => {
+                          setEditingPlant(null);
+                          setIsAddingPlant(false);
+                        }}
+                        className="px-5 py-2.5 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-bold text-slate-500 hover:text-navy-800 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSavePlant}
+                        className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/10 transition-colors"
+                      >
+                        <Save className="w-4 h-4" />
+                        <span>Publish Plant</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Plants Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {db.nursery.plants.map((plant) => (
+                    <div
+                      key={plant.id}
+                      className="bg-white border border-slate-200/50 rounded-3xl overflow-hidden shadow-sm hover:border-emerald-300 transition-all duration-300 group flex flex-col justify-between"
+                    >
+                      <div className="relative aspect-[4/3] bg-slate-50 overflow-hidden border-b border-slate-100">
+                        {plant.imageSrc ? (
+                          <img
+                            src={plant.imageSrc}
+                            alt={plant.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300">
+                            <Leaf className="w-12 h-12 stroke-[1]" />
+                          </div>
+                        )}
+                        <div className="absolute top-3.5 left-3.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-slate-100 text-[8.5px] font-black text-emerald-600 uppercase tracking-widest">
+                          ₹{plant.price}
+                        </div>
+                        <div className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-full text-[8.5px] font-black uppercase tracking-widest border text-white ${
+                          plant.quantity > 0 ? 'bg-emerald-500 border-emerald-400' : 'bg-rose-500 border-rose-400'
+                        }`}>
+                          {plant.quantity} in stock
+                        </div>
+                      </div>
+
+                      <div className="p-5 flex flex-col gap-3.5">
+                        <div className="flex flex-col gap-1">
+                          <h4 className="text-xs font-black text-navy-900 group-hover:text-emerald-600 transition-colors truncate">
+                            {plant.name}
+                          </h4>
+                          <p className="text-slate-500 text-[10px] leading-relaxed line-clamp-2">{plant.description}</p>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-3 border-t border-slate-100">
+                          <span className="text-[9px] font-bold text-slate-400 truncate max-w-[120px]">{plant.imageSrc || "No image"}</span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                setIsAddingPlant(false);
+                                setEditingPlant(plant);
+                              }}
+                              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-emerald-600 transition-colors"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePlant(plant.id)}
+                              className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {db.nursery.plants.length === 0 && (
+                    <div className="col-span-3 text-center py-12 bg-white border border-slate-200 p-8 rounded-3xl text-slate-400 text-xs font-bold">
+                      No plants currently in the catalog. Click "Add Plant" to begin.
+                    </div>
+                  )}
+                </div>
+
+                {/* Orders History panel */}
+                <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-4">
+                  <h3 className="text-sm font-black text-navy-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <ShoppingBag className="w-5 h-5 text-emerald-500" />
+                    <span>Nursery Order & Purchase History</span>
+                  </h3>
+
+                  <div className="max-h-[400px] overflow-y-auto pr-1">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-100 text-slate-400 uppercase text-[9px] font-black tracking-wider font-sans">
+                          <th className="py-3 px-2">Order ID</th>
+                          <th className="py-3 px-2">Plant Details</th>
+                          <th className="py-3 px-2">Purchaser</th>
+                          <th className="py-3 px-2 text-center">Qty</th>
+                          <th className="py-3 px-2">Total Paid</th>
+                          <th className="py-3 px-2">Method</th>
+                          <th className="py-3 px-2">Location/Unit</th>
+                          <th className="py-3 px-2">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(db.nursery.orders || []).map((order) => (
+                          <tr key={order.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors font-medium text-slate-700">
+                            <td className="py-3 px-2 font-bold font-mono text-[10px] text-slate-400">{order.id}</td>
+                            <td className="py-3 px-2 font-bold text-navy-900">{order.plantName}</td>
+                            <td className="py-3 px-2">
+                              <div className="flex flex-col">
+                                <span className="font-bold">{order.userName}</span>
+                                <span className="text-[10px] text-slate-400 font-mono">{order.userPhone} | {order.userEmail}</span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-2 text-center font-bold">{order.quantity}</td>
+                            <td className="py-3 px-2 font-black text-emerald-600">₹{order.totalPrice}</td>
+                            <td className="py-3 px-2">
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border ${
+                                order.deliveryMethod === 'pickup' 
+                                  ? 'bg-amber-50 border-amber-200 text-amber-600' 
+                                  : 'bg-indigo-50 border-indigo-200 text-indigo-600'
+                              }`}>
+                                {order.deliveryMethod === 'pickup' ? 'Pickup' : 'Delivery'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-2 font-mono text-[10px] text-slate-500">{order.officeUnit || 'Nursery Handoff'}</td>
+                            <td className="py-3 px-2 text-[10px] text-slate-400">{new Date(order.createdAt).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
+                        {(db.nursery.orders || []).length === 0 && (
+                          <tr>
+                            <td colSpan={8} className="py-8 text-center text-slate-400 text-xs font-bold">
+                              No purchase orders have been submitted yet.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
               </div>
             )}
 
