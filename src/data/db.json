@@ -203,5 +203,52 @@
       "id": "bk-1780744999116",
       "createdAt": "2026-06-06T11:23:19.116Z"
     }
-  ]
+  ],
+  "nursery": {
+    "description": "Lush green oasis within the Kohinoor complex offering a wide selection of indoor and outdoor plants to brighten your workspace and improve air quality.",
+    "location": "Ground Floor, Tower B Plaza Area",
+    "timing": "9:00 AM - 6:00 PM (Monday - Saturday)",
+    "contact": "+91 8657902809",
+    "plants": [
+      {
+        "id": "plant-snake",
+        "name": "Snake Plant (Sansevieria)",
+        "description": "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
+        "price": 250,
+        "imageSrc": "/images/snake_plant.png",
+        "quantity": 16
+      },
+      {
+        "id": "plant-areca",
+        "name": "Areca Palm",
+        "description": "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
+        "price": 350,
+        "imageSrc": "/images/areca_palm.png",
+        "quantity": 15
+      },
+      {
+        "id": "plant-peace",
+        "name": "Peace Lily",
+        "description": "Features dark green leaves and brilliant white spathes, ideal for low-light office desks.",
+        "price": 180,
+        "imageSrc": "/images/peace_lily.png",
+        "quantity": 10
+      }
+    ],
+    "orders": [
+      {
+        "plantId": "plant-snake",
+        "plantName": "Snake Plant (Sansevieria)",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "09372025677",
+        "quantity": 4,
+        "totalPrice": 1000,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780830368153",
+        "status": "pending",
+        "createdAt": "2026-06-07T11:06:08.154Z"
+      }
+    ]
+  }
 }
