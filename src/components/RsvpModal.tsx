@@ -57,7 +57,7 @@ export default function RsvpModal({ isOpen, onClose, eventName }: RsvpModalProps
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/70 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6 md:p-8"
           onClick={onClose}
         >
           <motion.div
@@ -66,7 +66,7 @@ export default function RsvpModal({ isOpen, onClose, eventName }: RsvpModalProps
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ type: "spring", damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg bg-white border border-white/60 glass-card rounded-[20px] sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-lg bg-white border border-white/60 glass-card rounded-[20px] sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 my-auto"
           >
             {/* Close Trigger */}
             <button

@@ -31,7 +31,7 @@ export default function AppointmentModal({ isOpen, onClose, doctor }: Appointmen
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/70 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6 md:p-8"
           onClick={onClose}
         >
           <motion.div
@@ -40,7 +40,7 @@ export default function AppointmentModal({ isOpen, onClose, doctor }: Appointmen
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ type: "spring", damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md bg-white border border-white/60 rounded-[20px] sm:rounded-[32px] shadow-2xl p-5 sm:p-6 md:p-8 overflow-y-auto max-h-[90vh]"
+            className="relative w-full max-w-md bg-white border border-white/60 rounded-[20px] sm:rounded-[32px] shadow-2xl p-5 sm:p-6 md:p-8 my-auto"
           >
             {/* Close Button */}
             <button

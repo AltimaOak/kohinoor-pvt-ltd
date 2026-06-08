@@ -76,7 +76,7 @@ export default function ServicesPage() {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
           >
             <Compass className="w-3.5 h-3.5 text-sky-400" />
-            <span>Healthcare & Emergency</span>
+            <span>Wellness & Support</span>
           </motion.div>
           
           <motion.h1
@@ -85,7 +85,7 @@ export default function ServicesPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
           >
-            Medical & Emergency Services
+            Occupant Services
           </motion.h1>
           
           <motion.p
@@ -94,14 +94,14 @@ export default function ServicesPage() {
             transition={{ delay: 0.2 }}
             className="text-slate-600 text-sm md:text-base leading-relaxed"
           >
-            Explore our on-site medical facilities, standby ambulance logistics, and bi-weekly wellness camps coordinated to support the health of all occupants.
+            Explore our on-site wellness facilities, premium robotic therapy sessions, medical checkups, and standby emergency transit systems designed for all occupants.
           </motion.p>
         </div>
       </section>
 
       {/* 2. SERVICES GRID */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 w-full relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+      <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {services.map((svc, index) => {
             const Icon = (LucideIcons as any)[svc.iconName] || LucideIcons.HelpCircle;
             const isMedicalCamp = svc.id === "svc-medical-camp";
@@ -264,7 +264,7 @@ export default function ServicesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md p-4 md:p-6 flex items-center justify-center"
+            className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6 md:p-10"
             onClick={() => setIsCampModalOpen(false)}
           >
             <motion.div
@@ -273,7 +273,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 overflow-y-auto"
+              className="relative w-full max-w-5xl bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 my-auto"
             >
               {/* Close Button */}
               <button
@@ -440,7 +440,7 @@ export default function ServicesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md p-4 md:p-6 flex items-center justify-center"
+            className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6 md:p-10"
             onClick={() => setIsMassageModalOpen(false)}
           >
             <motion.div
@@ -449,7 +449,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 overflow-y-auto"
+              className="relative w-full max-w-3xl bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 my-auto"
             >
               {/* Close Button */}
               <button
@@ -473,160 +473,97 @@ export default function ServicesPage() {
                 </p>
               </div>
 
-              {/* Split Content layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+              {/* Centered Content Card */}
+              <div className="w-full bg-white border border-slate-200/50 rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-8 lg:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.02)] hover:border-amber-300 transition-all duration-500 flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-amber-500/[0.01] pointer-events-none" />
                 
-                {/* Left Column: Details & CTA */}
-                <div className="lg:col-span-7 bg-white border border-slate-200/50 rounded-[28px] p-6 md:p-8 lg:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-amber-300 transition-all duration-500 flex flex-col justify-between relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-amber-500/[0.01] pointer-events-none" />
+                <div className="flex flex-col gap-6 sm:gap-8">
                   
-                  <div className="flex flex-col gap-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-400/20 text-amber-500 flex items-center justify-center shrink-0">
+                        <Flame className="w-6 h-6 stroke-[2]" />
+                      </div>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-navy-900 leading-tight">Robot Massage Chair Session</h3>
+                        <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
+                      </div>
+                    </div>
                     
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-400/20 text-amber-500 flex items-center justify-center shrink-0">
-                          <Flame className="w-6 h-6 stroke-[2]" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-bold text-navy-900 leading-tight">Robot Massage Chair Session</h3>
-                          <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
-                        </div>
-                      </div>
-                      
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
-                        <Ticket className="w-3.5 h-3.5" />
-                        Special Offer
-                      </span>
-                    </div>
-
-                    <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/[0.02] border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600">Limited-Time Pricing</span>
-                        <span className="text-slate-500 text-xs">Unlock a premium session at an exclusive corporate rate:</span>
-                      </div>
-                      <div className="flex items-baseline gap-1 text-amber-600 shrink-0">
-                        <span className="text-xl font-bold">₹</span>
-                        <span className="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-navy-900 to-amber-600">100</span>
-                        <span className="text-sm font-semibold text-slate-400">/ Session</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
-                        <div className="w-9 h-9 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
-                          <Clock className="w-4 h-4" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Duration</span>
-                          <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
-                        </div>
-                      </div>
-                      
-                      <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
-                        <div className="w-9 h-9 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
-                          <CalendarRange className="w-4 h-4" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Timings</span>
-                          <span className="text-xs font-bold text-navy-800">8:30 AM – 8:00 PM</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-3 p-5 border border-slate-100 rounded-2xl bg-slate-50/50">
-                      <h4 className="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                        Zero-Gravity Robotic Therapy
-                      </h4>
-                      <p className="text-slate-600 text-xs leading-relaxed">
-                        Equipped with multi-point body tracking rollers, gentle lumbar heating, customized airbag compression, and zero-gravity recline modes for complete physical decompression and cognitive rejuvenation.
-                      </p>
-                    </div>
-
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
+                      <Ticket className="w-3.5 h-3.5" />
+                      Special Offer
+                    </span>
                   </div>
 
-                  <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 pt-6 border-t border-slate-100 w-full">
-                    
-                    <div className="flex items-center gap-3 shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-                        <PhoneCall className="w-4.5 h-4.5 animate-pulse" />
+                  <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/[0.02] border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600">Limited-Time Pricing</span>
+                      <span className="text-slate-500 text-xs">Unlock a premium session at an exclusive corporate rate:</span>
+                    </div>
+                    <div className="flex items-baseline gap-1 text-amber-600 shrink-0">
+                      <span className="text-xl font-bold">₹</span>
+                      <span className="text-3xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-navy-900 to-amber-600">100</span>
+                      <span className="text-xs sm:text-sm font-semibold text-slate-400">/ Session</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="p-3 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
+                      <div className="w-9 h-9 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
+                        <Clock className="w-4 h-4" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Direct Booking</span>
-                        <a href="tel:8879002525" className="text-sm font-black text-navy-900 hover:text-amber-500 font-mono transition-colors">
-                          8879002525
-                        </a>
+                        <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Duration</span>
+                        <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
                       </div>
                     </div>
-
-                    <a
-                      href={`https://wa.me/918879002525?text=${encodeURIComponent(
-                        "Hello, I would like to book a 20-minute Tranquil Oasis Massage Chair session at Kohinoor City Office Towers."
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-3.5 px-8 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_25px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 cursor-pointer text-center"
-                    >
-                      <MessageSquare className="w-4 h-4 fill-current" />
-                      <span>Book Now</span>
-                    </a>
+                    
+                    <div className="p-3 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
+                      <div className="w-9 h-9 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
+                        <CalendarRange className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Timings</span>
+                        <span className="text-xs font-bold text-navy-800">8:30 AM – 8:00 PM</span>
+                      </div>
+                    </div>
                   </div>
+
+
 
                 </div>
 
-                {/* Right Column: Dynamic QR Booking Card */}
-                <div className="lg:col-span-5 flex flex-col justify-center relative group">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-orange-500/10 rounded-[36px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-5 sm:gap-6 pt-5 sm:pt-6 border-t border-slate-100 w-full">
                   
-                  <div className="relative w-full max-w-sm sm:max-w-md mx-auto bg-gradient-to-br from-navy-950 to-slate-900 border border-slate-800 text-white rounded-[32px] p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-xl group-hover:shadow-2xl transition-all duration-500 min-h-[360px] overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none" />
-                    
-                    <div className="flex flex-col items-center gap-4 w-full">
-                      <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/20 text-amber-400 flex items-center justify-center">
-                        <QrCode className="w-6 h-6 stroke-[2]" />
-                      </div>
-                      <div>
-                        <h4 className="text-base font-extrabold tracking-tight">Scan to Book on Mobile</h4>
-                        <p className="text-xs text-slate-400 mt-2 leading-relaxed max-w-[240px] mx-auto">
-                          Scan the QR code with your phone camera to book a session instantly via WhatsApp.
-                        </p>
-                      </div>
+                  <a
+                    href="tel:8879002525"
+                    className="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 shrink-0 group/phone cursor-pointer"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 group-hover/phone:scale-105 transition-transform">
+                      <PhoneCall className="w-4.5 h-4.5 animate-pulse" />
                     </div>
-
-                    <div className="my-6 p-6 bg-white/95 rounded-[24px] shadow-2xl flex items-center justify-center min-h-[180px] min-w-[180px] border border-amber-500/15 relative overflow-hidden group/qr">
-                      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5 pointer-events-none" />
-
-                      <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-amber-400/60 rounded-tl pointer-events-none" />
-                      <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-amber-400/60 rounded-tr pointer-events-none" />
-                      <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-amber-400/60 rounded-bl pointer-events-none" />
-                      <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-amber-400/60 rounded-br pointer-events-none" />
-
-                      <div className="relative overflow-hidden rounded-xl p-1 bg-white">
-                        <div className="absolute inset-x-0 h-0.5 bg-amber-400 shadow-[0_0_8px_#f59e0b] animate-scan-laser pointer-events-none" />
-                        
-                        <Image
-                          src="/images/tranquil_oasis_qr.png"
-                          alt="Scan to book Tranquil Oasis"
-                          width={140}
-                          height={140}
-                          className="rounded-lg object-contain transition-transform duration-350 group-hover/qr:scale-[1.03]"
-                          priority
-                        />
-                      </div>
-                    </div>
-
-                    <div className="w-full">
-                      <span className="text-[10px] uppercase font-bold text-amber-400 tracking-widest block">
-                        Quick Booking Access
-                      </span>
-                      <span className="text-[10px] text-slate-500 mt-1 block">
-                        Pre-filled chat will open on your phone
+                    <div className="flex flex-col text-left">
+                      <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Direct Booking</span>
+                      <span className="text-sm font-black text-navy-900 group-hover/phone:text-amber-500 font-mono transition-colors">
+                        8879002525
                       </span>
                     </div>
-                  </div>
+                  </a>
+
+                  <a
+                    href="https://calendly.com/kohinoorcityofficekhcom2/tranquiloasismassagelounge?month=2026-06"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-3 px-6 sm:py-3.5 sm:px-8 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_25px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 cursor-pointer text-center"
+                  >
+                    <CalendarRange className="w-4 h-4" />
+                    <span>Book Now</span>
+                  </a>
                 </div>
 
               </div>
+
             </motion.div>
           </motion.div>
         )}
