@@ -69,6 +69,19 @@
       ],
       "iconName": "Heart",
       "glowColor": "from-sky-400/20 to-sky-500/30"
+    },
+    {
+      "id": "svc-massage-chair",
+      "title": "Massage Chair",
+      "shortDesc": "Premium zero-gravity robotic therapy sessions for physical rejuvenation.",
+      "longDesc": "Step away from the corporate rush. Re-energize your mind and body with our premium robotic massage chair therapy, designed specifically to reduce fatigue and elevate your cognitive focus.",
+      "features": [
+        "20 Minute Session (₹100 Only)",
+        "Zero-Gravity Robotic Therapy",
+        "Timings: 8:30 AM – 8:00 PM"
+      ],
+      "iconName": "Compass",
+      "glowColor": "from-amber-400/20 to-amber-500/30"
     }
   ],
   "photos": [
