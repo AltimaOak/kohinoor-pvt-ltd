@@ -59,7 +59,7 @@
     },
     {
       "id": "svc-medical-camp",
-      "title": "Medical Camp",
+      "title": "Health Check ",
       "shortDesc": "Qualified visiting doctors present on the 2nd and 4th Wednesday of every month.",
       "longDesc": "Dedicated health camps are conducted on-site to promote occupant wellness and checkups. The business park hosts visiting professional medical doctors on the second and fourth Wednesday of every month, providing free health consultations, basic testing, and medical guidance.",
       "features": [
@@ -140,8 +140,6 @@
       "name": "Dr. Amit Verma",
       "specialty": "M.D. General Medicine",
       "schedule": "12:00 PM - 2:00 PM (Only 2nd & 4th Week of Wednesday)",
-      "phone": "+918657902810",
-      "email": "dr.amit.verma@kohinoorcommercial2.in",
       "avatarColor": "bg-sky-500/10 text-sky-600 border-sky-400/20",
       "bookingLink": "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform"
     }

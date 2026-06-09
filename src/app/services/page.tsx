@@ -177,7 +177,8 @@ export default function ServicesPage() {
             const Icon = (LucideIcons as any)[svc.iconName] || LucideIcons.HelpCircle;
             const isMedicalCamp = svc.id === "svc-medical-camp";
             const isMassageChair = svc.id === "svc-massage-chair";
-            const isClickable = isMedicalCamp || isMassageChair;
+            const isAmbulance = svc.id === "svc-ambulance";
+            const isClickable = isMedicalCamp || isMassageChair || isAmbulance;
 
             return (
               <motion.div
@@ -191,6 +192,8 @@ export default function ServicesPage() {
                     setIsCampModalOpen(true);
                   } else if (isMassageChair) {
                     setIsMassageModalOpen(true);
+                  } else if (isAmbulance) {
+                    window.location.href = "tel:8657935459";
                   }
                 }}
                 className={cn(
@@ -198,7 +201,8 @@ export default function ServicesPage() {
                   isClickable ? "cursor-pointer" : "",
                   isMedicalCamp && "hover:border-sky-400",
                   isMassageChair && "hover:border-amber-400",
-                  (!isMedicalCamp && !isMassageChair) && "hover:border-sky-300"
+                  isAmbulance && "hover:border-rose-400",
+                  (!isMedicalCamp && !isMassageChair && !isAmbulance) && "hover:border-sky-300"
                 )}
               >
                 {/* Glow Ambient behind card */}
@@ -214,7 +218,9 @@ export default function ServicesPage() {
                       "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 shrink-0",
                       isMassageChair 
                         ? "bg-amber-500/10 border border-amber-400/20 text-amber-500 group-hover:bg-amber-500 group-hover:text-white"
-                        : "bg-sky-500/10 border border-sky-400/20 text-sky-500 group-hover:bg-sky-500 group-hover:text-white"
+                        : isAmbulance
+                          ? "bg-rose-500/10 border border-rose-400/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white"
+                          : "bg-sky-500/10 border border-sky-400/20 text-sky-500 group-hover:bg-sky-500 group-hover:text-white"
                     )}>
                       <Icon className="w-7 h-7 stroke-[2]" />
                     </div>
@@ -244,7 +250,9 @@ export default function ServicesPage() {
                               "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 border",
                               isMassageChair 
                                 ? "bg-amber-500/10 border-amber-400/20 text-amber-600" 
-                                : "bg-sky-500/10 border-sky-400/20 text-sky-600"
+                                : isAmbulance
+                                  ? "bg-rose-500/10 border-rose-400/20 text-rose-600"
+                                  : "bg-sky-500/10 border-sky-400/20 text-sky-600"
                             )}>
                               <Check className="w-3 h-3 stroke-[2.5]" />
                             </div>
@@ -267,6 +275,13 @@ export default function ServicesPage() {
                       <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
                         <LucideIcons.Flame className="w-4 h-4 shrink-0 animate-pulse" />
                         <span>View Details & Book</span>
+                      </div>
+                    )}
+
+                    {isAmbulance && (
+                      <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-600 group-hover:bg-rose-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
+                        <LucideIcons.PhoneCall className="w-4 h-4 shrink-0 animate-pulse" />
+                        <span>Book Now</span>
                       </div>
                     )}
                   </div>
@@ -507,9 +522,9 @@ export default function ServicesPage() {
               </div>
 
               {/* Centered Content layout */}
-              <div className="max-w-3xl mx-auto w-full">
+              <div className="max-w-2xl mx-auto w-full">
                 {/* Doctors List */}
-                <div className="flex flex-col gap-6 w-full">
+                <div className="flex flex-col gap-4 w-full">
                   {doctors.map((doctor, idx) => {
                     return (
                       <motion.div
@@ -517,37 +532,41 @@ export default function ServicesPage() {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.4, delay: idx * 0.05 }}
-                        className="bg-white border border-slate-200/60 rounded-[20px] sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.01)] hover:shadow-md hover:border-slate-300 transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 relative overflow-hidden group/doc"
+                        className="bg-white border border-slate-200/60 rounded-[16px] sm:rounded-2xl p-3.5 sm:p-4.5 shadow-[0_4px_20px_rgb(0,0,0,0.01)] hover:shadow-md hover:border-slate-300 transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 relative overflow-hidden group/doc"
                       >
-                        <div className="flex items-start gap-3 sm:gap-4">
-                          <div className={cn("w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center border shrink-0 transition-all duration-300", 
+                        <div className="flex items-start gap-3 sm:gap-3.5">
+                          <div className={cn("w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shrink-0 transition-all duration-300", 
                             doctor.avatarColor
                           )}>
-                            <LucideIcons.Stethoscope className="w-5 h-5 sm:w-6 sm:h-6" />
+                            <LucideIcons.Stethoscope className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
-                          <div className="flex flex-col gap-1 sm:gap-1.5">
-                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                              <h4 className="text-sm sm:text-base font-extrabold text-navy-900 tracking-tight leading-tight">
+                          <div className="flex flex-col gap-0.5 sm:gap-1">
+                            <div className="flex flex-wrap items-center gap-1">
+                              <h4 className="text-xs sm:text-sm font-extrabold text-navy-900 tracking-tight leading-tight">
                                 {doctor.name}
                               </h4>
                             </div>
-                            <span className="text-[10px] sm:text-xs text-sky-600 font-bold tracking-wide">
+                            <span className="text-[9px] sm:text-xs text-sky-600 font-bold tracking-wide">
                               {doctor.specialty}
                             </span>
                             
-                            <div className="flex flex-col gap-1 mt-1 text-[10px] sm:text-[11px] text-slate-500">
-                              <div className="flex items-center gap-1.5">
+                            <div className="flex flex-col gap-0.5 mt-0.5 text-[9px] sm:text-[10px] text-slate-500">
+                              <div className="flex items-center gap-1">
                                 <LucideIcons.CalendarRange className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
                                 <span>Visiting: <span className="font-semibold text-slate-700">{doctor.schedule}</span></span>
                               </div>
-                              <div className="flex items-center gap-1.5">
-                                <LucideIcons.Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
-                                <span className="font-mono text-slate-700">{doctor.phone}</span>
-                              </div>
-                              <div className="flex items-center gap-1.5">
-                                <LucideIcons.Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
-                                <span className="text-slate-700 break-all">{doctor.email}</span>
-                              </div>
+                              {doctor.phone && (
+                                <div className="flex items-center gap-1">
+                                  <LucideIcons.Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
+                                  <span className="font-mono text-slate-700">{doctor.phone}</span>
+                                </div>
+                              )}
+                              {doctor.email && (
+                                <div className="flex items-center gap-1">
+                                  <LucideIcons.Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
+                                  <span className="text-slate-700 break-all">{doctor.email}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -557,9 +576,9 @@ export default function ServicesPage() {
                             href={doctor.bookingLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full sm:w-auto sm:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer text-center bg-navy-900 text-white hover:bg-sky-500"
+                            className="w-full sm:w-auto sm:self-center px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1 cursor-pointer text-center bg-navy-900 text-white hover:bg-sky-500"
                           >
-                            <LucideIcons.ExternalLink className="w-3.5 h-3.5" />
+                            <LucideIcons.ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             Book Appointment
                           </a>
                         ) : (
@@ -568,9 +587,9 @@ export default function ServicesPage() {
                               setSelectedDoctor(doctor);
                               setIsModalOpen(true);
                             }}
-                            className="w-full sm:w-auto sm:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer bg-navy-900 text-white hover:bg-sky-500"
+                            className="w-full sm:w-auto sm:self-center px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1 cursor-pointer bg-navy-900 text-white hover:bg-sky-500"
                           >
-                            <LucideIcons.Calendar className="w-3.5 h-3.5" />
+                            <LucideIcons.Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             Book Appointment
                           </button>
                         )}

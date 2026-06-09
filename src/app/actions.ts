@@ -108,8 +108,8 @@ export interface DoctorItem {
   name: string;
   specialty: string;
   schedule: string;
-  phone: string;
-  email: string;
+  phone?: string;
+  email?: string;
   avatarColor: string;
   bookingLink?: string;
 }

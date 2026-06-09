@@ -19,9 +19,9 @@ export default function AppointmentModal({ isOpen, onClose, doctor }: Appointmen
   };
 
   const encodedText = encodeURIComponent(generateMessageText());
-  const waPhone = doctor.phone.replace(/[^0-9]/g, "");
+  const waPhone = doctor.phone ? doctor.phone.replace(/[^0-9]/g, "") : "";
   const whatsappUrl = `https://wa.me/${waPhone}?text=${encodedText}`;
-  const mailtoUrl = `mailto:${doctor.email}?subject=${encodeURIComponent(`Appointment Request - Kohinoor Towers`)}&body=${encodedText}`;
+  const mailtoUrl = `mailto:${doctor.email || ""}?subject=${encodeURIComponent(`Appointment Request - Kohinoor Towers`)}&body=${encodedText}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(whatsappUrl)}`;
 
   return (
@@ -72,62 +72,72 @@ export default function AppointmentModal({ isOpen, onClose, doctor }: Appointmen
                   <span className="text-slate-500">Visiting Hours:</span>
                   <span className="font-bold text-navy-800 ml-auto">{doctor.schedule}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span className="text-slate-500">Contact:</span>
-                  <span className="font-mono text-slate-700 ml-auto">{doctor.phone}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span className="text-slate-500">Email:</span>
-                  <span className="text-slate-700 ml-auto break-all">{doctor.email}</span>
-                </div>
+                {doctor.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span className="text-slate-500">Contact:</span>
+                    <span className="font-mono text-slate-700 ml-auto">{doctor.phone}</span>
+                  </div>
+                )}
+                {doctor.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span className="text-slate-500">Email:</span>
+                    <span className="text-slate-700 ml-auto break-all">{doctor.email}</span>
+                  </div>
+                )}
               </div>
 
               {/* QR Code Block */}
-              <div className="flex flex-col items-center gap-3 bg-slate-950 p-6 rounded-[28px] w-full text-white border border-slate-800 relative overflow-hidden shadow-inner">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-[30px] pointer-events-none" />
-                
-                <div className="flex items-center gap-2 mb-1">
-                  <QrCode className="w-4.5 h-4.5 text-sky-400" />
-                  <span className="text-xs font-extrabold tracking-tight">WhatsApp Scan Booking</span>
-                </div>
+              {doctor.phone && (
+                <div className="flex flex-col items-center gap-3 bg-slate-950 p-6 rounded-[28px] w-full text-white border border-slate-800 relative overflow-hidden shadow-inner">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-[30px] pointer-events-none" />
+                  
+                  <div className="flex items-center gap-2 mb-1">
+                    <QrCode className="w-4.5 h-4.5 text-sky-400" />
+                    <span className="text-xs font-extrabold tracking-tight">WhatsApp Scan Booking</span>
+                  </div>
 
-                <div className="p-3 bg-white rounded-2xl shadow-xl flex items-center justify-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={qrCodeUrl}
-                    alt={`QR Code to book with Dr. ${doctor.name}`}
-                    className="w-32 h-32 rounded-xl"
-                  />
+                  <div className="p-3 bg-white rounded-2xl shadow-xl flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={qrCodeUrl}
+                      alt={`QR Code to book with Dr. ${doctor.name}`}
+                      className="w-32 h-32 rounded-xl"
+                    />
+                  </div>
+                  
+                  <span className="text-[9px] text-slate-400 leading-normal max-w-[200px] mt-1">
+                    Scan this QR code with your phone camera to instantly start a booking chat on WhatsApp.
+                  </span>
                 </div>
-                
-                <span className="text-[9px] text-slate-400 leading-normal max-w-[200px] mt-1">
-                  Scan this QR code with your phone camera to instantly start a booking chat on WhatsApp.
-                </span>
-              </div>
+              )}
 
               {/* Direct Booking Actions */}
               <div className="flex flex-col gap-3 w-full">
                 {/* Send via WhatsApp */}
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-xs uppercase tracking-wider transition-colors shadow-md text-center cursor-pointer"
-                >
-                  <MessageSquare className="w-4 h-4 fill-current" />
-                  <span>Open WhatsApp Chat</span>
-                </a>
+                {doctor.phone && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-xs uppercase tracking-wider transition-colors shadow-md text-center cursor-pointer"
+                  >
+                    <MessageSquare className="w-4 h-4 fill-current" />
+                    <span>Open WhatsApp Chat</span>
+                  </a>
+                )}
 
                 {/* Send via Email */}
-                <a
-                  href={mailtoUrl}
-                  className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-navy-900 hover:bg-sky-500 text-white font-extrabold text-xs uppercase tracking-wider transition-colors shadow-md text-center cursor-pointer"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>Send Request Email</span>
-                </a>
+                {doctor.email && (
+                  <a
+                    href={mailtoUrl}
+                    className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-navy-900 hover:bg-sky-500 text-white font-extrabold text-xs uppercase tracking-wider transition-colors shadow-md text-center cursor-pointer"
+                  >
+                    <Mail className="w-4 h-4" />
+                    <span>Send Request Email</span>
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>

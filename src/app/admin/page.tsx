@@ -53,7 +53,8 @@ import {
   EventItem,
   ServiceItem,
   PhotoItem,
-  ManagerItem
+  ManagerItem,
+  DoctorItem
 } from "@/app/actions";
 import * as LucideIcons from "lucide-react";
 
@@ -87,7 +88,7 @@ export default function AdminPage() {
 
   // Database state
   const [db, setDb] = useState<DatabaseSchema | null>(null);
-  const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts">("events");
+  const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts" | "doctors">("events");
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -98,6 +99,8 @@ export default function AdminPage() {
   const [isAddingService, setIsAddingService] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<PhotoItem | null>(null);
   const [isAddingPhoto, setIsAddingPhoto] = useState(false);
+  const [editingDoctor, setEditingDoctor] = useState<DoctorItem | null>(null);
+  const [isAddingDoctor, setIsAddingDoctor] = useState(false);
 
   // Temporary feature text for services input
   const [newFeatureText, setNewFeatureText] = useState("");
@@ -367,6 +370,43 @@ export default function AdminPage() {
   };
 
   // ==========================================
+  // DOCTOR OPERATIONS
+  // ==========================================
+  const handleSaveDoctor = async () => {
+    if (!db || !editingDoctor) return;
+    if (!editingDoctor.name || !editingDoctor.specialty || !editingDoctor.schedule) {
+      showToast("error", "Please fill in all core doctor fields");
+      return;
+    }
+
+    let updatedDoctors = db.doctors ? [...db.doctors] : [];
+    if (isAddingDoctor) {
+      updatedDoctors.push({
+        ...editingDoctor,
+        id: `dr-${Date.now()}`
+      });
+    } else {
+      updatedDoctors = updatedDoctors.map((dr) =>
+        dr.id === editingDoctor.id ? editingDoctor : dr
+      );
+    }
+
+    const success = await saveDatabase({ ...db, doctors: updatedDoctors });
+    if (success) {
+      setEditingDoctor(null);
+      setIsAddingDoctor(false);
+    }
+  };
+
+  const handleDeleteDoctor = async (id: string) => {
+    if (!db) return;
+    if (!confirm("Are you sure you want to delete this doctor?")) return;
+
+    const updatedDoctors = (db.doctors || []).filter((dr) => dr.id !== id);
+    await saveDatabase({ ...db, doctors: updatedDoctors });
+  };
+
+  // ==========================================
   // CONTACTS OPERATIONS
   // ==========================================
   const handleUpdateContactDetails = async (field: "siteAddress" | "siteAddressMapLink", value: string) => {
@@ -619,6 +659,7 @@ export default function AdminPage() {
             {[
               { id: "events", label: "Community Events", icon: Calendar, color: "text-amber-500 bg-amber-50" },
               { id: "services", label: "Healthcare & Services", icon: Briefcase, color: "text-rose-500 bg-rose-50" },
+              { id: "doctors", label: "Visiting Doctors", icon: Heart, color: "text-rose-600 bg-red-50" },
               { id: "photos", label: "Interactive Gallery", icon: ImageIcon, color: "text-sky-500 bg-sky-50" },
               { id: "contacts", label: "Contacts & Directory", icon: PhoneCall, color: "text-emerald-500 bg-emerald-50" },
             ].map((tab) => {
@@ -633,6 +674,8 @@ export default function AdminPage() {
                     setEditingEvent(null);
                     setEditingService(null);
                     setEditingPhoto(null);
+                    setEditingDoctor(null);
+                    setIsAddingDoctor(false);
                   }}
                   className={`flex items-center gap-3.5 px-4.5 py-4 rounded-2xl w-full text-left transition-all ${
                     isSelected
@@ -1628,6 +1671,248 @@ export default function AdminPage() {
                     </div>
                   </div>
 
+                </div>
+              </div>
+            )}
+
+            {activeTab === "doctors" && db && (
+              <div className="flex flex-col gap-6">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                  <div className="flex flex-col gap-0.5">
+                    <h2 className="text-lg font-black text-navy-900 leading-none">Visiting Doctors & Specialists</h2>
+                    <p className="text-xs text-slate-500">Manage names, schedules, contact details, and booking redirects.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsAddingDoctor(true);
+                      setEditingDoctor({
+                        id: "",
+                        name: "Dr. New Doctor",
+                        specialty: "General Wellness",
+                        schedule: "Visiting Hours",
+                        phone: "",
+                        email: "",
+                        avatarColor: "bg-sky-500/10 text-sky-600 border-sky-400/20",
+                        bookingLink: ""
+                      });
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Doctor</span>
+                  </button>
+                </div>
+
+                {/* Doctor Form (Add/Edit) */}
+                {editingDoctor && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white border border-sky-300 p-8 rounded-3xl shadow-md flex flex-col gap-6"
+                  >
+                    <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-sky-600 flex items-center gap-2">
+                        {isAddingDoctor ? <Plus className="w-4.5 h-4.5" /> : <Edit className="w-4.5 h-4.5" />}
+                        <span>{isAddingDoctor ? "Add New Doctor" : "Edit Doctor Details"}</span>
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setEditingDoctor(null);
+                          setIsAddingDoctor(false);
+                        }}
+                        className="text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Full Name</label>
+                        <input
+                          type="text"
+                          value={editingDoctor.name}
+                          onChange={(e) => setEditingDoctor({ ...editingDoctor, name: e.target.value })}
+                          placeholder="e.g. Dr. Amit Verma"
+                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Specialty / Qualification</label>
+                        <input
+                          type="text"
+                          value={editingDoctor.specialty}
+                          onChange={(e) => setEditingDoctor({ ...editingDoctor, specialty: e.target.value })}
+                          placeholder="e.g. M.D. General Medicine"
+                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Visiting Schedule</label>
+                        <input
+                          type="text"
+                          value={editingDoctor.schedule}
+                          onChange={(e) => setEditingDoctor({ ...editingDoctor, schedule: e.target.value })}
+                          placeholder="e.g. 12:00 PM - 2:00 PM (Only 2nd & 4th Week of Wednesday)"
+                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Booking Form URL (Optional)</label>
+                        <input
+                          type="text"
+                          value={editingDoctor.bookingLink || ""}
+                          onChange={(e) => setEditingDoctor({ ...editingDoctor, bookingLink: e.target.value })}
+                          placeholder="e.g. https://docs.google.com/forms/..."
+                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contact Phone (Optional)</label>
+                        <input
+                          type="text"
+                          value={editingDoctor.phone || ""}
+                          onChange={(e) => setEditingDoctor({ ...editingDoctor, phone: e.target.value })}
+                          placeholder="e.g. +918657902810"
+                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contact Email (Optional)</label>
+                        <input
+                          type="text"
+                          value={editingDoctor.email || ""}
+                          onChange={(e) => setEditingDoctor({ ...editingDoctor, email: e.target.value })}
+                          placeholder="e.g. dr.amit.verma@kohinoorcommercial2.in"
+                          className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Card Theme Style</label>
+                      <div className="flex flex-wrap gap-4">
+                        {[
+                          { label: "Sky / Blue Theme", value: "bg-sky-500/10 text-sky-600 border-sky-400/20" },
+                          { label: "Rose / Red Theme", value: "bg-rose-500/10 text-rose-600 border-rose-400/20" },
+                          { label: "Emerald / Green Theme", value: "bg-emerald-500/10 text-emerald-600 border-emerald-400/20" },
+                          { label: "Amber / Orange Theme", value: "bg-amber-500/10 text-amber-600 border-amber-400/20" }
+                        ].map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setEditingDoctor({ ...editingDoctor, avatarColor: opt.value })}
+                            className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition-all ${
+                              editingDoctor.avatarColor === opt.value
+                                ? "border-sky-500 bg-sky-50 text-sky-700 shadow-sm"
+                                : "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingDoctor(null);
+                          setIsAddingDoctor(false);
+                        }}
+                        className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-600 transition-all cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveDoctor}
+                        className="px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Save className="w-4 h-4" />
+                        <span>Publish Doctor</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Doctors List Dashboard */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {(db.doctors || []).map((dr) => (
+                    <div
+                      key={dr.id}
+                      className="bg-white border border-slate-200/60 p-6 rounded-3xl shadow-sm flex flex-col justify-between gap-6 hover:shadow-md transition-shadow relative group/card"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border shrink-0 font-bold ${dr.avatarColor}`}>
+                          <LucideIcons.Stethoscope className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <h4 className="text-sm font-extrabold text-navy-900 leading-tight">{dr.name}</h4>
+                          <span className="text-[10px] font-bold text-sky-600 tracking-wider uppercase leading-none">{dr.specialty}</span>
+                          
+                          <div className="flex flex-col gap-1.5 mt-3 text-xs text-slate-500">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="font-medium text-slate-700">{dr.schedule}</span>
+                            </div>
+                            {dr.phone && (
+                              <div className="flex items-center gap-2">
+                                <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <span className="font-mono text-slate-600">{dr.phone}</span>
+                              </div>
+                            )}
+                            {dr.email && (
+                              <div className="flex items-center gap-2">
+                                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <span className="text-slate-600 truncate max-w-[180px]">{dr.email}</span>
+                              </div>
+                            )}
+                            {dr.bookingLink && (
+                              <div className="flex items-center gap-2 text-sky-600">
+                                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                                <a href={dr.bookingLink} target="_blank" rel="noopener noreferrer" className="font-semibold hover:underline truncate max-w-[180px]">
+                                  Form Link
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-4 border-t border-slate-100">
+                        <button
+                          onClick={() => {
+                            setIsAddingDoctor(false);
+                            setEditingDoctor(dr);
+                          }}
+                          className="flex-grow flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-600 transition-all cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteDoctor(dr.id)}
+                          className="flex-grow flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-rose-100 hover:bg-rose-50 text-xs font-bold text-rose-600 transition-all cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {(db.doctors || []).length === 0 && (
+                    <div className="col-span-full text-center py-12 border border-dashed border-slate-200 rounded-3xl bg-white text-slate-400 text-xs font-bold">
+                      No doctors currently registered in database.
+                    </div>
+                  )}
                 </div>
               </div>
             )}
