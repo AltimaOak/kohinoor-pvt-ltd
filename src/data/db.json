@@ -216,7 +216,7 @@
         "description": "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
         "price": 250,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 16
+        "quantity": 15
       },
       {
         "id": "plant-areca",
@@ -224,7 +224,7 @@
         "description": "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
         "price": 350,
         "imageSrc": "/images/areca_palm.png",
-        "quantity": 15
+        "quantity": 9
       },
       {
         "id": "plant-peace",
@@ -232,7 +232,7 @@
         "description": "Features dark green leaves and brilliant white spathes, ideal for low-light office desks.",
         "price": 180,
         "imageSrc": "/images/peace_lily.png",
-        "quantity": 10
+        "quantity": 0
       }
     ],
     "orders": [
@@ -248,6 +248,333 @@
         "id": "ord-1780830368153",
         "status": "pending",
         "createdAt": "2026-06-07T11:06:08.154Z"
+      },
+      {
+        "plantId": "plant-snake",
+        "plantName": "Snake Plant (Sansevieria)",
+        "userName": "Tanmay Mhatre",
+        "userEmail": "tanmay@corp.com",
+        "userPhone": "9372025677",
+        "quantity": 1,
+        "totalPrice": 250,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780985848647",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:17:28.647Z"
+      },
+      {
+        "plantId": "plant-peace",
+        "plantName": "Peace Lily",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "09372025677",
+        "quantity": 6,
+        "totalPrice": 1080,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780987040201",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:37:20.202Z"
+      },
+      {
+        "plantId": "plant-peace",
+        "plantName": "Peace Lily",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "09372025677",
+        "quantity": 1,
+        "totalPrice": 180,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780987686800",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:48:06.800Z"
+      },
+      {
+        "plantId": "plant-areca",
+        "plantName": "Areca Palm",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "09372025677",
+        "quantity": 1,
+        "totalPrice": 350,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780987830579",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:50:30.579Z"
+      },
+      {
+        "plantId": "plant-areca",
+        "plantName": "Areca Palm",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "quantity": 1,
+        "totalPrice": 350,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780987855468",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:50:55.468Z"
+      },
+      {
+        "plantId": "plant-peace",
+        "plantName": "Peace Lily",
+        "userName": "Test Nursery Buyer",
+        "userEmail": "nursery@test.com",
+        "userPhone": "9876543210",
+        "quantity": 1,
+        "totalPrice": 180,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780988202925",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:56:42.925Z"
+      },
+      {
+        "plantId": "plant-areca",
+        "plantName": "Areca Palm",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "quantity": 1,
+        "totalPrice": 350,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780988543397",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:02:23.397Z"
+      },
+      {
+        "plantId": "plant-peace",
+        "plantName": "Peace Lily",
+        "userName": "Test Nursery Buyer",
+        "userEmail": "nursery@test.com",
+        "userPhone": "9876543210",
+        "quantity": 1,
+        "totalPrice": 180,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780988979650",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:09:39.650Z"
+      },
+      {
+        "plantId": "plant-peace",
+        "plantName": "Peace Lily",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "quantity": 1,
+        "totalPrice": 180,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780989415050",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:16:55.050Z"
+      },
+      {
+        "plantId": "plant-areca",
+        "plantName": "Areca Palm",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "quantity": 1,
+        "totalPrice": 350,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780989707517",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:21:47.517Z"
+      },
+      {
+        "plantId": "plant-areca",
+        "plantName": "Areca Palm",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "quantity": 2,
+        "totalPrice": 700,
+        "deliveryMethod": "pickup",
+        "id": "ord-1780990021394",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:27:01.394Z"
+      }
+    ]
+  },
+  "cafeteria": {
+    "description": "Premium corporate cafeteria offering freshly brewed hot beverages, delicious breakfast selections, and corporate lunch thalis.",
+    "location": "Ground Floor, Tower A Plaza Area",
+    "timing": "8:00 AM - 8:30 PM (Monday - Saturday)",
+    "contact": "+91 8657902811",
+    "menu": [
+      {
+        "id": "cafe-coffee",
+        "name": "Cappuccino / Filter Coffee",
+        "category": "Drinks",
+        "description": "Freshly brewed premium espresso with textured milk, or authentic South Indian filter coffee.",
+        "price": 80,
+        "imageSrc": "/images/coffee.png",
+        "quantity": 93
+      },
+      {
+        "id": "cafe-tea",
+        "name": "Adrak Masala Chai",
+        "category": "Drinks",
+        "description": "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
+        "price": 50,
+        "imageSrc": "/images/tea.png",
+        "quantity": 99
+      },
+      {
+        "id": "cafe-sandwich",
+        "name": "Classic Club Sandwich",
+        "category": "Breakfast",
+        "description": "Triple-layered toasted bread with crisp veggies, cheese, and seasoned herb spread.",
+        "price": 120,
+        "imageSrc": "/images/sandwich.png",
+        "quantity": 48
+      },
+      {
+        "id": "cafe-poha",
+        "name": "Indori Kanda Poha",
+        "category": "Breakfast",
+        "description": "Flattened rice tempered with mustard, curry leaves, roasted peanuts, onion, and topped with sev.",
+        "price": 70,
+        "imageSrc": "/images/poha.png",
+        "quantity": 60
+      },
+      {
+        "id": "cafe-thali",
+        "name": "Executive Veg Thali",
+        "category": "Lunch",
+        "description": "A premium lunch containing Paneer Subzi, Dal Tadka, Seasonal Dry Veg, Roti, Rice, Papad, Raita, and Sweet.",
+        "price": 220,
+        "imageSrc": "/images/thali.png",
+        "quantity": 39
+      },
+      {
+        "id": "cafe-friedrice",
+        "name": "Schezwan Veg Fried Rice",
+        "category": "Lunch",
+        "description": "Spicy wok-tossed long grain rice with finely chopped farm-fresh vegetables and Schezwan sauce.",
+        "price": 150,
+        "imageSrc": "/images/friedrice.png",
+        "quantity": 50
+      }
+    ],
+    "orders": [
+      {
+        "items": [
+          {
+            "itemId": "cafe-coffee",
+            "name": "Cappuccino / Filter Coffee",
+            "price": 80,
+            "quantity": 1
+          },
+          {
+            "itemId": "cafe-sandwich",
+            "name": "Classic Club Sandwich",
+            "price": 120,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 200,
+        "userName": "Tanmay Mhatre",
+        "userEmail": "tanmay@corp.com",
+        "userPhone": "9372025677",
+        "id": "cafe-1780986275558",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:24:35.558Z"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-sandwich",
+            "name": "Classic Club Sandwich",
+            "price": 120,
+            "quantity": 1
+          },
+          {
+            "itemId": "cafe-coffee",
+            "name": "Cappuccino / Filter Coffee",
+            "price": 80,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 200,
+        "userName": "Tanmay Mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "id": "cafe-1780986962356",
+        "status": "pending",
+        "createdAt": "2026-06-09T06:36:02.356Z"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-coffee",
+            "name": "Cappuccino / Filter Coffee",
+            "price": 80,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 80,
+        "userName": "Test Cafe Buyer",
+        "userEmail": "cafe@test.com",
+        "userPhone": "9876543211",
+        "id": "cafe-1780988404104",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:00:04.104Z"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-coffee",
+            "name": "Cappuccino / Filter Coffee",
+            "price": 80,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 80,
+        "userName": "Test Cafe Buyer",
+        "userEmail": "cafe@test.com",
+        "userPhone": "9876543211",
+        "id": "cafe-1780989208855",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:13:28.855Z"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-tea",
+            "name": "Adrak Masala Chai",
+            "price": 50,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 50,
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "id": "cafe-1780989326464",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:15:26.464Z"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-coffee",
+            "name": "Cappuccino / Filter Coffee",
+            "price": 80,
+            "quantity": 3
+          },
+          {
+            "itemId": "cafe-thali",
+            "name": "Executive Veg Thali",
+            "price": 220,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 460,
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "0372025677",
+        "id": "cafe-1780989920525",
+        "status": "pending",
+        "createdAt": "2026-06-09T07:25:20.526Z"
       }
     ]
   }
