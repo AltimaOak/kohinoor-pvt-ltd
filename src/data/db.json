@@ -139,19 +139,11 @@
       "id": "dr-amit-verma",
       "name": "Dr. Amit Verma",
       "specialty": "M.D. General Medicine",
-      "schedule": "2nd Wednesday (10:00 AM - 4:00 PM)",
+      "schedule": "12:00 PM - 2:00 PM (Only 2nd & 4th Week of Wednesday)",
       "phone": "+918657902810",
       "email": "dr.amit.verma@kohinoorcommercial2.in",
-      "avatarColor": "bg-sky-500/10 text-sky-600 border-sky-400/20"
-    },
-    {
-      "id": "dr-neha-kapoor",
-      "name": "Dr. Neha Kapoor",
-      "specialty": "D.N.B. Cardiology & General Wellness",
-      "schedule": "4th Wednesday (10:00 AM - 4:00 PM)",
-      "phone": "+918657902812",
-      "email": "dr.neha.kapoor@kohinoorcommercial2.in",
-      "avatarColor": "bg-rose-500/10 text-rose-600 border-rose-400/20"
+      "avatarColor": "bg-sky-500/10 text-sky-600 border-sky-400/20",
+      "bookingLink": "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform"
     }
   ],
   "bookings": [

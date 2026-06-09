@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Building2,
   Award,
-  Sparkles,
   ShieldAlert,
   Compass,
   ArrowUpRight,
@@ -65,16 +64,6 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center w-full">
             {/* Hero Content (8 Columns) - sitting over the dark overlay */}
             <div className="lg:col-span-8 flex flex-col gap-6 text-left max-w-2xl">
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-sky-400/30 bg-sky-500/10 text-sky-400 text-xs font-bold w-max uppercase tracking-wider shadow-sm"
-              >
-                <Sparkles className="w-4 h-4 text-sky-400 animate-pulse" />
-                <span>THE NEXT ERA OF COMMERCIAL REAL ESTATE</span>
-              </motion.div>
-
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

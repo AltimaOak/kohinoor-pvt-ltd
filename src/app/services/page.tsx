@@ -58,7 +58,6 @@ export default function ServicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCampModalOpen, setIsCampModalOpen] = useState(false);
   const [isMassageModalOpen, setIsMassageModalOpen] = useState(false);
-  const [activeQrDoctorId, setActiveQrDoctorId] = useState("dr-amit-verma");
 
   // Plant Nursery States
   const [nursery, setNursery] = useState<NurserySchema | null>(null);
@@ -94,17 +93,6 @@ export default function ServicesPage() {
   const [cafeOrderId, setCafeOrderId] = useState("");
   const [orderReadyState, setOrderReadyState] = useState<"idle" | "preparing" | "ready">("idle");
   const [readyAlertVisible, setReadyAlertVisible] = useState(false);
-
-  const activeQrDoctor = doctors.find(d => d.id === activeQrDoctorId) || doctors[0];
-  const qrWhatsAppUrl = activeQrDoctor 
-    ? `https://wa.me/${activeQrDoctor.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-        `Hello Dr. ${activeQrDoctor.name}, I would like to book an appointment via the Kohinoor Services Hub.`
-      )}`
-    : "";
-
-  const qrCodeUrl = qrWhatsAppUrl
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrWhatsAppUrl)}`
-    : "";
 
   async function loadData() {
     try {
@@ -276,7 +264,7 @@ export default function ServicesPage() {
                     )}
 
                     {isMassageChair && (
-                      <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600 group-hover:bg-amber-50 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
+                      <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
                         <LucideIcons.Flame className="w-4 h-4 shrink-0 animate-pulse" />
                         <span>View Details & Book</span>
                       </div>
@@ -510,43 +498,30 @@ export default function ServicesPage() {
                   <LucideIcons.HeartHandshake className="w-4 h-4 text-sky-500" />
                   On-Site Medical Consultation
                 </span>
-                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
+                 <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
                   Visiting Doctors & Specialists
                 </h2>
                 <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
-                  Schedule direct consultations with our visiting medical professionals. Book appointments online to save time or scan the terminal QR code to schedule on your mobile device.
+                  Schedule direct consultations with our visiting medical professionals. Book appointments online to save time.
                 </p>
               </div>
 
-              {/* Split Content layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+              {/* Centered Content layout */}
+              <div className="max-w-3xl mx-auto w-full">
                 {/* Doctors List */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="flex flex-col gap-6 w-full">
                   {doctors.map((doctor, idx) => {
-                    const isSelectedForQr = activeQrDoctorId === doctor.id;
                     return (
                       <motion.div
                         key={doctor.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.4, delay: idx * 0.05 }}
-                        onClick={() => setActiveQrDoctorId(doctor.id)}
-                        className={cn(
-                          "bg-white border rounded-[20px] sm:rounded-3xl p-4 sm:p-5 md:p-6 transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 cursor-pointer relative overflow-hidden group/doc",
-                          isSelectedForQr 
-                            ? "border-sky-500 shadow-[0_4px_25px_rgba(56,189,248,0.15)] bg-sky-500/[0.02]" 
-                            : "border-slate-200/60 shadow-[0_4px_20px_rgb(0,0,0,0.01)] hover:shadow-md hover:border-slate-300"
-                        )}
+                        className="bg-white border border-slate-200/60 rounded-[20px] sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.01)] hover:shadow-md hover:border-slate-300 transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 relative overflow-hidden group/doc"
                       >
-                        {/* Left Active border bar */}
-                        <div className={cn(
-                          "absolute top-0 left-0 bottom-0 w-1 transition-all duration-300",
-                          isSelectedForQr ? "bg-sky-500" : "bg-transparent"
-                        )} />
-
                         <div className="flex items-start gap-3 sm:gap-4">
                           <div className={cn("w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center border shrink-0 transition-all duration-300", 
-                            isSelectedForQr ? "bg-sky-500 text-white border-sky-400" : doctor.avatarColor
+                            doctor.avatarColor
                           )}>
                             <LucideIcons.Stethoscope className="w-5 h-5 sm:w-6 sm:h-6" />
                           </div>
@@ -555,11 +530,6 @@ export default function ServicesPage() {
                               <h4 className="text-sm sm:text-base font-extrabold text-navy-900 tracking-tight leading-tight">
                                 {doctor.name}
                               </h4>
-                              {isSelectedForQr && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-sky-100 text-sky-700 uppercase tracking-wide">
-                                  Active QR
-                                </span>
-                              )}
                             </div>
                             <span className="text-[10px] sm:text-xs text-sky-600 font-bold tracking-wide">
                               {doctor.specialty}
@@ -582,22 +552,28 @@ export default function ServicesPage() {
                           </div>
                         </div>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent toggling the QR code selector when booking
-                            setSelectedDoctor(doctor);
-                            setIsModalOpen(true);
-                          }}
-                          className={cn(
-                            "w-full sm:w-auto sm:self-center px-4 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer",
-                            isSelectedForQr
-                              ? "bg-navy-900 text-white hover:bg-sky-500"
-                              : "bg-slate-100 text-slate-700 hover:bg-navy-900 hover:text-white"
-                          )}
-                        >
-                          <LucideIcons.Calendar className="w-3.5 h-3.5" />
-                          Book Appointment
-                        </button>
+                        {doctor.bookingLink ? (
+                          <a
+                            href={doctor.bookingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full sm:w-auto sm:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer text-center bg-navy-900 text-white hover:bg-sky-500"
+                          >
+                            <LucideIcons.ExternalLink className="w-3.5 h-3.5" />
+                            Book Appointment
+                          </a>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setSelectedDoctor(doctor);
+                              setIsModalOpen(true);
+                            }}
+                            className="w-full sm:w-auto sm:self-center px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer bg-navy-900 text-white hover:bg-sky-500"
+                          >
+                            <LucideIcons.Calendar className="w-3.5 h-3.5" />
+                            Book Appointment
+                          </button>
+                        )}
                       </motion.div>
                     );
                   })}
@@ -607,46 +583,6 @@ export default function ServicesPage() {
                       No visiting doctors currently scheduled.
                     </div>
                   )}
-                </div>
-
-                {/* QR Card - Desktop Only */}
-                <div className="hidden lg:flex bg-gradient-to-br from-navy-950 to-slate-900 rounded-[32px] p-6 text-white shadow-xl flex-col justify-between items-center text-center border border-slate-800 relative overflow-hidden min-h-[380px]">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-[40px] pointer-events-none" />
-                  
-                  <div className="flex flex-col items-center gap-4 w-full">
-                    <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-400/20 text-sky-400 flex items-center justify-center">
-                      <LucideIcons.QrCode className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-extrabold tracking-tight">Mobile QR Booking</h4>
-                      <p className="text-[11px] text-slate-400 mt-1 leading-relaxed max-w-[200px] mx-auto">
-                        Scan with your phone to book directly with <strong>{activeQrDoctor?.name || 'doctor'}</strong> via WhatsApp.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="my-4 p-3 bg-white rounded-2xl shadow-xl flex items-center justify-center min-h-[128px] min-w-[128px]">
-                    {qrCodeUrl ? (
-                      <img
-                        src={qrCodeUrl}
-                        alt={`QR Code to Book with ${activeQrDoctor?.name || 'Doctor'}`}
-                        className="w-28 h-28 rounded-xl"
-                      />
-                    ) : (
-                      <div className="w-28 h-28 bg-slate-800 animate-pulse rounded-xl flex items-center justify-center text-[10px] text-slate-500">
-                        Generating...
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="w-full">
-                    <span className="text-[9px] uppercase font-bold text-sky-400 tracking-widest block">
-                      Quick Access Scan
-                    </span>
-                    <span className="text-[9px] text-slate-500 mt-0.5 block">
-                      Point camera to begin
-                    </span>
-                  </div>
                 </div>
               </div>
             </motion.div>
@@ -661,7 +597,7 @@ export default function ServicesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6 md:p-10"
+            className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6"
             onClick={() => setIsMassageModalOpen(false)}
           >
             <motion.div
@@ -670,119 +606,116 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-3xl bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 my-auto"
+              className="relative w-full max-w-lg bg-white border border-slate-200/60 rounded-[28px] shadow-2xl p-5 sm:p-7 flex flex-col gap-5 sm:gap-6 my-auto overflow-hidden"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsMassageModalOpen(false)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50"
+                className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50"
               >
-                <LucideIcons.X className="w-6 h-6" />
+                <LucideIcons.X className="w-5 h-5" />
               </button>
 
+              {/* Ambient Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-amber-500/[0.02] pointer-events-none" />
+
               {/* Modal Header */}
-              <div className="flex flex-col gap-3 text-left pr-10 md:pr-0">
-                <span className="text-xs font-bold text-amber-600 uppercase tracking-widest flex items-center gap-1.5">
+              <div className="flex flex-col gap-2.5 text-left pr-8 relative z-10">
+                <span className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
                   Premium Wellness Service
                 </span>
-                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-navy-900 font-display">
                   Tranquil Oasis Massage Chair
                 </h2>
-                <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
-                  Step away from the corporate rush. Re-energize your mind and body with our premium robotic massage chair therapy, designed specifically to reduce fatigue and elevate your cognitive focus.
-                </p>
+
               </div>
 
-              {/* Centered Content Card */}
-              <div className="w-full bg-white border border-slate-200/50 rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-8 lg:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.02)] hover:border-amber-300 transition-all duration-500 flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-amber-500/[0.01] pointer-events-none" />
+              {/* Content Body */}
+              <div className="flex flex-col gap-5 relative z-10 w-full">
                 
-                <div className="flex flex-col gap-6 sm:gap-8">
-                  
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-400/20 text-amber-500 flex items-center justify-center shrink-0">
-                        <Flame className="w-6 h-6 stroke-[2]" />
-                      </div>
-                      <div>
-                        <h3 className="text-base sm:text-lg font-bold text-navy-900 leading-tight">Robot Massage Chair Session</h3>
-                        <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
-                      </div>
+                {/* Header row with icon & badge */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-amber-500/[0.02] border border-amber-500/10 rounded-2xl p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-400/20 text-amber-500 flex items-center justify-center shrink-0">
+                      <Flame className="w-5.5 h-5.5 stroke-[2]" />
                     </div>
-                    
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
-                      <Ticket className="w-3.5 h-3.5" />
-                      Special Offer
+                    <div>
+                      <h3 className="text-sm sm:text-base font-bold text-navy-900 leading-tight">Robot Massage Chair Session</h3>
+                      <span className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
+                    </div>
+                  </div>
+                  
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
+                    <Ticket className="w-3 h-3" />
+                    Special Offer
+                  </span>
+                </div>
+
+                {/* Price block */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/[0.02] border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-600">Limited-Time Pricing</span>
+                    <span className="text-slate-500 text-xs">Exclusive rate for park occupants:</span>
+                  </div>
+                  <div className="flex items-baseline gap-1 text-amber-600 shrink-0">
+                    <span className="text-lg font-bold">₹</span>
+                    <span className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-navy-900 to-amber-600">100</span>
+                    <span className="text-xs font-semibold text-slate-400">/ Session</span>
+                  </div>
+                </div>
+
+                {/* Grid details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider">Duration</span>
+                      <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
+                      <CalendarRange className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider">Timings</span>
+                      <span className="text-xs font-bold text-navy-800">8:30 AM – 8:00 PM</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Action buttons */}
+              <div className="mt-4 flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-slate-100 w-full relative z-10">
+                <a
+                  href="tel:8879002525"
+                  className="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 shrink-0 group/phone cursor-pointer"
+                >
+                  <div className="w-9 h-9 rounded-full bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 group-hover/phone:scale-105 transition-transform">
+                    <PhoneCall className="w-4 h-4 animate-pulse" />
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider">Direct Booking</span>
+                    <span className="text-xs sm:text-sm font-black text-navy-900 group-hover/phone:text-amber-500 font-mono transition-colors">
+                      8879002525
                     </span>
                   </div>
+                </a>
 
-                  <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/[0.02] border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600">Limited-Time Pricing</span>
-                      <span className="text-slate-500 text-xs">Unlock a premium session at an exclusive corporate rate:</span>
-                    </div>
-                    <div className="flex items-baseline gap-1 text-amber-600 shrink-0">
-                      <span className="text-xl font-bold">₹</span>
-                      <span className="text-3xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-navy-900 to-amber-600">100</span>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-400">/ Session</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="p-3 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
-                      <div className="w-9 h-9 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
-                        <Clock className="w-4 h-4" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Duration</span>
-                        <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3.5">
-                      <div className="w-9 h-9 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
-                        <CalendarRange className="w-4 h-4" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Timings</span>
-                        <span className="text-xs font-bold text-navy-800">8:30 AM – 8:00 PM</span>
-                      </div>
-                    </div>
-                  </div>
-
-
-
-                </div>
-
-                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-5 sm:gap-6 pt-5 sm:pt-6 border-t border-slate-100 w-full">
-                  
-                  <a
-                    href="tel:8879002525"
-                    className="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 shrink-0 group/phone cursor-pointer"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 group-hover/phone:scale-105 transition-transform">
-                      <PhoneCall className="w-4.5 h-4.5 animate-pulse" />
-                    </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Direct Booking</span>
-                      <span className="text-sm font-black text-navy-900 group-hover/phone:text-amber-500 font-mono transition-colors">
-                        8879002525
-                      </span>
-                    </div>
-                  </a>
-
-                  <a
-                    href="https://calendly.com/kohinoorcityofficekhcom2/tranquiloasismassagelounge?month=2026-06"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-3 px-6 sm:py-3.5 sm:px-8 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_25px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 cursor-pointer text-center"
-                  >
-                    <CalendarRange className="w-4 h-4" />
-                    <span>Book Now</span>
-                  </a>
-                </div>
-
+                <a
+                  href="https://calendly.com/kohinoorcityofficekhcom2/tranquiloasismassagelounge?month=2026-06"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_4px_12px_rgba(245,158,11,0.2)] hover:shadow-[0_6px_16px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 cursor-pointer text-center"
+                >
+                  <CalendarRange className="w-3.5 h-3.5" />
+                  <span>Book Now</span>
+                </a>
               </div>
 
             </motion.div>

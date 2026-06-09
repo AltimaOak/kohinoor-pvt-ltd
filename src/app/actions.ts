@@ -111,6 +111,7 @@ export interface DoctorItem {
   phone: string;
   email: string;
   avatarColor: string;
+  bookingLink?: string;
 }
 
 export interface BookingItem {
