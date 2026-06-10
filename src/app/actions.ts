@@ -149,6 +149,7 @@ export interface PlantOrder {
   officeUnit?: string;
   status: "pending" | "completed";
   createdAt: string;
+  receiptId?: string;
 }
 
 export interface NurserySchema {
@@ -184,6 +185,7 @@ export interface CafeOrder {
   userPhone: string;
   status: "pending" | "completed";
   createdAt: string;
+  receiptId?: string;
 }
 
 export interface CafeteriaSchema {
@@ -195,6 +197,33 @@ export interface CafeteriaSchema {
   orders: CafeOrder[];
 }
 
+export interface ReceiptLog {
+  timestamp: string;
+  status: "success" | "failure";
+  error?: string;
+}
+
+export interface Receipt {
+  id: string; // REC-XXXXXX
+  orderId: string;
+  serviceType: "Nursery" | "Cafeteria";
+  date: string;
+  customerName: string;
+  customerPhone: string;
+  items: {
+    itemId: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  totalAmountPaid: number;
+  paymentStatus: "completed" | "pending";
+  paymentMethod: string;
+  whatsAppSentStatus: "sent" | "failed" | "pending";
+  whatsAppSentTimestamp?: string;
+  whatsAppDeliveryLogs: ReceiptLog[];
+}
+
 export interface DatabaseSchema {
   events: EventItem[];
   services: ServiceItem[];
@@ -204,6 +233,7 @@ export interface DatabaseSchema {
   bookings?: BookingItem[];
   nursery?: NurserySchema;
   cafeteria?: CafeteriaSchema;
+  receipts?: Receipt[];
 }
 
 // Ensure database file exists
@@ -318,7 +348,8 @@ async function ensureDbExists() {
           }
         ],
         orders: []
-      }
+      },
+      receipts: []
     };
     await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
     await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
@@ -435,6 +466,12 @@ export async function getDb(): Promise<DatabaseSchema> {
         ],
         orders: []
       };
+      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    }
+
+    // Auto-migrate if receipts is missing
+    if (!db.receipts) {
+      db.receipts = [];
       await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
     }
 
@@ -594,6 +631,8 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 
     // Create order item
     const orderId = `ord-${Date.now()}`;
+    const receiptId = `REC-${Date.now()}`;
+
     const newOrder: PlantOrder = {
       ...order,
       deliveryMethod: "pickup", // Hardcoded to pickup
@@ -601,12 +640,66 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
       id: orderId,
       status: "pending",
       createdAt: new Date().toISOString(),
+      receiptId: receiptId,
     };
 
     if (!db.nursery.orders) {
       db.nursery.orders = [];
     }
     db.nursery.orders.push(newOrder);
+
+    // Generate E-Receipt
+    const newReceipt: Receipt = {
+      id: receiptId,
+      orderId: orderId,
+      serviceType: "Nursery",
+      date: newOrder.createdAt,
+      customerName: order.userName,
+      customerPhone: order.userPhone,
+      items: [
+        {
+          itemId: order.plantId,
+          name: order.plantName,
+          price: plant.price,
+          quantity: order.quantity
+        }
+      ],
+      totalAmountPaid: order.totalPrice,
+      paymentStatus: "completed",
+      paymentMethod: "Card / Online",
+      whatsAppSentStatus: "pending",
+      whatsAppDeliveryLogs: []
+    };
+
+    // Format WhatsApp message as requested
+    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
+      `Your order has been confirmed.\n\n` +
+      `Receipt No: ${receiptId}\n` +
+      `Service: Nursery\n` +
+      `Total Paid: ₹${order.totalPrice}\n\n` +
+      `A detailed receipt is attached below:\n` +
+      `http://localhost:8000/receipts/${receiptId}\n\n` +
+      `Thank you for choosing Kohinoor Facilities.`;
+
+    // Trigger Twilio dispatch
+    const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
+    
+    // Log Delivery
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      status: twilioRes.success ? ("success" as const) : ("failure" as const),
+      error: twilioRes.error
+    };
+    newReceipt.whatsAppDeliveryLogs.push(logEntry);
+    newReceipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
+    if (twilioRes.success) {
+      newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    }
+
+    if (!db.receipts) {
+      db.receipts = [];
+    }
+    db.receipts.push(newReceipt);
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
@@ -620,28 +713,13 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     console.log(`Body:\nDear Nursery Team,\n\nA new plant purchase order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Plant Name: ${newOrder.plantName}\n- Quantity: ${newOrder.quantity}\n- Total Price: ₹${newOrder.totalPrice}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Delivery Method: Self-Pickup\n\nPlease prepare the order for handoff.\n\nBest Regards,\nKohinoor Facility Hub`);
     console.log(`========================================\n`);
 
-    // Send WhatsApp message receipt to purchaser (real Twilio API dispatch with fallback)
-    const whatsAppMessage = `*KOHINOOR NURSERY RECEIPT*\n` +
-      `------------------------------\n` +
-      `Order ID: #${orderId}\n` +
-      `Customer: ${order.userName}\n` +
-      `Phone: ${order.userPhone}\n\n` +
-      `Item:\n` +
-      `• ${order.plantName} x ${order.quantity} - ₹${order.totalPrice}\n\n` +
-      `*Total Paid: ₹${order.totalPrice} (via Bill Payment)*\n\n` +
-      `Your plant purchase order has been placed successfully. Please collect your order from the Ground Floor, Tower B Plaza Area Nursery.\n` +
-      `Thank you!`;
-
-    // Trigger Twilio dispatch
-    await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
-
     // Keep console log simulation for visibility
     console.log(`\n========================================`);
     console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to ${order.userPhone}`);
     console.log(`Message:\n${whatsAppMessage}`);
     console.log(`========================================\n`);
 
-    return { success: true, orderId };
+    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus };
   } catch (error) {
     console.error("Error creating nursery purchase order:", error);
     return { success: false, error: "Failed to process plant purchase" };
@@ -670,17 +748,71 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     }
 
     const orderId = `cafe-${Date.now()}`;
+    const receiptId = `REC-${Date.now()}`;
+
     const newOrder: CafeOrder = {
       ...order,
       id: orderId,
       status: "pending",
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      receiptId: receiptId
     };
 
     if (!db.cafeteria.orders) {
       db.cafeteria.orders = [];
     }
     db.cafeteria.orders.push(newOrder);
+
+    // Generate E-Receipt
+    const newReceipt: Receipt = {
+      id: receiptId,
+      orderId: orderId,
+      serviceType: "Cafeteria",
+      date: newOrder.createdAt,
+      customerName: order.userName,
+      customerPhone: order.userPhone,
+      items: order.items.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      totalAmountPaid: order.totalPrice,
+      paymentStatus: "completed",
+      paymentMethod: "Card / Online",
+      whatsAppSentStatus: "pending",
+      whatsAppDeliveryLogs: []
+    };
+
+    // Format WhatsApp message as requested
+    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
+      `Your order has been confirmed.\n\n` +
+      `Receipt No: ${receiptId}\n` +
+      `Service: Cafeteria\n` +
+      `Total Paid: ₹${order.totalPrice}\n\n` +
+      `A detailed receipt is attached below:\n` +
+      `http://localhost:8000/receipts/${receiptId}\n\n` +
+      `Thank you for choosing Kohinoor Facilities.`;
+
+    // Trigger Twilio dispatch
+    const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
+    
+    // Log Delivery
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      status: twilioRes.success ? ("success" as const) : ("failure" as const),
+      error: twilioRes.error
+    };
+    newReceipt.whatsAppDeliveryLogs.push(logEntry);
+    newReceipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
+    if (twilioRes.success) {
+      newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    }
+
+    if (!db.receipts) {
+      db.receipts = [];
+    }
+    db.receipts.push(newReceipt);
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
@@ -694,31 +826,73 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     console.log(`Body:\nDear Cafeteria Team,\n\nA new food & beverage order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Total Price: ₹${newOrder.totalPrice}\n\nItems Ordered:\n${order.items.map(item => `- ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n')}\n\nPlease prepare the order for self-pickup.\n\nBest Regards,\nKohinoor Facility Hub`);
     console.log(`========================================\n`);
 
-    // Send real WhatsApp receipt via Twilio (with console fallback for visibility)
-    const itemsFormatted = order.items.map(item => `• ${item.name} x ${item.quantity} - ₹${item.price * item.quantity}`).join('\n');
-    const whatsAppMessage =
-      `*KOHINOOR CAFETERIA RECEIPT*\n` +
-      `------------------------------\n` +
-      `Order ID: #${orderId}\n` +
-      `Customer: ${order.userName}\n` +
-      `Phone: ${order.userPhone}\n\n` +
-      `Items:\n${itemsFormatted}\n\n` +
-      `*Total Paid: ₹${order.totalPrice} (via Bill Payment)*\n\n` +
-      `Your order has been placed successfully. Please collect from the Ground Floor, Tower A Cafeteria once ready.\n` +
-      `Thank you!`;
-
-    // Trigger real Twilio dispatch
-    await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
-
     // Console log for server-side visibility
     console.log(`\n========================================`);
     console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to ${order.userPhone}`);
     console.log(`Message:\n${whatsAppMessage}`);
     console.log(`========================================\n`);
 
-    return { success: true, orderId };
+    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus };
   } catch (error) {
     console.error("Error creating cafeteria order:", error);
     return { success: false, error: "Failed to process cafeteria order" };
+  }
+}
+
+// Resend WhatsApp receipt action (can be called by user or admin)
+export async function resendReceiptAction(receiptId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.receipts) {
+      db.receipts = [];
+    }
+
+    const receiptIndex = db.receipts.findIndex(r => r.id === receiptId);
+    if (receiptIndex === -1) {
+      return { success: false, error: "Receipt not found." };
+    }
+
+    const receipt = db.receipts[receiptIndex];
+
+    // Reconstruct WhatsApp Message
+    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
+      `Your order has been confirmed.\n\n` +
+      `Receipt No: ${receipt.id}\n` +
+      `Service: ${receipt.serviceType}\n` +
+      `Total Paid: ₹${receipt.totalAmountPaid}\n\n` +
+      `A detailed receipt is attached below:\n` +
+      `http://localhost:8000/receipts/${receipt.id}\n\n` +
+      `Thank you for choosing Kohinoor Facilities.`;
+
+    // Trigger Twilio dispatch
+    const twilioRes = await sendTwilioWhatsApp(receipt.customerPhone, whatsAppMessage);
+
+    // Log Delivery
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      status: twilioRes.success ? ("success" as const) : ("failure" as const),
+      error: twilioRes.error
+    };
+    
+    if (!receipt.whatsAppDeliveryLogs) {
+      receipt.whatsAppDeliveryLogs = [];
+    }
+    receipt.whatsAppDeliveryLogs.push(logEntry);
+    receipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
+    if (twilioRes.success) {
+      receipt.whatsAppSentTimestamp = logEntry.timestamp;
+    }
+
+    // Save database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    if (!twilioRes.success) {
+      return { success: false, error: twilioRes.error || "Failed to deliver WhatsApp message." };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error("Error resending receipt:", err);
+    return { success: false, error: "Server error occurred while resending." };
   }
 }

@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getDb, ServiceItem, DoctorItem, buyPlantAction, buyCafeteriaAction, NurserySchema, PlantItem, CafeteriaSchema, CafeMenuItem } from "@/app/actions";
+import { getDb, ServiceItem, DoctorItem, buyPlantAction, buyCafeteriaAction, NurserySchema, PlantItem, CafeteriaSchema, CafeMenuItem, resendReceiptAction } from "@/app/actions";
 import AppointmentModal from "@/components/AppointmentModal";
 
 function getWhatsAppUrl(phone: string, text: string): string {
@@ -76,6 +76,10 @@ export default function ServicesPage() {
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState("");
   const [purchaseOrderId, setPurchaseOrderId] = useState("");
+  const [purchaseReceiptId, setPurchaseReceiptId] = useState("");
+  const [nurseryWhatsAppStatus, setNurseryWhatsAppStatus] = useState<"sending" | "sent" | "failed">("sending");
+  const [isResendingNurseryReceipt, setIsResendingNurseryReceipt] = useState(false);
+  const [nurseryResendMessage, setNurseryResendMessage] = useState("");
 
   // Cafeteria States
   const [cafeteria, setCafeteria] = useState<CafeteriaSchema | null>(null);
@@ -91,6 +95,10 @@ export default function ServicesPage() {
   const [isSubmittingCafeOrder, setIsSubmittingCafeOrder] = useState(false);
   const [cafeOrderError, setCafeOrderError] = useState("");
   const [cafeOrderId, setCafeOrderId] = useState("");
+  const [cafeReceiptId, setCafeReceiptId] = useState("");
+  const [cafeWhatsAppStatus, setCafeWhatsAppStatus] = useState<"sending" | "sent" | "failed">("sending");
+  const [isResendingCafeReceipt, setIsResendingCafeReceipt] = useState(false);
+  const [cafeResendMessage, setCafeResendMessage] = useState("");
   const [orderReadyState, setOrderReadyState] = useState<"idle" | "preparing" | "ready">("idle");
   const [readyAlertVisible, setReadyAlertVisible] = useState(false);
 
@@ -429,9 +437,6 @@ export default function ServicesPage() {
           )}
         </div>
       </section>
-
-
-
       {/* 3. CORE AMENITIES GRID */}
       <section className="py-28 md:py-32 border-y border-slate-200/50 bg-[#F8FAFC] relative z-10 mt-12 w-full">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16 w-full">
@@ -972,9 +977,24 @@ export default function ServicesPage() {
 
                         const res = await buyPlantAction(orderData);
                         if (res.success) {
-                          setPurchaseOrderId(res.orderId || "");
+                          const orderId = res.orderId || "";
+                          const receiptId = res.receiptId || "";
+                          setPurchaseOrderId(orderId);
+                          setPurchaseReceiptId(receiptId);
+                          setNurseryWhatsAppStatus((res as any).whatsAppSentStatus === "sent" ? "sent" : "failed");
                           setPurchaseSuccess(true);
                           await loadData();
+
+                          // Auto-generate WhatsApp receipt message and send to user's phone number
+                          const msg = `Thank you for your order with Kohinoor Facilities.\n\n` +
+                            `Your order has been confirmed.\n\n` +
+                            `Receipt No: ${receiptId}\n` +
+                            `Service: Nursery\n` +
+                            `Total Paid: ₹${selectedPlant.price * buyQuantity}\n\n` +
+                            `A detailed receipt is attached below:\n` +
+                            `http://localhost:8000/receipts/${receiptId}\n\n` +
+                            `Thank you for choosing Kohinoor Facilities.`;
+                          window.open(getWhatsAppUrl(buyerPhone.trim(), msg), '_blank');
                         } else {
                           setPurchaseError(res.error || "Failed to process purchase.");
                         }
@@ -1151,7 +1171,88 @@ export default function ServicesPage() {
                       </div>
 
                       {/* WhatsApp Action */}
-                      <div className="bg-white p-3 border-t border-slate-100 flex justify-center">
+                      <div className="bg-white p-3 border-t border-slate-100 flex flex-col gap-2 justify-center items-center">
+                        <a
+                          href={getWhatsAppUrl(
+                            buyerPhone.trim(),
+                            `*KOHINOOR NURSERY RECEIPT*\n` +
+                            `------------------------------\n` +
+                            `Order ID: #${purchaseOrderId}\n` +
+                            `Customer: ${buyerName.trim()}\n` +
+                            `Phone: ${buyerPhone.trim()}\n\n` +
+                            `Item:\n` +
+                            `• ${selectedPlant.name} x ${buyQuantity} - ₹${selectedPlant.price * buyQuantity}\n\n` +
+                            `*Total Paid: ₹${selectedPlant.price * buyQuantity} (via Bill Payment)*\n\n` +
+                            `Your plant purchase order has been placed successfully. Please collect your order from the Ground Floor, Tower B Plaza Area Nursery.\n` +
+                            `Thank you!`
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Send Receipt to My WhatsApp</span>
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const printWindow = window.open('', '_blank');
+                            if (printWindow) {
+                              printWindow.document.write(`
+                                <html>
+                                  <head>
+                                    <title>Nursery Receipt - #${purchaseOrderId}</title>
+                                    <style>
+                                      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #333; background: #f1f5f9; }
+                                      .receipt { max-width: 400px; margin: 20px auto; border: 1px solid #e2e8f0; padding: 24px; border-radius: 16px; bg: #ffffff; background: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+                                      .header { text-align: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px; }
+                                      .header h2 { margin: 0; font-size: 20px; color: #059669; font-weight: 800; }
+                                      .header p { margin: 4px 0 0 0; font-size: 12px; color: #64748b; }
+                                      .row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 13px; line-height: 1.5; }
+                                      .total { font-weight: bold; border-top: 1px dashed #e2e8f0; padding-top: 12px; margin-top: 16px; font-size: 16px; color: #059669; }
+                                      .footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 24px; line-height: 1.6; border-t: 1px solid #f1f5f9; pt: 16px; }
+                                    </style>
+                                  </head>
+                                  <body>
+                                    <div class="receipt">
+                                      <div class="header">
+                                        <h2>GREEN CANOPY NURSERY</h2>
+                                        <p>Kohinoor Commercial II</p>
+                                      </div>
+                                      <div class="row"><strong>Order ID:</strong> <span>#${purchaseOrderId}</span></div>
+                                      <div class="row"><strong>Date:</strong> <span>${new Date().toLocaleDateString()}</span></div>
+                                      <div class="row"><strong>Customer:</strong> <span>${buyerName}</span></div>
+                                      <div class="row"><strong>Phone:</strong> <span>${buyerPhone}</span></div>
+                                      <div style="border-top: 1px solid #f1f5f9; margin: 12px 0;"></div>
+                                      <div class="row">
+                                        <span>${selectedPlant.name} x ${buyQuantity}</span>
+                                        <span>₹${selectedPlant.price * buyQuantity}</span>
+                                      </div>
+                                      <div class="row total">
+                                        <span>TOTAL PAID:</span>
+                                        <span>₹${selectedPlant.price * buyQuantity}</span>
+                                      </div>
+                                      <div class="footer">
+                                        <p><strong>Thank you for your purchase!</strong></p>
+                                        <p>Please collect your plant from the Ground Floor, Tower B Plaza Area Nursery.</p>
+                                      </div>
+                                    </div>
+                                    <script>
+                                      window.onload = function() { window.print(); window.close(); }
+                                    </script>
+                                  </body>
+                                </html>
+                              `);
+                              printWindow.document.close();
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                        >
+                          <LucideIcons.Printer className="w-3.5 h-3.5" />
+                          <span>Print / Download Receipt</span>
+                        </button>
+
                         <a
                           href={getWhatsAppUrl(
                             nursery?.contact || '8657902809',
@@ -1159,7 +1260,7 @@ export default function ServicesPage() {
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center"
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
                           <span>Query Order on WhatsApp</span>
@@ -1526,10 +1627,26 @@ export default function ServicesPage() {
                         };
 
                         const res = await buyCafeteriaAction(orderData);
-                        if (res.success && res.orderId) {
-                          setCafeOrderId(res.orderId);
+                         if (res.success && res.orderId) {
+                          const orderId = res.orderId;
+                          const receiptId = res.receiptId || "";
+                          setCafeOrderId(orderId);
+                          setCafeReceiptId(receiptId);
+                          setCafeWhatsAppStatus((res as any).whatsAppSentStatus === "sent" ? "sent" : "failed");
                           setCafeStep("success");
                           await loadData();
+
+                          // Auto-generate WhatsApp receipt message and send to user's phone number
+                          const itemsFormatted = orderItems.map(item => `• ${item.name} x ${item.quantity} - ₹${item.price * item.quantity}`).join('\n');
+                          const msg = `Thank you for your order with Kohinoor Facilities.\n\n` +
+                            `Your order has been confirmed.\n\n` +
+                            `Receipt No: ${receiptId}\n` +
+                            `Service: Cafeteria\n` +
+                            `Total Paid: ₹${totalPrice}\n\n` +
+                            `A detailed receipt is attached below:\n` +
+                            `http://localhost:8000/receipts/${receiptId}\n\n` +
+                            `Thank you for choosing Kohinoor Facilities.`;
+                          window.open(getWhatsAppUrl(cafePhone.trim(), msg), '_blank');
                           
                           // Trigger ready simulation
                           setOrderReadyState("preparing");
@@ -1692,9 +1809,70 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2.5 p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-800 text-xs font-semibold w-full max-w-md text-left">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Receipt auto-generated & sent to **+91 {cafePhone}** via Kohinoor WhatsApp Gateway.</span>
+                  <div className={cn(
+                    "flex flex-col gap-2.5 p-4 rounded-xl border w-full max-w-md text-left",
+                    cafeWhatsAppStatus === "sending" && "bg-sky-50 border-sky-200 text-sky-800",
+                    cafeWhatsAppStatus === "sent" && "bg-emerald-50 border-emerald-200 text-emerald-800",
+                    cafeWhatsAppStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
+                  )}>
+                    <div className="flex items-start gap-2.5">
+                      {cafeWhatsAppStatus === "sending" && (
+                        <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0 mt-0.5" />
+                      )}
+                      {cafeWhatsAppStatus === "sent" && (
+                        <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      )}
+                      {cafeWhatsAppStatus === "failed" && (
+                        <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      )}
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-xs font-bold font-sans">
+                          {cafeWhatsAppStatus === "sending" && "Sending electronic receipt to your WhatsApp..."}
+                          {cafeWhatsAppStatus === "sent" && `Receipt sent successfully to WhatsApp (+91 ${cafePhone})!`}
+                          {cafeWhatsAppStatus === "failed" && "WhatsApp Gateway delivery failed (credentials missing or connection error)."}
+                        </span>
+                        <span className="text-[10px] opacity-80">
+                          Receipt ID: <span className="font-mono">{cafeReceiptId}</span>
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {cafeWhatsAppStatus === "failed" && (
+                      <div className="flex items-center gap-2 mt-1 border-t border-rose-100 pt-2">
+                        <button
+                          type="button"
+                          disabled={isResendingCafeReceipt}
+                          onClick={async () => {
+                            setIsResendingCafeReceipt(true);
+                            setCafeResendMessage("Retrying...");
+                            try {
+                              const ret = await resendReceiptAction(cafeReceiptId);
+                              if (ret.success) {
+                                setCafeWhatsAppStatus("sent");
+                                setCafeResendMessage("Sent!");
+                              } else {
+                                setCafeResendMessage(ret.error || "Retry failed");
+                              }
+                            } catch (e) {
+                              setCafeResendMessage("Failed");
+                            } finally {
+                              setIsResendingCafeReceipt(false);
+                            }
+                          }}
+                          className="px-2.5 py-1 rounded bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider hover:bg-rose-700 transition-colors flex items-center gap-1.5 cursor-pointer font-bold"
+                        >
+                          {isResendingCafeReceipt ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <MessageSquare className="w-3 h-3" />
+                          )}
+                          <span>Send Again</span>
+                        </button>
+                        {cafeResendMessage && (
+                          <span className="text-[9px] font-bold text-rose-600">{cafeResendMessage}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Simulated WhatsApp Receipt on mobile */}
@@ -1744,7 +1922,100 @@ export default function ServicesPage() {
                     </div>
 
                     {/* WhatsApp Action */}
-                    <div className="bg-white p-3 border-t border-slate-100 flex justify-center">
+                    <div className="bg-white p-3 border-t border-slate-100 flex flex-col gap-2 justify-center items-center">
+                      <a
+                        href={getWhatsAppUrl(
+                          cafePhone.trim(),
+                          `*KOHINOOR CAFETERIA RECEIPT*\n` +
+                          `------------------------------\n` +
+                          `Order ID: #${cafeOrderId}\n` +
+                          `Customer: ${cafeName.trim()}\n` +
+                          `Phone: ${cafePhone.trim()}\n\n` +
+                          `Items:\n` +
+                          Object.entries(cafeCart).map(([id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id)!;
+                            return `• ${it.name} x ${qty} - ₹${it.price * qty}`;
+                          }).join('\n') + `\n\n` +
+                          `*Total Paid: ₹${Object.entries(cafeCart).reduce((sum, [id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id);
+                            return sum + (it ? it.price * qty : 0);
+                          }, 0)} (via Bill Payment)*\n\n` +
+                          `Your order has been placed successfully. Please collect from the Ground Floor, Tower A Cafeteria once ready.\n` +
+                          `Thank you!`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Send Receipt to My WhatsApp</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const totalPaid = Object.entries(cafeCart).reduce((sum, [id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id);
+                            return sum + (it ? it.price * qty : 0);
+                          }, 0);
+                          const itemsRows = Object.entries(cafeCart).map(([id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id)!;
+                            return `<div class="row"><span>${it.name} x ${qty}</span><span>₹${it.price * qty}</span></div>`;
+                          }).join('');
+
+                          const printWindow = window.open('', '_blank');
+                          if (printWindow) {
+                            printWindow.document.write(`
+                              <html>
+                                <head>
+                                  <title>Cafeteria Receipt - #${cafeOrderId}</title>
+                                  <style>
+                                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #333; background: #f1f5f9; }
+                                    .receipt { max-width: 400px; margin: 20px auto; border: 1px solid #e2e8f0; padding: 24px; border-radius: 16px; bg: #ffffff; background: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+                                    .header { text-align: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px; }
+                                    .header h2 { margin: 0; font-size: 20px; color: #d97706; font-weight: 800; }
+                                    .header p { margin: 4px 0 0 0; font-size: 12px; color: #64748b; }
+                                    .row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 13px; line-height: 1.5; }
+                                    .total { font-weight: bold; border-top: 1px dashed #e2e8f0; padding-top: 12px; margin-top: 16px; font-size: 16px; color: #d97706; }
+                                    .footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 24px; line-height: 1.6; border-t: 1px solid #f1f5f9; pt: 16px; }
+                                  </style>
+                                </head>
+                                <body>
+                                  <div class="receipt">
+                                    <div class="header">
+                                      <h2>KOHINOOR CAFETERIA</h2>
+                                      <p>Kohinoor Commercial II</p>
+                                    </div>
+                                    <div class="row"><strong>Order ID:</strong> <span>#${cafeOrderId}</span></div>
+                                    <div class="row"><strong>Date:</strong> <span>${new Date().toLocaleDateString()}</span></div>
+                                    <div class="row"><strong>Customer:</strong> <span>${cafeName}</span></div>
+                                    <div class="row"><strong>Phone:</strong> <span>${cafePhone}</span></div>
+                                    <div style="border-top: 1px solid #f1f5f9; margin: 12px 0;"></div>
+                                    ${itemsRows}
+                                    <div class="row total">
+                                      <span>TOTAL PAID:</span>
+                                      <span>₹${totalPaid}</span>
+                                    </div>
+                                    <div class="footer">
+                                      <p><strong>Thank you for your order!</strong></p>
+                                      <p>Please collect your order from the Ground Floor, Tower A Cafeteria counter once ready.</p>
+                                    </div>
+                                  </div>
+                                  <script>
+                                    window.onload = function() { window.print(); window.close(); }
+                                  </script>
+                                </body>
+                              </html>
+                            `);
+                            printWindow.document.close();
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                      >
+                        <LucideIcons.Printer className="w-3.5 h-3.5" />
+                        <span>Print / Download Receipt</span>
+                      </button>
+
                       <a
                         href={getWhatsAppUrl(
                           cafeteria?.contact || '8657902811',
@@ -1752,7 +2023,7 @@ export default function ServicesPage() {
                         )}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center"
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         <span>Query Order on WhatsApp</span>
