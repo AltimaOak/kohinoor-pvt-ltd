@@ -59,7 +59,7 @@
     },
     {
       "id": "svc-medical-camp",
-      "title": "Health Check ",
+      "title": "Health Checkup",
       "shortDesc": "Qualified visiting doctors present on the 2nd and 4th Wednesday of every month.",
       "longDesc": "Dedicated health camps are conducted on-site to promote occupant wellness and checkups. The business park hosts visiting professional medical doctors on the second and fourth Wednesday of every month, providing free health consultations, basic testing, and medical guidance.",
       "features": [
@@ -206,7 +206,7 @@
         "description": "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
         "price": 250,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 15
+        "quantity": 13
       },
       {
         "id": "plant-areca",
@@ -214,15 +214,15 @@
         "description": "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
         "price": 350,
         "imageSrc": "/images/areca_palm.png",
-        "quantity": 9
+        "quantity": 8
       },
       {
-        "id": "plant-peace",
-        "name": "Peace Lily",
-        "description": "Features dark green leaves and brilliant white spathes, ideal for low-light office desks.",
-        "price": 180,
-        "imageSrc": "/images/peace_lily.png",
-        "quantity": 0
+        "id": "plant-1781075621847",
+        "name": "Test Fern",
+        "description": "Lush green test plant",
+        "price": 140,
+        "imageSrc": "/images/snake_plant.png",
+        "quantity": 1015
       }
     ],
     "orders": [
@@ -381,6 +381,46 @@
         "id": "ord-1780990021394",
         "status": "pending",
         "createdAt": "2026-06-09T07:27:01.394Z"
+      },
+      {
+        "plantId": "plant-snake",
+        "plantName": "Snake Plant (Sansevieria)",
+        "userName": "Test Customer",
+        "userEmail": "test@test.com",
+        "userPhone": "9876543210",
+        "quantity": 1,
+        "totalPrice": 250,
+        "deliveryMethod": "pickup",
+        "id": "ord-1781073393445",
+        "status": "pending",
+        "createdAt": "2026-06-10T06:36:33.445Z"
+      },
+      {
+        "plantId": "plant-areca",
+        "plantName": "Areca Palm",
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "quantity": 1,
+        "totalPrice": 350,
+        "deliveryMethod": "pickup",
+        "id": "ord-1781073648706",
+        "status": "pending",
+        "createdAt": "2026-06-10T06:40:48.706Z"
+      },
+      {
+        "plantId": "plant-snake",
+        "plantName": "Snake Plant (Sansevieria)",
+        "userName": "John Doe",
+        "userEmail": "john.doe@example.com",
+        "userPhone": "9876543210",
+        "quantity": 1,
+        "totalPrice": 250,
+        "deliveryMethod": "pickup",
+        "id": "ord-1781074751046",
+        "status": "pending",
+        "createdAt": "2026-06-10T06:59:11.046Z",
+        "receiptId": "REC-1781074751046"
       }
     ]
   },
@@ -388,7 +428,7 @@
     "description": "Premium corporate cafeteria offering freshly brewed hot beverages, delicious breakfast selections, and corporate lunch thalis.",
     "location": "Ground Floor, Tower A Plaza Area",
     "timing": "8:00 AM - 8:30 PM (Monday - Saturday)",
-    "contact": "+91 8657902811",
+    "contact": "+91 8108839330",
     "menu": [
       {
         "id": "cafe-coffee",
@@ -443,6 +483,15 @@
         "price": 150,
         "imageSrc": "/images/friedrice.png",
         "quantity": 50
+      },
+      {
+        "id": "cafe-1781076047502",
+        "name": "Vegetable Salad",
+        "category": "Breakfast",
+        "description": "Fresh Veggies and Healthy diet salad",
+        "price": 110,
+        "imageSrc": "/uploads/1781076027796_salad.jpg",
+        "quantity": 19
       }
     ],
     "orders": [
@@ -565,7 +614,96 @@
         "id": "cafe-1780989920525",
         "status": "pending",
         "createdAt": "2026-06-09T07:25:20.526Z"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-1781076047502",
+            "name": "Vegetable Salad",
+            "price": 110,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 110,
+        "userName": "tanmay nivrutti mhatre",
+        "userEmail": "tanmaymhatre167@gmail.com",
+        "userPhone": "9372025677",
+        "id": "cafe-1781076110178",
+        "status": "pending",
+        "createdAt": "2026-06-10T07:21:50.178Z",
+        "receiptId": "REC-1781076110178"
       }
     ]
-  }
+  },
+  "receipts": [
+    {
+      "id": "REC-1781074751046",
+      "orderId": "ord-1781074751046",
+      "serviceType": "Nursery",
+      "date": "2026-06-10T06:59:11.046Z",
+      "customerName": "John Doe",
+      "customerPhone": "9876543210",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 250,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "failed",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-06-10T06:59:11.052Z",
+          "status": "failure",
+          "error": "Twilio credentials missing or not configured."
+        },
+        {
+          "timestamp": "2026-06-10T07:01:04.743Z",
+          "status": "failure",
+          "error": "Twilio credentials missing or not configured."
+        },
+        {
+          "timestamp": "2026-06-10T07:01:47.132Z",
+          "status": "failure",
+          "error": "Twilio credentials missing or not configured."
+        },
+        {
+          "timestamp": "2026-06-10T07:02:04.569Z",
+          "status": "failure",
+          "error": "Twilio credentials missing or not configured."
+        }
+      ]
+    },
+    {
+      "id": "REC-1781076110178",
+      "orderId": "cafe-1781076110178",
+      "serviceType": "Cafeteria",
+      "date": "2026-06-10T07:21:50.178Z",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerPhone": "9372025677",
+      "items": [
+        {
+          "itemId": "cafe-1781076047502",
+          "name": "Vegetable Salad",
+          "price": 110,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 110,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "failed",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-06-10T07:21:50.183Z",
+          "status": "failure",
+          "error": "Twilio credentials missing or not configured."
+        }
+      ]
+    }
+  ]
 }

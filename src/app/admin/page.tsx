@@ -40,7 +40,11 @@ import {
   HelpCircle,
   MapPin,
   Mail,
-  Phone
+  Phone,
+  FileText,
+  Send,
+  Leaf,
+  Coffee
 } from "lucide-react";
 import {
   getDb,
@@ -49,12 +53,15 @@ import {
   logoutAction,
   checkAuth,
   uploadPhotoAction,
+  resendReceiptAction,
   DatabaseSchema,
   EventItem,
   ServiceItem,
   PhotoItem,
   ManagerItem,
-  DoctorItem
+  DoctorItem,
+  PlantItem,
+  CafeMenuItem
 } from "@/app/actions";
 import * as LucideIcons from "lucide-react";
 
@@ -88,7 +95,17 @@ export default function AdminPage() {
 
   // Database state
   const [db, setDb] = useState<DatabaseSchema | null>(null);
-  const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts" | "doctors">("events");
+  const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts" | "doctors" | "receipts" | "nursery" | "cafeteria">("events");
+  const [selectedReceiptId, setSelectedReceiptId] = useState<string | null>(null);
+  const [resendingReceiptId, setResendingReceiptId] = useState<string | null>(null);
+
+  // Nursery states
+  const [editingPlant, setEditingPlant] = useState<PlantItem | null>(null);
+  const [isAddingPlant, setIsAddingPlant] = useState(false);
+
+  // Cafeteria states
+  const [editingCafeItem, setEditingCafeItem] = useState<CafeMenuItem | null>(null);
+  const [isAddingCafeItem, setIsAddingCafeItem] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -197,7 +214,7 @@ export default function AdminPage() {
   };
 
   // Image Upload handler
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event") => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event" | "plant" | "cafe") => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -236,6 +253,10 @@ export default function AdminPage() {
               imageSrc: newImages[0]
             };
           });
+        } else if (forEdit === "plant") {
+          setEditingPlant((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
+        } else if (forEdit === "cafe") {
+          setEditingCafeItem((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
         }
       } else {
         showToast("error", res.error || "Image upload failed");
@@ -487,6 +508,150 @@ export default function AdminPage() {
     await saveDatabase(db);
   };
 
+  const handleResendReceipt = async (receiptId: string) => {
+    setResendingReceiptId(receiptId);
+    showToast("info", `Resending WhatsApp receipt for ${receiptId}...`);
+    try {
+      const res = await resendReceiptAction(receiptId);
+      if (res.success) {
+        showToast("success", `Receipt ${receiptId} resent successfully!`);
+        // Refresh database to get updated logs/status
+        const updatedDb = await getDb();
+        setDb(updatedDb);
+      } else {
+        showToast("error", res.error || "Failed to resend receipt.");
+      }
+    } catch (err) {
+      showToast("error", "Server communication failed while resending.");
+    } finally {
+      setResendingReceiptId(null);
+    }
+  };
+
+  // Nursery details save
+  const handleSaveNurseryDetails = async () => {
+    if (!db || !db.nursery) return;
+    const success = await saveDatabase(db);
+    if (success) {
+      showToast("success", "Nursery details saved successfully!");
+    }
+  };
+
+  // Plant save (add or edit)
+  const handleSavePlant = async () => {
+    if (!db || !db.nursery || !editingPlant) return;
+    if (!editingPlant.name || !editingPlant.description || editingPlant.price <= 0 || editingPlant.quantity < 0) {
+      showToast("error", "Please fill in all plant fields correctly.");
+      return;
+    }
+
+    let updatedPlants = [...db.nursery.plants];
+    if (isAddingPlant) {
+      updatedPlants.push({
+        ...editingPlant,
+        id: `plant-${Date.now()}`
+      });
+    } else {
+      updatedPlants = updatedPlants.map((p) =>
+        p.id === editingPlant.id ? editingPlant : p
+      );
+    }
+
+    const success = await saveDatabase({
+      ...db,
+      nursery: {
+        ...db.nursery,
+        plants: updatedPlants
+      }
+    });
+
+    if (success) {
+      setEditingPlant(null);
+      setIsAddingPlant(false);
+      showToast("success", "Plant details published successfully!");
+    }
+  };
+
+  // Plant delete
+  const handleDeletePlant = async (id: string) => {
+    if (!db || !db.nursery) return;
+    if (!confirm("Are you sure you want to delete this plant?")) return;
+
+    const updatedPlants = db.nursery.plants.filter((p) => p.id !== id);
+    const success = await saveDatabase({
+      ...db,
+      nursery: {
+        ...db.nursery,
+        plants: updatedPlants
+      }
+    });
+    if (success) {
+      showToast("success", "Plant deleted successfully!");
+    }
+  };
+
+  // Cafeteria details save
+  const handleSaveCafeteriaDetails = async () => {
+    if (!db || !db.cafeteria) return;
+    const success = await saveDatabase(db);
+    if (success) {
+      showToast("success", "Cafeteria details saved successfully!");
+    }
+  };
+
+  // Cafe item save (add or edit)
+  const handleSaveCafeItem = async () => {
+    if (!db || !db.cafeteria || !editingCafeItem) return;
+    if (!editingCafeItem.name || !editingCafeItem.description || editingCafeItem.price <= 0 || editingCafeItem.quantity < 0) {
+      showToast("error", "Please fill in all menu item fields correctly.");
+      return;
+    }
+
+    let updatedMenu = [...db.cafeteria.menu];
+    if (isAddingCafeItem) {
+      updatedMenu.push({
+        ...editingCafeItem,
+        id: `cafe-${Date.now()}`
+      });
+    } else {
+      updatedMenu = updatedMenu.map((item) =>
+        item.id === editingCafeItem.id ? editingCafeItem : item
+      );
+    }
+
+    const success = await saveDatabase({
+      ...db,
+      cafeteria: {
+        ...db.cafeteria,
+        menu: updatedMenu
+      }
+    });
+
+    if (success) {
+      setEditingCafeItem(null);
+      setIsAddingCafeItem(false);
+      showToast("success", "Menu item published successfully!");
+    }
+  };
+
+  // Cafe item delete
+  const handleDeleteCafeItem = async (id: string) => {
+    if (!db || !db.cafeteria) return;
+    if (!confirm("Are you sure you want to delete this menu item?")) return;
+
+    const updatedMenu = db.cafeteria.menu.filter((item) => item.id !== id);
+    const success = await saveDatabase({
+      ...db,
+      cafeteria: {
+        ...db.cafeteria,
+        menu: updatedMenu
+      }
+    });
+    if (success) {
+      showToast("success", "Menu item deleted successfully!");
+    }
+  };
+
   // Render Spinner during load
   if (loading) {
     return (
@@ -662,6 +827,9 @@ export default function AdminPage() {
               { id: "doctors", label: "Visiting Doctors", icon: Heart, color: "text-rose-600 bg-red-50" },
               { id: "photos", label: "Interactive Gallery", icon: ImageIcon, color: "text-sky-500 bg-sky-50" },
               { id: "contacts", label: "Contacts & Directory", icon: PhoneCall, color: "text-emerald-500 bg-emerald-50" },
+              { id: "nursery", label: "Plant Nursery", icon: Leaf, color: "text-emerald-600 bg-emerald-50" },
+              { id: "cafeteria", label: "Cafeteria Menu", icon: Coffee, color: "text-amber-600 bg-amber-50" },
+              { id: "receipts", label: "Receipts & WhatsApp Logs", icon: FileText, color: "text-indigo-500 bg-indigo-50" },
             ].map((tab) => {
               const TabIcon = tab.icon;
               const isSelected = activeTab === tab.id;
@@ -676,6 +844,10 @@ export default function AdminPage() {
                     setEditingPhoto(null);
                     setEditingDoctor(null);
                     setIsAddingDoctor(false);
+                    setEditingPlant(null);
+                    setIsAddingPlant(false);
+                    setEditingCafeItem(null);
+                    setIsAddingCafeItem(false);
                   }}
                   className={`flex items-center gap-3.5 px-4.5 py-4 rounded-2xl w-full text-left transition-all ${
                     isSelected
@@ -1913,6 +2085,806 @@ export default function AdminPage() {
                       No doctors currently registered in database.
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "receipts" && db && (
+              <div className="flex flex-col gap-6">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                  <div className="flex flex-col gap-0.5">
+                    <h2 className="text-lg font-black text-navy-900 leading-none">Receipts & WhatsApp Delivery Logs</h2>
+                    <p className="text-xs text-slate-500">Track automatic orders, e-receipt logs, and trigger manual delivery retries.</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Receipts List */}
+                  <div className={`bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5 ${selectedReceiptId ? 'lg:col-span-7' : 'lg:col-span-12'}`}>
+                    <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
+                      <FileText className="w-4.5 h-4.5" />
+                      <span>Order Receipts History ({ (db.receipts || []).length })</span>
+                    </h3>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                            <th className="pb-3 pr-2">Receipt ID</th>
+                            <th className="pb-3 pr-2">Customer</th>
+                            <th className="pb-3 pr-2">Service</th>
+                            <th className="pb-3 pr-2 text-right">Total</th>
+                              <th className="pb-3 pr-2 text-center">WhatsApp</th>
+                            <th className="pb-3 text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(db.receipts || []).length === 0 ? (
+                            <tr>
+                              <td colSpan={6} className="text-center py-8 text-slate-400 font-bold">
+                                No purchase receipts found in history.
+                              </td>
+                            </tr>
+                          ) : (
+                            [...(db.receipts || [])]
+                              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                              .map((receipt) => {
+                                const isSelected = selectedReceiptId === receipt.id;
+                                return (
+                                  <tr 
+                                    key={receipt.id} 
+                                    className={`border-b border-slate-100/60 hover:bg-slate-50/50 transition-all cursor-pointer ${isSelected ? 'bg-sky-50/30' : ''}`}
+                                    onClick={() => setSelectedReceiptId(receipt.id === selectedReceiptId ? null : receipt.id)}
+                                  >
+                                    <td className="py-3.5 pr-2 font-mono font-bold text-slate-700">
+                                      {receipt.id}
+                                      <span className="block text-[10px] text-slate-400 font-normal font-sans mt-0.5">
+                                        {new Date(receipt.date).toLocaleString()}
+                                      </span>
+                                    </td>
+                                    <td className="py-3.5 pr-2">
+                                      <span className="font-semibold text-slate-800 block leading-tight">{receipt.customerName}</span>
+                                      <span className="text-slate-500 font-mono text-[10px]">{receipt.customerPhone}</span>
+                                    </td>
+                                    <td className="py-3.5 pr-2">
+                                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                        receipt.serviceType === "Nursery" 
+                                          ? "bg-emerald-50 text-emerald-700 border border-emerald-100" 
+                                          : "bg-amber-50 text-amber-700 border border-amber-100"
+                                      }`}>
+                                        {receipt.serviceType}
+                                      </span>
+                                    </td>
+                                    <td className="py-3.5 pr-2 text-right font-black text-slate-900">
+                                      ₹{receipt.totalAmountPaid}
+                                    </td>
+                                    <td className="py-3.5 pr-2 text-center">
+                                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                                        receipt.whatsAppSentStatus === "sent" 
+                                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                                          : receipt.whatsAppSentStatus === "failed"
+                                          ? "bg-rose-50 text-rose-700 border border-rose-200"
+                                          : "bg-slate-50 text-slate-600 border border-slate-200"
+                                      }`}>
+                                        {receipt.whatsAppSentStatus === "sent" && <CheckCircle className="w-3 h-3 text-emerald-600" />}
+                                        {receipt.whatsAppSentStatus === "failed" && <AlertCircle className="w-3 h-3 text-rose-600" />}
+                                        {receipt.whatsAppSentStatus === "pending" && <Loader2 className="w-3 h-3 animate-spin text-slate-500" />}
+                                        <span className="capitalize">{receipt.whatsAppSentStatus}</span>
+                                      </span>
+                                    </td>
+                                    <td className="py-3.5 text-center" onClick={(e) => e.stopPropagation()}>
+                                      <div className="flex items-center justify-center gap-2">
+                                        <a 
+                                          href={`/receipts/${receipt.id}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all"
+                                          title="View Receipt"
+                                        >
+                                          <ExternalLink className="w-3.5 h-3.5" />
+                                        </a>
+                                        <button
+                                          onClick={() => handleResendReceipt(receipt.id)}
+                                          disabled={resendingReceiptId === receipt.id}
+                                          className={`p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all ${
+                                            resendingReceiptId === receipt.id ? 'opacity-50 cursor-not-allowed' : ''
+                                          }`}
+                                          title="Resend WhatsApp"
+                                        >
+                                          {resendingReceiptId === receipt.id ? (
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-500" />
+                                          ) : (
+                                            <Send className="w-3.5 h-3.5" />
+                                          )}
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Selected Receipt Details & WhatsApp Attempt Logs */}
+                  {selectedReceiptId && (() => {
+                    const receipt = db.receipts?.find(r => r.id === selectedReceiptId);
+                    if (!receipt) return null;
+                    return (
+                      <div className="lg:col-span-5 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-6 sticky top-24">
+                        <div className="flex justify-between items-start border-b border-slate-100 pb-4">
+                          <div>
+                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Selected Receipt</span>
+                            <h3 className="text-base font-black text-navy-900 font-mono leading-none mt-1">{receipt.id}</h3>
+                          </div>
+                          <button 
+                            onClick={() => setSelectedReceiptId(null)}
+                            className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Customer Information */}
+                        <div className="flex flex-col gap-2">
+                          <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Customer Details</h4>
+                          <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl flex flex-col gap-2">
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Name:</span>
+                              <span className="font-semibold text-slate-800">{receipt.customerName}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Phone Number:</span>
+                              <span className="font-mono font-semibold text-slate-800">{receipt.customerPhone}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Order Reference:</span>
+                              <span className="font-mono text-slate-600">{receipt.orderId}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Ordered Items */}
+                        <div className="flex flex-col gap-2">
+                          <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Line Items</h4>
+                          <div className="border border-slate-100 rounded-2xl overflow-hidden text-xs">
+                            <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 font-bold text-slate-500 grid grid-cols-12">
+                              <span className="col-span-6">Item</span>
+                              <span className="col-span-2 text-center">Qty</span>
+                              <span className="col-span-4 text-right">Price</span>
+                            </div>
+                            <div className="divide-y divide-slate-100 max-h-[150px] overflow-y-auto">
+                              {receipt.items.map((item, idx) => (
+                                <div key={idx} className="px-4 py-2.5 grid grid-cols-12 text-slate-700 font-medium">
+                                  <span className="col-span-6 truncate font-semibold">{item.name}</span>
+                                  <span className="col-span-2 text-center text-slate-500">{item.quantity}</span>
+                                  <span className="col-span-4 text-right font-bold">₹{item.price * item.quantity}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="bg-sky-50/30 px-4 py-3 border-t border-slate-100 font-black text-slate-900 flex justify-between items-center">
+                              <span>Total Paid:</span>
+                              <span>₹{receipt.totalAmountPaid}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* WhatsApp Delivery Logs */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center">
+                            <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">WhatsApp Dispatch Logs</h4>
+                            <button
+                              onClick={() => handleResendReceipt(receipt.id)}
+                              disabled={resendingReceiptId === receipt.id}
+                              className="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-white text-[10px] font-bold shadow-md shadow-sky-500/10 transition-all flex items-center gap-1 cursor-pointer"
+                            >
+                              {resendingReceiptId === receipt.id ? (
+                                <Loader2 className="w-3 animate-spin text-white" />
+                              ) : (
+                                <Zap className="w-3 h-3 text-white" />
+                              )}
+                              <span>Send Receipt</span>
+                            </button>
+                          </div>
+                          <div className="border border-slate-100 rounded-2xl p-4 max-h-[180px] overflow-y-auto flex flex-col gap-3">
+                            {(!receipt.whatsAppDeliveryLogs || receipt.whatsAppDeliveryLogs.length === 0) ? (
+                              <div className="text-center py-4 text-slate-400 font-bold text-xs">
+                                No dispatch attempts logged yet.
+                              </div>
+                            ) : (
+                              receipt.whatsAppDeliveryLogs.map((log, idx) => (
+                                <div key={idx} className="flex gap-3 text-xs leading-normal">
+                                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                                    log.status === "success" ? "bg-emerald-500" : "bg-rose-500"
+                                  }`} />
+                                  <div className="flex flex-col gap-0.5">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-semibold text-slate-800">
+                                        {log.status === "success" ? "Delivered successfully" : "Delivery failed"}
+                                      </span>
+                                      <span className="text-[10px] text-slate-400 font-mono">
+                                        {new Date(log.timestamp).toLocaleString()}
+                                      </span>
+                                    </div>
+                                    {log.error && (
+                                      <span className="text-[10px] text-rose-600 font-medium bg-rose-50 border border-rose-100/50 px-2 py-1 rounded-md mt-1 font-mono break-all">
+                                        Error: {log.error}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "nursery" && db && db.nursery && (
+              <div className="flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                  <div className="flex flex-col gap-0.5">
+                    <h2 className="text-lg font-black text-navy-900 leading-none">Plant Nursery Management</h2>
+                    <p className="text-xs text-slate-500">Edit Nursery contact info, description, and manage the plant catalog.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsAddingPlant(true);
+                      setEditingPlant({
+                        id: "",
+                        name: "",
+                        description: "",
+                        price: 0,
+                        imageSrc: "/images/snake_plant.png",
+                        quantity: 10
+                      });
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Plant</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Nursery Configuration Details */}
+                  <div className="lg:col-span-4 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                    <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
+                      <Settings className="w-4.5 h-4.5" />
+                      <span>Nursery Details</span>
+                    </h3>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description</label>
+                      <textarea
+                        value={db.nursery.description}
+                        onChange={(e) => {
+                          const updatedNursery = { ...db.nursery!, description: e.target.value };
+                          setDb({ ...db, nursery: updatedNursery });
+                        }}
+                        rows={4}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 resize-none leading-relaxed text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Location</label>
+                      <input
+                        type="text"
+                        value={db.nursery.location}
+                        onChange={(e) => {
+                          const updatedNursery = { ...db.nursery!, location: e.target.value };
+                          setDb({ ...db, nursery: updatedNursery });
+                        }}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Timings</label>
+                      <input
+                        type="text"
+                        value={db.nursery.timing}
+                        onChange={(e) => {
+                          const updatedNursery = { ...db.nursery!, timing: e.target.value };
+                          setDb({ ...db, nursery: updatedNursery });
+                        }}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contact Phone</label>
+                      <input
+                        type="text"
+                        value={db.nursery.contact}
+                        onChange={(e) => {
+                          const updatedNursery = { ...db.nursery!, contact: e.target.value };
+                          setDb({ ...db, nursery: updatedNursery });
+                        }}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleSaveNurseryDetails}
+                      className="w-full flex items-center justify-center gap-1.5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Publish Details</span>
+                    </button>
+                  </div>
+
+                  {/* Right Column: Plants Grid Catalog */}
+                  <div className="lg:col-span-8 flex flex-col gap-6">
+                    {/* Plant Catalog Editor Form */}
+                    {editingPlant && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white border border-sky-300 p-6 rounded-3xl shadow-md flex flex-col gap-5"
+                      >
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-sky-600 flex items-center gap-1.5">
+                            {isAddingPlant ? <Plus className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
+                            <span>{isAddingPlant ? "Add Catalog Plant" : "Edit Plant Details"}</span>
+                          </h3>
+                          <button
+                            onClick={() => {
+                              setEditingPlant(null);
+                              setIsAddingPlant(false);
+                            }}
+                            className="text-slate-400 hover:text-slate-600"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Plant Name</label>
+                            <input
+                              type="text"
+                              value={editingPlant.name}
+                              onChange={(e) => setEditingPlant({ ...editingPlant, name: e.target.value })}
+                              placeholder="e.g. Ficus Bonsai"
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Price (₹)</label>
+                            <input
+                              type="number"
+                              value={editingPlant.price}
+                              onChange={(e) => setEditingPlant({ ...editingPlant, price: Number(e.target.value) })}
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Stock Quantity</label>
+                            <input
+                              type="number"
+                              value={editingPlant.quantity}
+                              onChange={(e) => setEditingPlant({ ...editingPlant, quantity: Number(e.target.value) })}
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Image Link URL</label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={editingPlant.imageSrc}
+                                onChange={(e) => setEditingPlant({ ...editingPlant, imageSrc: e.target.value })}
+                                className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs flex-grow focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                              />
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleImageUpload(e, "plant")}
+                                className="hidden"
+                                id="plant-image-upload"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => document.getElementById("plant-image-upload")?.click()}
+                                className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 shrink-0 transition-colors"
+                              >
+                                {uploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                                <span>Upload</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description</label>
+                          <textarea
+                            value={editingPlant.description}
+                            onChange={(e) => setEditingPlant({ ...editingPlant, description: e.target.value })}
+                            rows={3}
+                            placeholder="Detailed plant instructions and care brief..."
+                            className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 resize-none leading-relaxed text-slate-700 font-semibold"
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingPlant(null);
+                              setIsAddingPlant(false);
+                            }}
+                            className="px-4.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-500 transition-colors cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSavePlant}
+                            className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/10 transition-colors flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Save className="w-4 h-4" />
+                            <span>Save Plant</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Plants Listing */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {db.nursery.plants.map((plant) => (
+                        <div
+                          key={plant.id}
+                          className="bg-white border border-slate-200/50 p-4 rounded-3xl shadow-sm flex gap-4 hover:border-emerald-300 transition-all duration-300 relative group/plant"
+                        >
+                          <div className="w-20 h-20 border border-slate-100 rounded-2xl overflow-hidden bg-slate-50 shrink-0 relative">
+                            <img src={plant.imageSrc} alt={plant.name} className="w-full h-full object-cover" />
+                          </div>
+
+                          <div className="flex flex-col justify-between flex-grow min-w-0">
+                            <div>
+                              <h4 className="text-xs font-black text-navy-900 truncate leading-snug">{plant.name}</h4>
+                              <p className="text-[10px] text-slate-400 leading-normal line-clamp-2 mt-0.5">{plant.description}</p>
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
+                              <span className="text-xs font-extrabold text-emerald-600">₹{plant.price}</span>
+                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                plant.quantity > 0 ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-rose-50 text-rose-700 border border-rose-100"
+                              }`}>
+                                {plant.quantity > 0 ? `${plant.quantity} in stock` : "Out of stock"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Edit / Delete Buttons Overlay */}
+                          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover/plant:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => {
+                                setIsAddingPlant(false);
+                                setEditingPlant(plant);
+                              }}
+                              className="p-1.5 rounded-lg bg-white border border-slate-200/60 text-slate-400 hover:text-sky-600 shadow-sm transition-colors"
+                              title="Edit Plant"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePlant(plant.id)}
+                              className="p-1.5 rounded-lg bg-white border border-slate-200/60 text-slate-400 hover:text-rose-600 shadow-sm transition-colors"
+                              title="Delete Plant"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "cafeteria" && db && db.cafeteria && (
+              <div className="flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                  <div className="flex flex-col gap-0.5">
+                    <h2 className="text-lg font-black text-navy-900 leading-none">Cafeteria Menu Management</h2>
+                    <p className="text-xs text-slate-500">Edit Cafeteria physical details, location info, and configure breakfast / lunch thalis.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsAddingCafeItem(true);
+                      setEditingCafeItem({
+                        id: "",
+                        name: "",
+                        category: "Drinks",
+                        description: "",
+                        price: 0,
+                        imageSrc: "/images/coffee.png",
+                        quantity: 50
+                      });
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Menu Item</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Cafeteria configuration coordinates */}
+                  <div className="lg:col-span-4 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                    <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
+                      <Settings className="w-4.5 h-4.5" />
+                      <span>Cafeteria Settings</span>
+                    </h3>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description</label>
+                      <textarea
+                        value={db.cafeteria.description}
+                        onChange={(e) => {
+                          const updatedCafe = { ...db.cafeteria!, description: e.target.value };
+                          setDb({ ...db, cafeteria: updatedCafe });
+                        }}
+                        rows={4}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 resize-none leading-relaxed text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Location</label>
+                      <input
+                        type="text"
+                        value={db.cafeteria.location}
+                        onChange={(e) => {
+                          const updatedCafe = { ...db.cafeteria!, location: e.target.value };
+                          setDb({ ...db, cafeteria: updatedCafe });
+                        }}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Timings</label>
+                      <input
+                        type="text"
+                        value={db.cafeteria.timing}
+                        onChange={(e) => {
+                          const updatedCafe = { ...db.cafeteria!, timing: e.target.value };
+                          setDb({ ...db, cafeteria: updatedCafe });
+                        }}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contact Phone</label>
+                      <input
+                        type="text"
+                        value={db.cafeteria.contact}
+                        onChange={(e) => {
+                          const updatedCafe = { ...db.cafeteria!, contact: e.target.value };
+                          setDb({ ...db, cafeteria: updatedCafe });
+                        }}
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleSaveCafeteriaDetails}
+                      className="w-full flex items-center justify-center gap-1.5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Publish Details</span>
+                    </button>
+                  </div>
+
+                  {/* Right Column: Menu Grid Catalog */}
+                  <div className="lg:col-span-8 flex flex-col gap-6">
+                    {/* Cafe Item Editor Form */}
+                    {editingCafeItem && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white border border-sky-300 p-6 rounded-3xl shadow-md flex flex-col gap-5"
+                      >
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-sky-600 flex items-center gap-1.5">
+                            {isAddingCafeItem ? <Plus className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
+                            <span>{isAddingCafeItem ? "Add Menu Item" : "Edit Menu Item Details"}</span>
+                          </h3>
+                          <button
+                            onClick={() => {
+                              setEditingCafeItem(null);
+                              setIsAddingCafeItem(false);
+                            }}
+                            className="text-slate-400 hover:text-slate-600"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Item Name</label>
+                            <input
+                              type="text"
+                              value={editingCafeItem.name}
+                              onChange={(e) => setEditingCafeItem({ ...editingCafeItem, name: e.target.value })}
+                              placeholder="e.g. Masala Dosa"
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Category</label>
+                            <select
+                              value={editingCafeItem.category}
+                              onChange={(e) => setEditingCafeItem({ ...editingCafeItem, category: e.target.value as any })}
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold text-slate-700"
+                            >
+                              <option value="Drinks">Drinks</option>
+                              <option value="Breakfast">Breakfast</option>
+                              <option value="Lunch">Lunch</option>
+                            </select>
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Price (₹)</label>
+                            <input
+                              type="number"
+                              value={editingCafeItem.price}
+                              onChange={(e) => setEditingCafeItem({ ...editingCafeItem, price: Number(e.target.value) })}
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Daily Stock Quantity</label>
+                            <input
+                              type="number"
+                              value={editingCafeItem.quantity}
+                              onChange={(e) => setEditingCafeItem({ ...editingCafeItem, quantity: Number(e.target.value) })}
+                              className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Image Link URL</label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={editingCafeItem.imageSrc}
+                                onChange={(e) => setEditingCafeItem({ ...editingCafeItem, imageSrc: e.target.value })}
+                                className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs flex-grow focus:outline-none focus:border-sky-500 bg-slate-50/50 text-slate-700 font-semibold"
+                              />
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleImageUpload(e, "cafe")}
+                                className="hidden"
+                                id="cafe-image-upload"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => document.getElementById("cafe-image-upload")?.click()}
+                                className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 shrink-0 transition-colors"
+                              >
+                                {uploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                                <span>Upload</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description</label>
+                          <textarea
+                            value={editingCafeItem.description}
+                            onChange={(e) => setEditingCafeItem({ ...editingCafeItem, description: e.target.value })}
+                            rows={3}
+                            placeholder="Detailed taste ingredients brief..."
+                            className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 resize-none leading-relaxed text-slate-700 font-semibold"
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingCafeItem(null);
+                              setIsAddingCafeItem(false);
+                            }}
+                            className="px-4.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-500 transition-colors cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSaveCafeItem}
+                            className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/10 transition-colors flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Save className="w-4 h-4" />
+                            <span>Save Item</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Cafe Menu Listing */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {db.cafeteria.menu.map((item) => (
+                        <div
+                          key={item.id}
+                          className="bg-white border border-slate-200/50 p-4 rounded-3xl shadow-sm flex gap-4 hover:border-amber-300 transition-all duration-300 relative group/cafe"
+                        >
+                          <div className="w-20 h-20 border border-slate-100 rounded-2xl overflow-hidden bg-slate-50 shrink-0 relative">
+                            <img src={item.imageSrc} alt={item.name} className="w-full h-full object-cover" />
+                          </div>
+
+                          <div className="flex flex-col justify-between flex-grow min-w-0">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="text-xs font-black text-navy-900 truncate leading-snug">{item.name}</h4>
+                                <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${
+                                  item.category === "Drinks" 
+                                    ? "bg-sky-50 text-sky-700 border border-sky-100" 
+                                    : item.category === "Breakfast"
+                                    ? "bg-amber-50 text-amber-700 border border-amber-100"
+                                    : "bg-rose-50 text-rose-700 border border-rose-100"
+                                }`}>
+                                  {item.category}
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-slate-400 leading-normal line-clamp-2 mt-1">{item.description}</p>
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
+                              <span className="text-xs font-extrabold text-amber-600">₹{item.price}</span>
+                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                item.quantity > 0 ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-rose-50 text-rose-700 border border-rose-100"
+                              }`}>
+                                {item.quantity > 0 ? `${item.quantity} in stock` : "Out of stock"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Edit / Delete Buttons Overlay */}
+                          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover/cafe:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => {
+                                setIsAddingCafeItem(false);
+                                setEditingCafeItem(item);
+                              }}
+                              className="p-1.5 rounded-lg bg-white border border-slate-200/60 text-slate-400 hover:text-sky-600 shadow-sm transition-colors"
+                              title="Edit Menu Item"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCafeItem(item.id)}
+                              className="p-1.5 rounded-lg bg-white border border-slate-200/60 text-slate-400 hover:text-rose-600 shadow-sm transition-colors"
+                              title="Delete Menu Item"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
