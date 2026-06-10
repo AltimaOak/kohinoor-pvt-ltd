@@ -141,14 +141,7 @@ export default function ServicesPage() {
         <div className="absolute top-0 left-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
         <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
-          >
-            <Compass className="w-3.5 h-3.5 text-sky-400" />
-            <span>Wellness & Support</span>
-          </motion.div>
+        
           
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
@@ -156,7 +149,7 @@ export default function ServicesPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
           >
-            Occupant Services
+            Our  Services
           </motion.h1>
           
           <motion.p
@@ -165,7 +158,7 @@ export default function ServicesPage() {
             transition={{ delay: 0.2 }}
             className="text-slate-600 text-sm md:text-base leading-relaxed"
           >
-            Explore our on-site wellness facilities, premium robotic therapy sessions, medical checkups, and standby emergency transit systems designed for all occupants.
+            Explore our  facilities designed for all occupants.
           </motion.p>
         </div>
       </section>
