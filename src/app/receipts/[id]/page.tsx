@@ -130,7 +130,7 @@ export default async function ReceiptPage({ params }: { params: any }) {
           onClick={() => window.print()}
           className="px-6 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
         >
-          Print Copy
+          Print Reciept
         </button>
       </div>
 

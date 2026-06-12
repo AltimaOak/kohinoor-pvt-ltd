@@ -137,7 +137,7 @@
   "doctors": [
     {
       "id": "dr-amit-verma",
-      "name": "Dr. Amit Verma",
+      "name": "Dr.Reshma Nikam",
       "specialty": "M.D. General Medicine",
       "schedule": "12:00 PM - 2:00 PM (Only 2nd & 4th Week of Wednesday)",
       "avatarColor": "bg-sky-500/10 text-sky-600 border-sky-400/20",
