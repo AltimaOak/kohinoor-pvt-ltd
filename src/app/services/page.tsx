@@ -97,6 +97,8 @@ export default function ServicesPage() {
   const [cafeOrderId, setCafeOrderId] = useState("");
   const [cafeReceiptId, setCafeReceiptId] = useState("");
   const [cafeWhatsAppStatus, setCafeWhatsAppStatus] = useState<"sending" | "sent" | "failed">("sending");
+  const [customerWhatsAppSent, setCustomerWhatsAppSent] = useState<"sending" | "sent" | "failed">("sending");
+  const [cafeteriaWhatsAppSent, setCafeteriaWhatsAppSent] = useState<"sending" | "sent" | "failed">("sending");
   const [isResendingCafeReceipt, setIsResendingCafeReceipt] = useState(false);
   const [cafeResendMessage, setCafeResendMessage] = useState("");
   const [orderReadyState, setOrderReadyState] = useState<"idle" | "preparing" | "ready">("idle");
@@ -1594,6 +1596,9 @@ export default function ServicesPage() {
                       e.preventDefault();
                       setIsSubmittingCafeOrder(true);
                       setCafeOrderError("");
+                      setCustomerWhatsAppSent("sending");
+                      setCafeteriaWhatsAppSent("sending");
+                      setCafeWhatsAppStatus("sending");
 
                       try {
                         const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
@@ -1625,6 +1630,8 @@ export default function ServicesPage() {
                           const receiptId = res.receiptId || "";
                           setCafeOrderId(orderId);
                           setCafeReceiptId(receiptId);
+                          setCustomerWhatsAppSent((res as any).customerWhatsAppStatus === "sent" ? "sent" : "failed");
+                          setCafeteriaWhatsAppSent((res as any).cafeteriaWhatsAppStatus === "sent" ? "sent" : "failed");
                           setCafeWhatsAppStatus((res as any).whatsAppSentStatus === "sent" ? "sent" : "failed");
                           setCafeStep("success");
                           await loadData();
@@ -1808,30 +1815,37 @@ export default function ServicesPage() {
                     cafeWhatsAppStatus === "sent" && "bg-emerald-50 border-emerald-200 text-emerald-800",
                     cafeWhatsAppStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
                   )}>
-                    <div className="flex items-start gap-2.5">
-                      {cafeWhatsAppStatus === "sending" && (
-                        <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0 mt-0.5" />
-                      )}
-                      {cafeWhatsAppStatus === "sent" && (
-                        <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                      )}
-                      {cafeWhatsAppStatus === "failed" && (
-                        <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                      )}
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-xs font-bold font-sans">
-                          {cafeWhatsAppStatus === "sending" && "Sending electronic receipt to your WhatsApp..."}
-                          {cafeWhatsAppStatus === "sent" && `Receipt sent successfully to WhatsApp (+91 ${cafePhone})!`}
-                          {cafeWhatsAppStatus === "failed" && "WhatsApp Gateway delivery failed (credentials missing or connection error)."}
-                        </span>
-                        <span className="text-[10px] opacity-80">
-                          Receipt ID: <span className="font-mono">{cafeReceiptId}</span>
-                        </span>
+                    <div className="flex flex-col gap-3 w-full">
+                      <div className="text-xs font-black font-sans pb-1.5 border-b border-current/10 flex justify-between items-center">
+                        <span>WhatsApp Delivery Status</span>
+                        <span className="text-[10px] font-mono opacity-80">ID: {cafeReceiptId}</span>
+                      </div>
+                      
+                      {/* Customer Status Row */}
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2 font-medium">
+                          {customerWhatsAppSent === "sending" && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          {customerWhatsAppSent === "sent" && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          {customerWhatsAppSent === "failed" && <AlertCircle className="w-3.5 h-3.5" />}
+                          <span>Customer Receipt (+91 {cafePhone})</span>
+                        </div>
+                        <span className="font-extrabold uppercase tracking-wider text-[9px]">{customerWhatsAppSent}</span>
+                      </div>
+
+                      {/* Cafeteria Status Row */}
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2 font-medium">
+                          {cafeteriaWhatsAppSent === "sending" && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          {cafeteriaWhatsAppSent === "sent" && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          {cafeteriaWhatsAppSent === "failed" && <AlertCircle className="w-3.5 h-3.5" />}
+                          <span>Cafeteria Kitchen Notification</span>
+                        </div>
+                        <span className="font-extrabold uppercase tracking-wider text-[9px]">{cafeteriaWhatsAppSent}</span>
                       </div>
                     </div>
                     
                     {cafeWhatsAppStatus === "failed" && (
-                      <div className="flex items-center gap-2 mt-1 border-t border-rose-100 pt-2">
+                      <div className="flex items-center gap-2 mt-1 border-t border-current/10 pt-2">
                         <button
                           type="button"
                           disabled={isResendingCafeReceipt}
@@ -1842,6 +1856,8 @@ export default function ServicesPage() {
                               const ret = await resendReceiptAction(cafeReceiptId);
                               if (ret.success) {
                                 setCafeWhatsAppStatus("sent");
+                                setCustomerWhatsAppSent("sent");
+                                setCafeteriaWhatsAppSent("sent");
                                 setCafeResendMessage("Sent!");
                               } else {
                                 setCafeResendMessage(ret.error || "Retry failed");
@@ -1942,6 +1958,36 @@ export default function ServicesPage() {
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         <span>Send Receipt to My WhatsApp</span>
+                      </a>
+
+                      <a
+                        href={getWhatsAppUrl(
+                          cafeteria?.contact || "8108839330",
+                          `*NEW CAFETERIA ORDER RECEIVED*\n` +
+                          `-----------------------------------\n` +
+                          `Order ID: #${cafeOrderId}\n` +
+                          `Receipt No: ${cafeReceiptId}\n\n` +
+                          `*Customer Details:*\n` +
+                          `- Name: ${cafeName.trim()}\n` +
+                          `- Phone: ${cafePhone.trim()}\n` +
+                          `- Email: ${cafeEmail.trim()}\n\n` +
+                          `*Items Ordered:*\n` +
+                          Object.entries(cafeCart).map(([id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id)!;
+                            return `• ${it.name} x ${qty} - ₹${it.price * qty}`;
+                          }).join('\n') + `\n\n` +
+                          `*Total Price:* ₹${Object.entries(cafeCart).reduce((sum, [id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id);
+                            return sum + (it ? it.price * qty : 0);
+                          }, 0)}\n\n` +
+                          `Please prepare this order for counter pickup.`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Send Order Ticket to Kitchen WhatsApp</span>
                       </a>
 
                       <button

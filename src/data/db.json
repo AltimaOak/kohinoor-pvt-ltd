@@ -446,7 +446,7 @@
         "description": "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
         "price": 50,
         "imageSrc": "/images/tea.png",
-        "quantity": 99
+        "quantity": 98
       },
       {
         "id": "cafe-sandwich",
@@ -632,6 +632,24 @@
         "status": "pending",
         "createdAt": "2026-06-10T07:21:50.178Z",
         "receiptId": "REC-1781076110178"
+      },
+      {
+        "items": [
+          {
+            "itemId": "cafe-tea",
+            "name": "Adrak Masala Chai",
+            "price": 50,
+            "quantity": 1
+          }
+        ],
+        "totalPrice": 50,
+        "userName": "Aditya yadav",
+        "userEmail": "adi144.yadav@gmail.com",
+        "userPhone": "9867561346",
+        "id": "cafe-1781237083698",
+        "status": "pending",
+        "createdAt": "2026-06-12T04:04:43.698Z",
+        "receiptId": "REC-1781237083698"
       }
     ]
   },
@@ -702,6 +720,38 @@
           "timestamp": "2026-06-10T07:21:50.183Z",
           "status": "failure",
           "error": "Twilio credentials missing or not configured."
+        }
+      ]
+    },
+    {
+      "id": "REC-1781237083698",
+      "orderId": "cafe-1781237083698",
+      "serviceType": "Cafeteria",
+      "date": "2026-06-12T04:04:43.698Z",
+      "customerName": "Aditya yadav",
+      "customerPhone": "9867561346",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 50,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "failed",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-06-12T04:04:43.717Z",
+          "status": "failure",
+          "error": "Customer dispatch: Twilio credentials missing or not configured."
+        },
+        {
+          "timestamp": "2026-06-12T04:04:43.723Z",
+          "status": "failure",
+          "error": "Cafeteria dispatch: Twilio credentials missing or not configured."
         }
       ]
     }

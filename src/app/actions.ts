@@ -609,7 +609,7 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
 }
 
 // Plant purchase server action
-export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; error?: string }> {
+export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; error?: string }> {
   try {
     const db = await getDb();
     if (!db.nursery) {
@@ -727,7 +727,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 }
 
 // Cafeteria purchase server action
-export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; error?: string }> {
+export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; customerWhatsAppStatus?: string; cafeteriaWhatsAppStatus?: string; error?: string }> {
   try {
     const db = await getDb();
     if (!db.cafeteria) {
@@ -794,19 +794,51 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       `http://localhost:8000/receipts/${receiptId}\n\n` +
       `Thank you for choosing Kohinoor Facilities.`;
 
-    // Trigger Twilio dispatch
+    // Trigger Twilio dispatch to customer
     const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
     
-    // Log Delivery
-    const logEntry = {
+    // Log Customer Delivery
+    const customerLogEntry = {
       timestamp: new Date().toISOString(),
       status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.error
+      error: twilioRes.success ? undefined : `Customer dispatch: ${twilioRes.error || "Unknown error"}`
     };
-    newReceipt.whatsAppDeliveryLogs.push(logEntry);
-    newReceipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
-    if (twilioRes.success) {
-      newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppDeliveryLogs.push(customerLogEntry);
+
+    // Format WhatsApp message for Cafeteria staff
+    const itemsList = order.items.map(item => `• ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n');
+    const cafeteriaWhatsAppMessage = `*NEW CAFETERIA ORDER RECEIVED*\n` +
+      `-----------------------------------\n` +
+      `Order ID: #${orderId}\n` +
+      `Receipt No: ${receiptId}\n\n` +
+      `*Customer Details:*\n` +
+      `- Name: ${order.userName}\n` +
+      `- Phone: ${order.userPhone}\n` +
+      `- Email: ${order.userEmail}\n\n` +
+      `*Items Ordered:*\n` +
+      `${itemsList}\n\n` +
+      `*Total Price:* ₹${order.totalPrice}\n\n` +
+      `A detailed receipt is available at:\n` +
+      `http://localhost:8000/receipts/${receiptId}\n\n` +
+      `Please prepare this order for self-pickup.`;
+
+    // Trigger Twilio dispatch to Cafeteria manager/staff
+    const cafeteriaContact = db.cafeteria.contact || "+91 8108839330";
+    const cafeteriaRes = await sendTwilioWhatsApp(cafeteriaContact, cafeteriaWhatsAppMessage);
+
+    // Log Cafeteria Delivery
+    const cafeteriaLogEntry = {
+      timestamp: new Date().toISOString(),
+      status: cafeteriaRes.success ? ("success" as const) : ("failure" as const),
+      error: cafeteriaRes.success ? undefined : `Cafeteria dispatch: ${cafeteriaRes.error || "Unknown error"}`
+    };
+    newReceipt.whatsAppDeliveryLogs.push(cafeteriaLogEntry);
+
+    // Determine final status
+    const allSucceeded = twilioRes.success && cafeteriaRes.success;
+    newReceipt.whatsAppSentStatus = allSucceeded ? "sent" : "failed";
+    if (allSucceeded) {
+      newReceipt.whatsAppSentTimestamp = new Date().toISOString();
     }
 
     if (!db.receipts) {
@@ -828,11 +860,20 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
 
     // Console log for server-side visibility
     console.log(`\n========================================`);
-    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to ${order.userPhone}`);
+    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to Customer ${order.userPhone}`);
     console.log(`Message:\n${whatsAppMessage}`);
+    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to Cafeteria Kitchen ${cafeteriaContact}`);
+    console.log(`Message:\n${cafeteriaWhatsAppMessage}`);
     console.log(`========================================\n`);
 
-    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus };
+    return {
+      success: true,
+      orderId,
+      receiptId,
+      whatsAppSentStatus: newReceipt.whatsAppSentStatus,
+      customerWhatsAppStatus: twilioRes.success ? "sent" : "failed",
+      cafeteriaWhatsAppStatus: cafeteriaRes.success ? "sent" : "failed"
+    };
   } catch (error) {
     console.error("Error creating cafeteria order:", error);
     return { success: false, error: "Failed to process cafeteria order" };
@@ -854,7 +895,7 @@ export async function resendReceiptAction(receiptId: string): Promise<{ success:
 
     const receipt = db.receipts[receiptIndex];
 
-    // Reconstruct WhatsApp Message
+    // Reconstruct WhatsApp Message for Customer
     const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
       `Your order has been confirmed.\n\n` +
       `Receipt No: ${receipt.id}\n` +
@@ -864,30 +905,61 @@ export async function resendReceiptAction(receiptId: string): Promise<{ success:
       `http://localhost:8000/receipts/${receipt.id}\n\n` +
       `Thank you for choosing Kohinoor Facilities.`;
 
-    // Trigger Twilio dispatch
+    // Trigger Twilio dispatch to customer
     const twilioRes = await sendTwilioWhatsApp(receipt.customerPhone, whatsAppMessage);
 
-    // Log Delivery
+    // Log Customer Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
       status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.error
+      error: twilioRes.success ? undefined : `Customer dispatch: ${twilioRes.error || "Unknown error"}`
     };
     
     if (!receipt.whatsAppDeliveryLogs) {
       receipt.whatsAppDeliveryLogs = [];
     }
     receipt.whatsAppDeliveryLogs.push(logEntry);
-    receipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
-    if (twilioRes.success) {
-      receipt.whatsAppSentTimestamp = logEntry.timestamp;
+
+    let allSucceeded = twilioRes.success;
+
+    // If it's a Cafeteria order, also resend to cafeteria kitchen
+    if (receipt.serviceType === "Cafeteria") {
+      const cafeteriaContact = db.cafeteria?.contact || "+91 8108839330";
+      const itemsList = receipt.items.map(item => `• ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n');
+      const cafeteriaWhatsAppMessage = `*NEW CAFETERIA ORDER RECEIVED (RESENT)*\n` +
+        `-----------------------------------\n` +
+        `Order ID: #${receipt.orderId}\n` +
+        `Receipt No: ${receipt.id}\n\n` +
+        `*Customer Details:*\n` +
+        `- Name: ${receipt.customerName}\n` +
+        `- Phone: ${receipt.customerPhone}\n\n` +
+        `*Items Ordered:*\n` +
+        `${itemsList}\n\n` +
+        `*Total Price:* ₹${receipt.totalAmountPaid}\n\n` +
+        `A detailed receipt is available at:\n` +
+        `http://localhost:8000/receipts/${receipt.id}\n\n` +
+        `Please prepare this order for self-pickup.`;
+      
+      const cafeteriaRes = await sendTwilioWhatsApp(cafeteriaContact, cafeteriaWhatsAppMessage);
+      const cafeteriaLogEntry = {
+        timestamp: new Date().toISOString(),
+        status: cafeteriaRes.success ? ("success" as const) : ("failure" as const),
+        error: cafeteriaRes.success ? undefined : `Cafeteria dispatch: ${cafeteriaRes.error || "Unknown error"}`
+      };
+      receipt.whatsAppDeliveryLogs.push(cafeteriaLogEntry);
+      allSucceeded = allSucceeded && cafeteriaRes.success;
+    }
+
+    receipt.whatsAppSentStatus = allSucceeded ? "sent" : "failed";
+    if (allSucceeded) {
+      receipt.whatsAppSentTimestamp = new Date().toISOString();
     }
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 
-    if (!twilioRes.success) {
-      return { success: false, error: twilioRes.error || "Failed to deliver WhatsApp message." };
+    if (!allSucceeded) {
+      return { success: false, error: "Failed to deliver WhatsApp message(s)." };
     }
 
     return { success: true };
