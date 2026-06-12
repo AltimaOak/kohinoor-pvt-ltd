@@ -54,6 +54,7 @@ import {
   checkAuth,
   uploadPhotoAction,
   resendReceiptAction,
+  resendEmailReceiptAction,
   DatabaseSchema,
   EventItem,
   ServiceItem,
@@ -98,6 +99,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts" | "doctors" | "receipts" | "nursery" | "cafeteria">("events");
   const [selectedReceiptId, setSelectedReceiptId] = useState<string | null>(null);
   const [resendingReceiptId, setResendingReceiptId] = useState<string | null>(null);
+  const [resendingEmailReceiptId, setResendingEmailReceiptId] = useState<string | null>(null);
 
   // Nursery states
   const [editingPlant, setEditingPlant] = useState<PlantItem | null>(null);
@@ -525,6 +527,26 @@ export default function AdminPage() {
       showToast("error", "Server communication failed while resending.");
     } finally {
       setResendingReceiptId(null);
+    }
+  };
+
+  const handleResendEmailReceipt = async (receiptId: string) => {
+    setResendingEmailReceiptId(receiptId);
+    showToast("info", `Resending email receipt for ${receiptId}...`);
+    try {
+      const res = await resendEmailReceiptAction(receiptId);
+      if (res.success) {
+        showToast("success", `Email receipt ${receiptId} resent successfully!`);
+        // Refresh database to get updated logs/status
+        const updatedDb = await getDb();
+        setDb(updatedDb);
+      } else {
+        showToast("error", res.error || "Failed to resend email receipt.");
+      }
+    } catch (err) {
+      showToast("error", "Server communication failed while resending email.");
+    } finally {
+      setResendingEmailReceiptId(null);
     }
   };
 
@@ -2240,9 +2262,44 @@ export default function AdminPage() {
                               <span className="font-mono font-semibold text-slate-800">{receipt.customerPhone}</span>
                             </div>
                             <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Email Address:</span>
+                              <span className="font-semibold text-slate-800">{receipt.customerEmail || "N/A"}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Email Status:</span>
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                receipt.emailSentStatus === "sent"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  : receipt.emailSentStatus === "failed"
+                                  ? "bg-rose-50 text-rose-700 border border-rose-200"
+                                  : "bg-slate-50 text-slate-600 border border-slate-200"
+                              }`}>
+                                <span className="capitalize">{receipt.emailSentStatus || "N/A"}</span>
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-xs">
                               <span className="text-slate-500 font-medium">Order Reference:</span>
                               <span className="font-mono text-slate-600">{receipt.orderId}</span>
                             </div>
+                            {receipt.pdfUrl && (
+                              <div className="flex justify-between text-xs border-t border-slate-100 pt-2">
+                                <span className="text-slate-500 font-medium">PDF Receipt:</span>
+                                <a 
+                                  href={receipt.pdfUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sky-600 hover:text-sky-700 font-bold underline"
+                                >
+                                  View / Download PDF
+                                </a>
+                              </div>
+                            )}
+                            {receipt.whatsAppMessageId && (
+                              <div className="flex justify-between text-xs border-t border-slate-100 pt-2">
+                                <span className="text-slate-500 font-medium">WhatsApp ID:</span>
+                                <span className="font-mono text-[10px] text-slate-600 break-all select-all">{receipt.whatsAppMessageId}</span>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -2303,6 +2360,59 @@ export default function AdminPage() {
                                     <div className="flex items-center gap-2">
                                       <span className="font-semibold text-slate-800">
                                         {log.status === "success" ? "Delivered successfully" : "Delivery failed"}
+                                      </span>
+                                      <span className="text-[10px] text-slate-400 font-mono">
+                                        {new Date(log.timestamp).toLocaleString()}
+                                      </span>
+                                    </div>
+                                    {log.error && (
+                                      <span className="text-[10px] text-rose-600 font-medium bg-rose-50 border border-rose-100/50 px-2 py-1 rounded-md mt-1 font-mono break-all">
+                                        Error: {log.error}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Email Delivery Logs */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center">
+                            <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Email Dispatch Logs</h4>
+                            <button
+                              onClick={() => handleResendEmailReceipt(receipt.id)}
+                              disabled={resendingEmailReceiptId === receipt.id}
+                              className="px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-[10px] font-bold shadow-md shadow-blue-500/10 transition-all flex items-center gap-1 cursor-pointer"
+                            >
+                              {resendingEmailReceiptId === receipt.id ? (
+                                <Loader2 className="w-3 animate-spin text-white" />
+                              ) : (
+                                <Mail className="w-3 h-3 text-white" />
+                              )}
+                              <span>Send Email</span>
+                            </button>
+                          </div>
+                          <div className="border border-slate-100 rounded-2xl p-4 max-h-[180px] overflow-y-auto flex flex-col gap-3">
+                            <div className="flex justify-between text-xs font-semibold pb-1.5 border-b border-slate-100">
+                              <span className="text-slate-500 font-medium">Recipient Email:</span>
+                              <span className="text-slate-800">{receipt.customerEmail || "N/A"}</span>
+                            </div>
+                            {(!receipt.emailDeliveryLogs || receipt.emailDeliveryLogs.length === 0) ? (
+                              <div className="text-center py-4 text-slate-400 font-bold text-xs">
+                                No email dispatch attempts logged yet.
+                              </div>
+                            ) : (
+                              receipt.emailDeliveryLogs.map((log, idx) => (
+                                <div key={idx} className="flex gap-3 text-xs leading-normal">
+                                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                                    log.status === "success" ? "bg-emerald-500" : "bg-rose-500"
+                                  }`} />
+                                  <div className="flex flex-col gap-0.5">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-semibold text-slate-800">
+                                        {log.status === "success" ? "Sent successfully" : "Send failed"}
                                       </span>
                                       <span className="text-[10px] text-slate-400 font-mono">
                                         {new Date(log.timestamp).toLocaleString()}

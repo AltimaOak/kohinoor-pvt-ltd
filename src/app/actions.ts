@@ -2,7 +2,10 @@
 
 import fs from "fs/promises";
 import path from "path";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { generateAndSaveReceiptPdf, generateReceiptPdfBuffer } from "./utils/receiptGenerator";
+import { sendWhatsAppDocumentMessage } from "./utils/whatsAppSender";
+import { sendReceiptEmail } from "./utils/emailSender";
 
 const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
@@ -203,6 +206,12 @@ export interface ReceiptLog {
   error?: string;
 }
 
+export interface EmailLog {
+  timestamp: string;
+  status: "success" | "failure";
+  error?: string;
+}
+
 export interface Receipt {
   id: string; // REC-XXXXXX
   orderId: string;
@@ -210,6 +219,7 @@ export interface Receipt {
   date: string;
   customerName: string;
   customerPhone: string;
+  customerEmail?: string;
   items: {
     itemId: string;
     name: string;
@@ -219,9 +229,14 @@ export interface Receipt {
   totalAmountPaid: number;
   paymentStatus: "completed" | "pending";
   paymentMethod: string;
-  whatsAppSentStatus: "sent" | "failed" | "pending";
+  whatsAppSentStatus: "sent" | "delivered" | "failed" | "pending";
   whatsAppSentTimestamp?: string;
   whatsAppDeliveryLogs: ReceiptLog[];
+  pdfUrl?: string;
+  whatsAppMessageId?: string;
+  emailSentStatus?: "sent" | "failed" | "pending";
+  emailSentTimestamp?: string;
+  emailDeliveryLogs?: EmailLog[];
 }
 
 export interface DatabaseSchema {
@@ -609,7 +624,7 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
 }
 
 // Plant purchase server action
-export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; error?: string }> {
+export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; emailSentStatus?: string; pdfUrl?: string; error?: string }> {
   try {
     const db = await getDb();
     if (!db.nursery) {
@@ -656,6 +671,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
       date: newOrder.createdAt,
       customerName: order.userName,
       customerPhone: order.userPhone,
+      customerEmail: order.userEmail,
       items: [
         {
           itemId: order.plantId,
@@ -671,29 +687,81 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
       whatsAppDeliveryLogs: []
     };
 
-    // Format WhatsApp message as requested
-    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
-      `Your order has been confirmed.\n\n` +
-      `Receipt No: ${receiptId}\n` +
-      `Service: Nursery\n` +
-      `Total Paid: ₹${order.totalPrice}\n\n` +
-      `A detailed receipt is attached below:\n` +
-      `http://localhost:8000/receipts/${receiptId}\n\n` +
-      `Thank you for choosing Kohinoor Facilities.`;
+    // Generate PDF Receipt
+    let pdfBuffer: Buffer | null = null;
+    let pdfUrl = "";
+    try {
+      pdfBuffer = await generateReceiptPdfBuffer(newReceipt);
+      
+      // Save it to disk for static public receipt access
+      const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
+      await fs.mkdir(receiptsDir, { recursive: true });
+      const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
+      const filePath = path.join(receiptsDir, filename);
+      await fs.writeFile(filePath, pdfBuffer);
+      pdfUrl = `/uploads/receipts/${filename}`;
+      newReceipt.pdfUrl = pdfUrl;
+    } catch (pdfErr) {
+      console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF:", pdfErr);
+    }
 
-    // Trigger Twilio dispatch
-    const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
+    // Determine host and absolute URL
+    let absolutePdfUrl = "";
+    if (pdfUrl) {
+      let host = "localhost:3000";
+      try {
+        host = (await headers()).get("host") || "localhost:3000";
+      } catch (e) {
+        // Fallback
+      }
+      const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+      absolutePdfUrl = `${protocol}://${host}${pdfUrl}`;
+    }
+
+    // Dispatch Receipt Email with the generated PDF Buffer
+    if (pdfBuffer && order.userEmail) {
+      const emailRes = await sendReceiptEmail(newReceipt, pdfBuffer, order.userEmail);
+      newReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+      const emailLog = {
+        timestamp: new Date().toISOString(),
+        status: emailRes.success ? ("success" as const) : ("failure" as const),
+        error: emailRes.error
+      };
+      newReceipt.emailDeliveryLogs = [emailLog];
+      if (emailRes.success) {
+        newReceipt.emailSentTimestamp = emailLog.timestamp;
+      }
+    } else {
+      newReceipt.emailSentStatus = "failed";
+      newReceipt.emailDeliveryLogs = [{
+        timestamp: new Date().toISOString(),
+        status: "failure" as const,
+        error: !pdfBuffer ? "PDF buffer was not generated" : "No customer email provided"
+      }];
+    }
+
+    // Trigger official WhatsApp Document delivery
+    const whatsAppRes = await sendWhatsAppDocumentMessage(
+      order.userName,
+      orderId,
+      receiptId,
+      "Nursery",
+      order.totalPrice,
+      order.userPhone,
+      absolutePdfUrl
+    );
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.error
+      status: whatsAppRes.success ? ("success" as const) : ("failure" as const),
+      error: whatsAppRes.error
     };
     newReceipt.whatsAppDeliveryLogs.push(logEntry);
-    newReceipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
-    if (twilioRes.success) {
+    newReceipt.whatsAppSentStatus = whatsAppRes.success ? "sent" : "failed";
+    if (whatsAppRes.success) {
       newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+      newReceipt.whatsAppMessageId = whatsAppRes.messageId;
     }
 
     if (!db.receipts) {
@@ -703,6 +771,9 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    // Asynchronously trigger background retry worker for any failed receipts
+    Promise.resolve().then(() => retryFailedWhatsAppSends());
 
     // Simulate sending email to nursery manager & purchaser
     console.log(`\n========================================`);
@@ -715,11 +786,11 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 
     // Keep console log simulation for visibility
     console.log(`\n========================================`);
-    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to ${order.userPhone}`);
-    console.log(`Message:\n${whatsAppMessage}`);
+    console.log(`[WHATSAPP DISPATCH] Outgoing PDF receipt WhatsApp message triggered to ${order.userPhone}`);
+    console.log(`PDF URL: ${newReceipt.pdfUrl}`);
     console.log(`========================================\n`);
 
-    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus };
+    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus, emailSentStatus: newReceipt.emailSentStatus, pdfUrl: newReceipt.pdfUrl };
   } catch (error) {
     console.error("Error creating nursery purchase order:", error);
     return { success: false, error: "Failed to process plant purchase" };
@@ -727,7 +798,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 }
 
 // Cafeteria purchase server action
-export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; error?: string }> {
+export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; emailSentStatus?: string; pdfUrl?: string; error?: string }> {
   try {
     const db = await getDb();
     if (!db.cafeteria) {
@@ -771,6 +842,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       date: newOrder.createdAt,
       customerName: order.userName,
       customerPhone: order.userPhone,
+      customerEmail: order.userEmail,
       items: order.items.map(item => ({
         itemId: item.itemId,
         name: item.name,
@@ -784,29 +856,81 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       whatsAppDeliveryLogs: []
     };
 
-    // Format WhatsApp message as requested
-    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
-      `Your order has been confirmed.\n\n` +
-      `Receipt No: ${receiptId}\n` +
-      `Service: Cafeteria\n` +
-      `Total Paid: ₹${order.totalPrice}\n\n` +
-      `A detailed receipt is attached below:\n` +
-      `http://localhost:8000/receipts/${receiptId}\n\n` +
-      `Thank you for choosing Kohinoor Facilities.`;
+    // Generate PDF Receipt
+    let pdfBuffer: Buffer | null = null;
+    let pdfUrl = "";
+    try {
+      pdfBuffer = await generateReceiptPdfBuffer(newReceipt);
+      
+      // Save it to disk for static public receipt access
+      const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
+      await fs.mkdir(receiptsDir, { recursive: true });
+      const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
+      const filePath = path.join(receiptsDir, filename);
+      await fs.writeFile(filePath, pdfBuffer);
+      pdfUrl = `/uploads/receipts/${filename}`;
+      newReceipt.pdfUrl = pdfUrl;
+    } catch (pdfErr) {
+      console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF:", pdfErr);
+    }
 
-    // Trigger Twilio dispatch
-    const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
+    // Determine host and absolute URL
+    let absolutePdfUrl = "";
+    if (pdfUrl) {
+      let host = "localhost:3000";
+      try {
+        host = (await headers()).get("host") || "localhost:3000";
+      } catch (e) {
+        // Fallback
+      }
+      const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+      absolutePdfUrl = `${protocol}://${host}${pdfUrl}`;
+    }
+
+    // Dispatch Receipt Email with the generated PDF Buffer
+    if (pdfBuffer && order.userEmail) {
+      const emailRes = await sendReceiptEmail(newReceipt, pdfBuffer, order.userEmail);
+      newReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+      const emailLog = {
+        timestamp: new Date().toISOString(),
+        status: emailRes.success ? ("success" as const) : ("failure" as const),
+        error: emailRes.error
+      };
+      newReceipt.emailDeliveryLogs = [emailLog];
+      if (emailRes.success) {
+        newReceipt.emailSentTimestamp = emailLog.timestamp;
+      }
+    } else {
+      newReceipt.emailSentStatus = "failed";
+      newReceipt.emailDeliveryLogs = [{
+        timestamp: new Date().toISOString(),
+        status: "failure" as const,
+        error: !pdfBuffer ? "PDF buffer was not generated" : "No customer email provided"
+      }];
+    }
+
+    // Trigger official WhatsApp Document delivery
+    const whatsAppRes = await sendWhatsAppDocumentMessage(
+      order.userName,
+      orderId,
+      receiptId,
+      "Cafeteria",
+      order.totalPrice,
+      order.userPhone,
+      absolutePdfUrl
+    );
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.error
+      status: whatsAppRes.success ? ("success" as const) : ("failure" as const),
+      error: whatsAppRes.error
     };
     newReceipt.whatsAppDeliveryLogs.push(logEntry);
-    newReceipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
-    if (twilioRes.success) {
+    newReceipt.whatsAppSentStatus = whatsAppRes.success ? "sent" : "failed";
+    if (whatsAppRes.success) {
       newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+      newReceipt.whatsAppMessageId = whatsAppRes.messageId;
     }
 
     if (!db.receipts) {
@@ -816,6 +940,9 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    // Asynchronously trigger background retry worker for any failed receipts
+    Promise.resolve().then(() => retryFailedWhatsAppSends());
 
     // Simulate sending email to Cafeteria Manager & Purchaser
     console.log(`\n========================================`);
@@ -828,11 +955,11 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
 
     // Console log for server-side visibility
     console.log(`\n========================================`);
-    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to ${order.userPhone}`);
-    console.log(`Message:\n${whatsAppMessage}`);
+    console.log(`[WHATSAPP DISPATCH] Outgoing PDF receipt WhatsApp message triggered to ${order.userPhone}`);
+    console.log(`PDF URL: ${newReceipt.pdfUrl}`);
     console.log(`========================================\n`);
 
-    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus };
+    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus, emailSentStatus: newReceipt.emailSentStatus, pdfUrl: newReceipt.pdfUrl };
   } catch (error) {
     console.error("Error creating cafeteria order:", error);
     return { success: false, error: "Failed to process cafeteria order" };
@@ -854,45 +981,260 @@ export async function resendReceiptAction(receiptId: string): Promise<{ success:
 
     const receipt = db.receipts[receiptIndex];
 
-    // Reconstruct WhatsApp Message
-    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
-      `Your order has been confirmed.\n\n` +
-      `Receipt No: ${receipt.id}\n` +
-      `Service: ${receipt.serviceType}\n` +
-      `Total Paid: ₹${receipt.totalAmountPaid}\n\n` +
-      `A detailed receipt is attached below:\n` +
-      `http://localhost:8000/receipts/${receipt.id}\n\n` +
-      `Thank you for choosing Kohinoor Facilities.`;
+    // Generate PDF if missing
+    if (!receipt.pdfUrl) {
+      try {
+        receipt.pdfUrl = await generateAndSaveReceiptPdf(receipt);
+      } catch (pdfErr) {
+        console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF during resend:", pdfErr);
+      }
+    }
 
-    // Trigger Twilio dispatch
-    const twilioRes = await sendTwilioWhatsApp(receipt.customerPhone, whatsAppMessage);
+    // Determine host and absolute URL
+    let absolutePdfUrl = receipt.pdfUrl || "";
+    if (receipt.pdfUrl && receipt.pdfUrl.startsWith("/")) {
+      let host = "localhost:3000";
+      try {
+        host = (await headers()).get("host") || "localhost:3000";
+      } catch (e) {
+        // Fallback
+      }
+      const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+      absolutePdfUrl = `${protocol}://${host}${receipt.pdfUrl}`;
+    }
+
+    // Trigger official WhatsApp Document delivery
+    const whatsAppRes = await sendWhatsAppDocumentMessage(
+      receipt.customerName,
+      receipt.orderId,
+      receipt.id,
+      receipt.serviceType,
+      receipt.totalAmountPaid,
+      receipt.customerPhone,
+      absolutePdfUrl
+    );
 
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.error
+      status: whatsAppRes.success ? ("success" as const) : ("failure" as const),
+      error: whatsAppRes.error
     };
     
     if (!receipt.whatsAppDeliveryLogs) {
       receipt.whatsAppDeliveryLogs = [];
     }
     receipt.whatsAppDeliveryLogs.push(logEntry);
-    receipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
-    if (twilioRes.success) {
+    receipt.whatsAppSentStatus = whatsAppRes.success ? "sent" : "failed";
+    if (whatsAppRes.success) {
       receipt.whatsAppSentTimestamp = logEntry.timestamp;
+      receipt.whatsAppMessageId = whatsAppRes.messageId;
     }
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 
-    if (!twilioRes.success) {
-      return { success: false, error: twilioRes.error || "Failed to deliver WhatsApp message." };
+    if (!whatsAppRes.success) {
+      return { success: false, error: whatsAppRes.error || "Failed to deliver WhatsApp message." };
     }
 
     return { success: true };
   } catch (err) {
     console.error("Error resending receipt:", err);
     return { success: false, error: "Server error occurred while resending." };
+  }
+}
+
+/**
+ * Background worker to automatically retry failed or pending WhatsApp and Email receipt sends.
+ */
+export async function retryFailedWhatsAppSends(): Promise<void> {
+  try {
+    const db = await getDb();
+    if (!db.receipts) return;
+
+    let updatedAny = false;
+
+    // --- WhatsApp Retries ---
+    const failedWhatsAppReceipts = db.receipts.filter(
+      r => r.whatsAppSentStatus === "failed" || r.whatsAppSentStatus === "pending"
+    );
+
+    if (failedWhatsAppReceipts.length > 0) {
+      console.log(`[AUTO-RETRY WORKER] Found ${failedWhatsAppReceipts.length} failed/pending WhatsApp receipt deliveries. Attempting automatic retries...`);
+      for (const receipt of failedWhatsAppReceipts) {
+        if (!receipt.pdfUrl) {
+          try {
+            receipt.pdfUrl = await generateAndSaveReceiptPdf(receipt);
+          } catch (pdfErr) {
+            console.error(`[AUTO-RETRY WORKER] Failed to generate PDF for receipt ${receipt.id}:`, pdfErr);
+            continue;
+          }
+        }
+
+        // Construct absolute PDF URL
+        let absolutePdfUrl = receipt.pdfUrl;
+        if (receipt.pdfUrl.startsWith("/")) {
+          let host = "localhost:3000";
+          try {
+            host = (await headers()).get("host") || "localhost:3000";
+          } catch {
+            // outside request context
+          }
+          const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+          absolutePdfUrl = `${protocol}://${host}${receipt.pdfUrl}`;
+        }
+
+        const res = await sendWhatsAppDocumentMessage(
+          receipt.customerName,
+          receipt.orderId,
+          receipt.id,
+          receipt.serviceType,
+          receipt.totalAmountPaid,
+          receipt.customerPhone,
+          absolutePdfUrl
+        );
+
+        const logEntry = {
+          timestamp: new Date().toISOString(),
+          status: res.success ? ("success" as const) : ("failure" as const),
+          error: res.error
+        };
+
+        if (!receipt.whatsAppDeliveryLogs) {
+          receipt.whatsAppDeliveryLogs = [];
+        }
+        receipt.whatsAppDeliveryLogs.push(logEntry);
+        
+        if (res.success) {
+          receipt.whatsAppSentStatus = "sent";
+          receipt.whatsAppSentTimestamp = logEntry.timestamp;
+          receipt.whatsAppMessageId = res.messageId;
+          console.log(`[AUTO-RETRY WORKER SUCCESS] Auto-resent WhatsApp receipt ${receipt.id} successfully.`);
+        } else {
+          receipt.whatsAppSentStatus = "failed";
+          console.warn(`[AUTO-RETRY WORKER FAILURE] Failed to auto-resend WhatsApp receipt ${receipt.id}: ${res.error}`);
+        }
+        updatedAny = true;
+      }
+    }
+
+    // --- Email Retries ---
+    const failedEmailReceipts = db.receipts.filter(
+      r => r.customerEmail && (r.emailSentStatus === "failed" || r.emailSentStatus === "pending")
+    );
+
+    if (failedEmailReceipts.length > 0) {
+      console.log(`[AUTO-RETRY WORKER] Found ${failedEmailReceipts.length} failed/pending Email receipt deliveries. Attempting automatic retries...`);
+      for (const receipt of failedEmailReceipts) {
+        try {
+          const pdfBuffer = await generateReceiptPdfBuffer(receipt);
+          const emailRes = await sendReceiptEmail(receipt, pdfBuffer, receipt.customerEmail!);
+
+          const logEntry = {
+            timestamp: new Date().toISOString(),
+            status: emailRes.success ? ("success" as const) : ("failure" as const),
+            error: emailRes.error
+          };
+
+          if (!receipt.emailDeliveryLogs) {
+            receipt.emailDeliveryLogs = [];
+          }
+          receipt.emailDeliveryLogs.push(logEntry);
+
+          if (emailRes.success) {
+            receipt.emailSentStatus = "sent";
+            receipt.emailSentTimestamp = logEntry.timestamp;
+            console.log(`[AUTO-RETRY WORKER SUCCESS] Auto-sent Email receipt ${receipt.id} successfully.`);
+          } else {
+            receipt.emailSentStatus = "failed";
+            console.warn(`[AUTO-RETRY WORKER FAILURE] Failed to auto-send Email receipt ${receipt.id}: ${emailRes.error}`);
+          }
+          updatedAny = true;
+        } catch (emailErr: any) {
+          console.error(`[AUTO-RETRY WORKER] Failed to generate PDF or send email for receipt ${receipt.id}:`, emailErr);
+          const logEntry = {
+            timestamp: new Date().toISOString(),
+            status: "failure" as const,
+            error: emailErr.message || "Failed during retry"
+          };
+          if (!receipt.emailDeliveryLogs) {
+            receipt.emailDeliveryLogs = [];
+          }
+          receipt.emailDeliveryLogs.push(logEntry);
+          receipt.emailSentStatus = "failed";
+          updatedAny = true;
+        }
+      }
+    }
+
+    if (updatedAny) {
+      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    }
+  } catch (err) {
+    console.error(`[AUTO-RETRY WORKER ERROR] Unexpected error in retry background job:`, err);
+  }
+}
+
+/**
+ * Resends the PDF receipt to the customer's email.
+ */
+export async function resendEmailReceiptAction(receiptId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.receipts) {
+      db.receipts = [];
+    }
+
+    const receiptIndex = db.receipts.findIndex(r => r.id === receiptId);
+    if (receiptIndex === -1) {
+      return { success: false, error: "Receipt not found." };
+    }
+
+    const receipt = db.receipts[receiptIndex];
+
+    if (!receipt.customerEmail) {
+      return { success: false, error: "No email address found for this receipt. Cannot send email." };
+    }
+
+    // Generate in-memory PDF buffer
+    let pdfBuffer: Buffer;
+    try {
+      pdfBuffer = await generateReceiptPdfBuffer(receipt);
+    } catch (pdfErr: any) {
+      console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF during email resend:", pdfErr);
+      return { success: false, error: `Failed to generate PDF receipt: ${pdfErr.message || pdfErr}` };
+    }
+
+    // Call sendReceiptEmail
+    const emailRes = await sendReceiptEmail(receipt, pdfBuffer, receipt.customerEmail);
+
+    // Log Delivery
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      status: emailRes.success ? ("success" as const) : ("failure" as const),
+      error: emailRes.error
+    };
+
+    if (!receipt.emailDeliveryLogs) {
+      receipt.emailDeliveryLogs = [];
+    }
+    receipt.emailDeliveryLogs.push(logEntry);
+    receipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+    if (emailRes.success) {
+      receipt.emailSentTimestamp = logEntry.timestamp;
+    }
+
+    // Save database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    if (!emailRes.success) {
+      return { success: false, error: emailRes.error || "Failed to deliver email." };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error("Error resending email receipt:", err);
+    return { success: false, error: err.message || "Server error occurred while resending email." };
   }
 }
