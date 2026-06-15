@@ -54,6 +54,7 @@ import {
   checkAuth,
   uploadPhotoAction,
   resendReceiptAction,
+  resendEmailReceiptAction,
   DatabaseSchema,
   EventItem,
   ServiceItem,
@@ -61,7 +62,8 @@ import {
   ManagerItem,
   DoctorItem,
   PlantItem,
-  CafeMenuItem
+  CafeMenuItem,
+  HealthCheckupCard
 } from "@/app/actions";
 import * as LucideIcons from "lucide-react";
 
@@ -98,6 +100,9 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"events" | "services" | "photos" | "contacts" | "doctors" | "receipts" | "nursery" | "cafeteria">("events");
   const [selectedReceiptId, setSelectedReceiptId] = useState<string | null>(null);
   const [resendingReceiptId, setResendingReceiptId] = useState<string | null>(null);
+  const [resendingEmailReceiptId, setResendingEmailReceiptId] = useState<string | null>(null);
+  const [receiptSearchQuery, setReceiptSearchQuery] = useState("");
+  const [receiptServiceFilter, setReceiptServiceFilter] = useState<"all" | "Nursery" | "Cafeteria">("all");
 
   // Nursery states
   const [editingPlant, setEditingPlant] = useState<PlantItem | null>(null);
@@ -118,6 +123,30 @@ export default function AdminPage() {
   const [isAddingPhoto, setIsAddingPhoto] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<DoctorItem | null>(null);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
+
+  // Doctor Camp Poster State
+  const [cardSocietyName, setCardSocietyName] = useState("");
+  const [cardAvailabilityText, setCardAvailabilityText] = useState("");
+  const [cardFrequencyText, setCardFrequencyText] = useState("");
+  const [cardDaysText, setCardDaysText] = useState("");
+  const [cardTimingsText, setCardTimingsText] = useState("");
+  const [cardBookingLink, setCardBookingLink] = useState("");
+  const [cardFooterText, setCardFooterText] = useState("");
+  const [cardDoctorName, setCardDoctorName] = useState("");
+
+  // Synchronize card settings when db changes
+  useEffect(() => {
+    if (db?.healthCheckupCard) {
+      setCardSocietyName(db.healthCheckupCard.societyName || "");
+      setCardAvailabilityText(db.healthCheckupCard.availabilityText || "");
+      setCardFrequencyText(db.healthCheckupCard.frequencyText || "");
+      setCardDaysText(db.healthCheckupCard.daysText || "");
+      setCardTimingsText(db.healthCheckupCard.timingsText || "");
+      setCardBookingLink(db.healthCheckupCard.bookingLink || "");
+      setCardFooterText(db.healthCheckupCard.footerText || "");
+      setCardDoctorName(db.healthCheckupCard.doctorName || "");
+    }
+  }, [db]);
 
   // Temporary feature text for services input
   const [newFeatureText, setNewFeatureText] = useState("");
@@ -427,6 +456,27 @@ export default function AdminPage() {
     await saveDatabase({ ...db, doctors: updatedDoctors });
   };
 
+  const handleSaveCardSettings = async () => {
+    if (!db) return;
+    const updatedDb: DatabaseSchema = {
+      ...db,
+      healthCheckupCard: {
+        societyName: cardSocietyName,
+        availabilityText: cardAvailabilityText,
+        frequencyText: cardFrequencyText,
+        daysText: cardDaysText,
+        timingsText: cardTimingsText,
+        bookingLink: cardBookingLink,
+        footerText: cardFooterText,
+        doctorName: cardDoctorName
+      }
+    };
+    const success = await saveDatabase(updatedDb);
+    if (success) {
+      showToast("success", "Doctor Camp Poster settings published successfully!");
+    }
+  };
+
   // ==========================================
   // CONTACTS OPERATIONS
   // ==========================================
@@ -525,6 +575,26 @@ export default function AdminPage() {
       showToast("error", "Server communication failed while resending.");
     } finally {
       setResendingReceiptId(null);
+    }
+  };
+
+  const handleResendEmailReceipt = async (receiptId: string) => {
+    setResendingEmailReceiptId(receiptId);
+    showToast("info", `Resending email receipt for ${receiptId}...`);
+    try {
+      const res = await resendEmailReceiptAction(receiptId);
+      if (res.success) {
+        showToast("success", `Email receipt ${receiptId} resent successfully!`);
+        // Refresh database to get updated logs/status
+        const updatedDb = await getDb();
+        setDb(updatedDb);
+      } else {
+        showToast("error", res.error || "Failed to resend email receipt.");
+      }
+    } catch (err) {
+      showToast("error", "Server communication failed while resending email.");
+    } finally {
+      setResendingEmailReceiptId(null);
     }
   };
 
@@ -1875,6 +1945,107 @@ export default function AdminPage() {
                   </button>
                 </div>
 
+                {/* Doctor Camp Poster Settings Form */}
+                <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                  <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
+                    <Settings className="w-4.5 h-4.5" />
+                    <span>Doctor Camp Poster Card Settings</span>
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Society/Center Name</label>
+                      <input
+                        type="text"
+                        value={cardSocietyName}
+                        onChange={(e) => setCardSocietyName(e.target.value)}
+                        placeholder="Society Title at top of card"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Availability Text</label>
+                      <input
+                        type="text"
+                        value={cardAvailabilityText}
+                        onChange={(e) => setCardAvailabilityText(e.target.value)}
+                        placeholder="Availability Message (e.g. DOCTOR)"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Frequency Text</label>
+                      <input
+                        type="text"
+                        value={cardFrequencyText}
+                        onChange={(e) => setCardFrequencyText(e.target.value)}
+                        placeholder="Left column frequency (e.g. EVERY MONTH)"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Days Text</label>
+                      <input
+                        type="text"
+                        value={cardDaysText}
+                        onChange={(e) => setCardDaysText(e.target.value)}
+                        placeholder="Right column days (e.g. 2ND & 4TH WEDNESDAY)"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Timings Range</label>
+                      <input
+                        type="text"
+                        value={cardTimingsText}
+                        onChange={(e) => setCardTimingsText(e.target.value)}
+                        placeholder="Timing strip text (e.g. 12.00 pm - 02.00 pm)"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Booking Link URL (for Button & QR Code)</label>
+                      <input
+                        type="text"
+                        value={cardBookingLink}
+                        onChange={(e) => setCardBookingLink(e.target.value)}
+                        placeholder="e.g. https://docs.google.com/forms/..."
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold text-slate-700 font-mono"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Doctor's Name (Displayed below Button)</label>
+                      <input
+                        type="text"
+                        value={cardDoctorName}
+                        onChange={(e) => setCardDoctorName(e.target.value)}
+                        placeholder="e.g. Dr. Reshma Nikam"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold text-slate-700"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Footer Badge Text</label>
+                      <input
+                        type="text"
+                        value={cardFooterText}
+                        onChange={(e) => setCardFooterText(e.target.value)}
+                        placeholder="e.g. Your health is our priority"
+                        className="px-4 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 font-semibold text-slate-700"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end pt-2">
+                    <button
+                      onClick={handleSaveCardSettings}
+                      className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/10 transition-colors cursor-pointer"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Card Settings</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Doctor Form (Add/Edit) */}
                 {editingDoctor && (
                   <motion.div
@@ -2091,133 +2262,186 @@ export default function AdminPage() {
 
             {activeTab === "receipts" && db && (
               <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex flex-col gap-0.5">
-                    <h2 className="text-lg font-black text-navy-900 leading-none">Receipts & WhatsApp Delivery Logs</h2>
-                    <p className="text-xs text-slate-500">Track automatic orders, e-receipt logs, and trigger manual delivery retries.</p>
+                    <h2 className="text-lg font-black text-navy-900 leading-none">Receipts & Email Delivery</h2>
+                    <p className="text-xs text-slate-500">Track occupant service orders, view email receipt statuses, and trigger manual delivery retries.</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input
+                      type="text"
+                      value={receiptSearchQuery}
+                      onChange={(e) => setReceiptSearchQuery(e.target.value)}
+                      placeholder="Search Customer, Email, Phone, ID..."
+                      className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-sky-500 bg-slate-50 text-slate-700 min-w-[220px]"
+                    />
+                    <select
+                      value={receiptServiceFilter}
+                      onChange={(e) => setReceiptServiceFilter(e.target.value as any)}
+                      className="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-sky-500 bg-slate-50 text-slate-700"
+                    >
+                      <option value="all">All Services</option>
+                      <option value="Nursery">Nursery</option>
+                      <option value="Cafeteria">Cafeteria</option>
+                    </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left Column: Receipts List */}
                   <div className={`bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5 ${selectedReceiptId ? 'lg:col-span-7' : 'lg:col-span-12'}`}>
-                    <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
-                      <FileText className="w-4.5 h-4.5" />
-                      <span>Order Receipts History ({ (db.receipts || []).length })</span>
-                    </h3>
+                    {(() => {
+                      const ordersList = db.orders || [];
+                      const filteredOrders = ordersList.filter((order) => {
+                        if (receiptServiceFilter !== "all" && order.serviceType !== receiptServiceFilter) {
+                          return false;
+                        }
+                        if (receiptSearchQuery.trim()) {
+                          const query = receiptSearchQuery.toLowerCase();
+                          const nameMatch = order.customerName.toLowerCase().includes(query);
+                          const emailMatch = order.customerEmail.toLowerCase().includes(query);
+                          const phoneMatch = order.customerPhone.includes(query);
+                          const receiptMatch = order.receiptNumber.toLowerCase().includes(query);
+                          const orderIdMatch = order.orderId.toLowerCase().includes(query);
+                          return nameMatch || emailMatch || phoneMatch || receiptMatch || orderIdMatch;
+                        }
+                        return true;
+                      });
 
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                            <th className="pb-3 pr-2">Receipt ID</th>
-                            <th className="pb-3 pr-2">Customer</th>
-                            <th className="pb-3 pr-2">Service</th>
-                            <th className="pb-3 pr-2 text-right">Total</th>
-                              <th className="pb-3 pr-2 text-center">WhatsApp</th>
-                            <th className="pb-3 text-center">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(db.receipts || []).length === 0 ? (
-                            <tr>
-                              <td colSpan={6} className="text-center py-8 text-slate-400 font-bold">
-                                No purchase receipts found in history.
-                              </td>
-                            </tr>
-                          ) : (
-                            [...(db.receipts || [])]
-                              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                              .map((receipt) => {
-                                const isSelected = selectedReceiptId === receipt.id;
-                                return (
-                                  <tr 
-                                    key={receipt.id} 
-                                    className={`border-b border-slate-100/60 hover:bg-slate-50/50 transition-all cursor-pointer ${isSelected ? 'bg-sky-50/30' : ''}`}
-                                    onClick={() => setSelectedReceiptId(receipt.id === selectedReceiptId ? null : receipt.id)}
-                                  >
-                                    <td className="py-3.5 pr-2 font-mono font-bold text-slate-700">
-                                      {receipt.id}
-                                      <span className="block text-[10px] text-slate-400 font-normal font-sans mt-0.5">
-                                        {new Date(receipt.date).toLocaleString()}
-                                      </span>
-                                    </td>
-                                    <td className="py-3.5 pr-2">
-                                      <span className="font-semibold text-slate-800 block leading-tight">{receipt.customerName}</span>
-                                      <span className="text-slate-500 font-mono text-[10px]">{receipt.customerPhone}</span>
-                                    </td>
-                                    <td className="py-3.5 pr-2">
-                                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                        receipt.serviceType === "Nursery" 
-                                          ? "bg-emerald-50 text-emerald-700 border border-emerald-100" 
-                                          : "bg-amber-50 text-amber-700 border border-amber-100"
-                                      }`}>
-                                        {receipt.serviceType}
-                                      </span>
-                                    </td>
-                                    <td className="py-3.5 pr-2 text-right font-black text-slate-900">
-                                      ₹{receipt.totalAmountPaid}
-                                    </td>
-                                    <td className="py-3.5 pr-2 text-center">
-                                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                                        receipt.whatsAppSentStatus === "sent" 
-                                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
-                                          : receipt.whatsAppSentStatus === "failed"
-                                          ? "bg-rose-50 text-rose-700 border border-rose-200"
-                                          : "bg-slate-50 text-slate-600 border border-slate-200"
-                                      }`}>
-                                        {receipt.whatsAppSentStatus === "sent" && <CheckCircle className="w-3 h-3 text-emerald-600" />}
-                                        {receipt.whatsAppSentStatus === "failed" && <AlertCircle className="w-3 h-3 text-rose-600" />}
-                                        {receipt.whatsAppSentStatus === "pending" && <Loader2 className="w-3 h-3 animate-spin text-slate-500" />}
-                                        <span className="capitalize">{receipt.whatsAppSentStatus}</span>
-                                      </span>
-                                    </td>
-                                    <td className="py-3.5 text-center" onClick={(e) => e.stopPropagation()}>
-                                      <div className="flex items-center justify-center gap-2">
-                                        <a 
-                                          href={`/receipts/${receipt.id}`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all"
-                                          title="View Receipt"
-                                        >
-                                          <ExternalLink className="w-3.5 h-3.5" />
-                                        </a>
-                                        <button
-                                          onClick={() => handleResendReceipt(receipt.id)}
-                                          disabled={resendingReceiptId === receipt.id}
-                                          className={`p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all ${
-                                            resendingReceiptId === receipt.id ? 'opacity-50 cursor-not-allowed' : ''
-                                          }`}
-                                          title="Resend WhatsApp"
-                                        >
-                                          {resendingReceiptId === receipt.id ? (
-                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-500" />
-                                          ) : (
-                                            <Send className="w-3.5 h-3.5" />
-                                          )}
-                                        </button>
-                                      </div>
+                      return (
+                        <>
+                          <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
+                            <FileText className="w-4.5 h-4.5" />
+                            <span>Order Receipts History ({filteredOrders.length})</span>
+                          </h3>
+
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                                  <th className="pb-3 pr-2">Receipt ID</th>
+                                  <th className="pb-3 pr-2">Customer</th>
+                                  <th className="pb-3 pr-2">Service</th>
+                                  <th className="pb-3 pr-2 text-right">Total</th>
+                                  <th className="pb-3 pr-2 text-center">Email Status</th>
+                                  <th className="pb-3 text-center">Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {filteredOrders.length === 0 ? (
+                                  <tr>
+                                    <td colSpan={6} className="text-center py-8 text-slate-400 font-bold">
+                                      No purchase receipts found matching criteria.
                                     </td>
                                   </tr>
-                                );
-                              })
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
+                                ) : (
+                                  [...filteredOrders]
+                                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                                    .map((order) => {
+                                      const log = db.receiptLogs?.find((l) => l.receiptId === order.receiptNumber);
+                                      const emailStatus = log?.emailStatus || "pending";
+                                      const isSelected = selectedReceiptId === order.receiptNumber;
+                                      return (
+                                        <tr 
+                                          key={order.receiptNumber} 
+                                          className={`border-b border-slate-100/60 hover:bg-slate-50/50 transition-all cursor-pointer ${isSelected ? 'bg-sky-50/30' : ''}`}
+                                          onClick={() => setSelectedReceiptId(order.receiptNumber === selectedReceiptId ? null : order.receiptNumber)}
+                                        >
+                                          <td className="py-3.5 pr-2 font-mono font-bold text-slate-700">
+                                            {order.receiptNumber}
+                                            <span className="block text-[10px] text-slate-400 font-normal font-sans mt-0.5">
+                                              {new Date(order.createdAt).toLocaleString()}
+                                            </span>
+                                          </td>
+                                          <td className="py-3.5 pr-2">
+                                            <span className="font-semibold text-slate-800 block leading-tight">{order.customerName}</span>
+                                            <span className="text-slate-500 font-mono text-[10px]">{order.customerPhone}</span>
+                                          </td>
+                                          <td className="py-3.5 pr-2">
+                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                              order.serviceType === "Nursery" 
+                                                ? "bg-emerald-50 text-emerald-700 border border-emerald-100" 
+                                                : "bg-amber-50 text-amber-700 border border-amber-100"
+                                            }`}>
+                                              {order.serviceType}
+                                            </span>
+                                          </td>
+                                          <td className="py-3.5 pr-2 text-right font-black text-slate-900">
+                                            ₹{order.amount}
+                                          </td>
+                                          <td className="py-3.5 pr-2 text-center">
+                                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                                              emailStatus === "sent" 
+                                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                                                : emailStatus === "failed"
+                                                ? "bg-rose-50 text-rose-700 border border-rose-200"
+                                                : "bg-slate-50 text-slate-600 border border-slate-200"
+                                            }`}>
+                                              {emailStatus === "sent" && <CheckCircle className="w-3 h-3 text-emerald-600" />}
+                                              {emailStatus === "failed" && <AlertCircle className="w-3 h-3 text-rose-600" />}
+                                              {emailStatus === "pending" && <Loader2 className="w-3 h-3 animate-spin text-slate-500" />}
+                                              <span className="capitalize">{emailStatus}</span>
+                                            </span>
+                                          </td>
+                                          <td className="py-3.5 text-center" onClick={(e) => e.stopPropagation()}>
+                                            <div className="flex items-center justify-center gap-1.5">
+                                              <a 
+                                                href={`/receipt/${order.receiptNumber}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all"
+                                                title="View Secure Portal"
+                                              >
+                                                <ExternalLink className="w-3.5 h-3.5" />
+                                              </a>
+                                              <a 
+                                                href={`/api/receipts/${order.receiptNumber}/pdf`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all"
+                                                title="Download PDF"
+                                              >
+                                                <FileText className="w-3.5 h-3.5" />
+                                              </a>
+                                              <button
+                                                onClick={() => handleResendEmailReceipt(order.receiptNumber)}
+                                                disabled={resendingEmailReceiptId === order.receiptNumber}
+                                                className={`p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-navy-900 shadow-sm transition-all ${
+                                                  resendingEmailReceiptId === order.receiptNumber ? 'opacity-50 cursor-not-allowed' : ''
+                                                }`}
+                                                title="Resend Email"
+                                              >
+                                                {resendingEmailReceiptId === order.receiptNumber ? (
+                                                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />
+                                                ) : (
+                                                  <Mail className="w-3.5 h-3.5" />
+                                                )}
+                                              </button>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      );
+                                    })
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
 
-                  {/* Right Column: Selected Receipt Details & WhatsApp Attempt Logs */}
+                  {/* Right Column: Selected Receipt Details & Email Logs */}
                   {selectedReceiptId && (() => {
-                    const receipt = db.receipts?.find(r => r.id === selectedReceiptId);
-                    if (!receipt) return null;
+                    const order = db.orders?.find(o => o.receiptNumber === selectedReceiptId);
+                    if (!order) return null;
+                    const log = db.receiptLogs?.find(l => l.receiptId === order.receiptNumber);
                     return (
                       <div className="lg:col-span-5 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-6 sticky top-24">
                         <div className="flex justify-between items-start border-b border-slate-100 pb-4">
                           <div>
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Selected Receipt</span>
-                            <h3 className="text-base font-black text-navy-900 font-mono leading-none mt-1">{receipt.id}</h3>
+                            <h3 className="text-base font-black text-navy-900 font-mono leading-none mt-1">{order.receiptNumber}</h3>
                           </div>
                           <button 
                             onClick={() => setSelectedReceiptId(null)}
@@ -2233,15 +2457,34 @@ export default function AdminPage() {
                           <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl flex flex-col gap-2">
                             <div className="flex justify-between text-xs">
                               <span className="text-slate-500 font-medium">Name:</span>
-                              <span className="font-semibold text-slate-800">{receipt.customerName}</span>
+                              <span className="font-semibold text-slate-800">{order.customerName}</span>
                             </div>
                             <div className="flex justify-between text-xs">
                               <span className="text-slate-500 font-medium">Phone Number:</span>
-                              <span className="font-mono font-semibold text-slate-800">{receipt.customerPhone}</span>
+                              <span className="font-mono font-semibold text-slate-800">{order.customerPhone}</span>
                             </div>
                             <div className="flex justify-between text-xs">
-                              <span className="text-slate-500 font-medium">Order Reference:</span>
-                              <span className="font-mono text-slate-600">{receipt.orderId}</span>
+                              <span className="text-slate-500 font-medium">Email Address:</span>
+                              <span className="font-semibold text-slate-800">{order.customerEmail}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Order Date:</span>
+                              <span className="font-semibold text-slate-800">{new Date(order.createdAt).toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Order ID:</span>
+                              <span className="font-mono text-slate-600">{order.orderId}</span>
+                            </div>
+                            <div className="flex justify-between text-xs border-t border-slate-100 pt-2">
+                              <span className="text-slate-500 font-medium">Receipt PDF:</span>
+                              <a 
+                                href={`/api/receipts/${order.receiptNumber}/pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sky-600 hover:text-sky-700 font-bold underline"
+                              >
+                                View / Download PDF
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -2256,7 +2499,7 @@ export default function AdminPage() {
                               <span className="col-span-4 text-right">Price</span>
                             </div>
                             <div className="divide-y divide-slate-100 max-h-[150px] overflow-y-auto">
-                              {receipt.items.map((item, idx) => (
+                              {order.items.map((item, idx) => (
                                 <div key={idx} className="px-4 py-2.5 grid grid-cols-12 text-slate-700 font-medium">
                                   <span className="col-span-6 truncate font-semibold">{item.name}</span>
                                   <span className="col-span-2 text-center text-slate-500">{item.quantity}</span>
@@ -2266,57 +2509,51 @@ export default function AdminPage() {
                             </div>
                             <div className="bg-sky-50/30 px-4 py-3 border-t border-slate-100 font-black text-slate-900 flex justify-between items-center">
                               <span>Total Paid:</span>
-                              <span>₹{receipt.totalAmountPaid}</span>
+                              <span>₹{order.amount}</span>
                             </div>
                           </div>
                         </div>
 
-                        {/* WhatsApp Delivery Logs */}
+                        {/* Email Delivery Logs */}
                         <div className="flex flex-col gap-2">
                           <div className="flex justify-between items-center">
-                            <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">WhatsApp Dispatch Logs</h4>
+                            <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Email Dispatch Status</h4>
                             <button
-                              onClick={() => handleResendReceipt(receipt.id)}
-                              disabled={resendingReceiptId === receipt.id}
-                              className="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-white text-[10px] font-bold shadow-md shadow-sky-500/10 transition-all flex items-center gap-1 cursor-pointer"
+                              onClick={() => handleResendEmailReceipt(order.receiptNumber)}
+                              disabled={resendingEmailReceiptId === order.receiptNumber}
+                              className="px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-[10px] font-bold shadow-md shadow-blue-500/10 transition-all flex items-center gap-1 cursor-pointer"
                             >
-                              {resendingReceiptId === receipt.id ? (
+                              {resendingEmailReceiptId === order.receiptNumber ? (
                                 <Loader2 className="w-3 animate-spin text-white" />
                               ) : (
-                                <Zap className="w-3 h-3 text-white" />
+                                <Mail className="w-3 h-3 text-white" />
                               )}
                               <span>Send Receipt</span>
                             </button>
                           </div>
-                          <div className="border border-slate-100 rounded-2xl p-4 max-h-[180px] overflow-y-auto flex flex-col gap-3">
-                            {(!receipt.whatsAppDeliveryLogs || receipt.whatsAppDeliveryLogs.length === 0) ? (
-                              <div className="text-center py-4 text-slate-400 font-bold text-xs">
-                                No dispatch attempts logged yet.
-                              </div>
-                            ) : (
-                              receipt.whatsAppDeliveryLogs.map((log, idx) => (
-                                <div key={idx} className="flex gap-3 text-xs leading-normal">
-                                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                                    log.status === "success" ? "bg-emerald-500" : "bg-rose-500"
-                                  }`} />
-                                  <div className="flex flex-col gap-0.5">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-semibold text-slate-800">
-                                        {log.status === "success" ? "Delivered successfully" : "Delivery failed"}
-                                      </span>
-                                      <span className="text-[10px] text-slate-400 font-mono">
-                                        {new Date(log.timestamp).toLocaleString()}
-                                      </span>
-                                    </div>
-                                    {log.error && (
-                                      <span className="text-[10px] text-rose-600 font-medium bg-rose-50 border border-rose-100/50 px-2 py-1 rounded-md mt-1 font-mono break-all">
-                                        Error: {log.error}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              ))
-                            )}
+                          <div className="border border-slate-100 rounded-2xl p-4 flex flex-col gap-3 text-xs">
+                            <div className="flex justify-between">
+                              <span className="text-slate-500 font-medium">Email Status:</span>
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                log?.emailStatus === "sent"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  : log?.emailStatus === "failed"
+                                  ? "bg-rose-50 text-rose-700 border border-rose-200"
+                                  : "bg-slate-50 text-slate-600 border border-slate-200"
+                              }`}>
+                                <span className="capitalize">{log?.emailStatus || "Pending"}</span>
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-500 font-medium">Last Attempt:</span>
+                              <span className="font-semibold text-slate-800 font-mono">
+                                {log?.emailSentAt ? new Date(log.emailSentAt).toLocaleString() : "Never"}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-500 font-medium">Total Retries:</span>
+                              <span className="font-semibold text-slate-850 font-mono">{log?.resendCount || 0}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
