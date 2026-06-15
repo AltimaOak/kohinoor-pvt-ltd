@@ -218,6 +218,7 @@ export interface Order {
   paymentStatus: "pending" | "completed" | "failed";
   receiptNumber: string;
   createdAt: string;
+  orderStatus?: "placed" | "preparing" | "ready" | "completed";
 }
 
 export interface ReceiptLog {
@@ -699,13 +700,15 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
     const doctor = db.doctors?.find(d => d.id === booking.doctorId);
     const doctorEmail = doctor ? doctor.email : "clinic@kohinoorcommercial2.in";
     
-    // Simulate sending email to doctor
+    // Simulate sending email to doctor, both building managers & occupant
     console.log(`\n========================================`);
     console.log(`[EMAIL DISPATCH] Outgoing Mail`);
     console.log(`To Doctor: ${booking.doctorName} <${doctorEmail}>`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
     console.log(`Cc Occupant: ${booking.userName} <${booking.userEmail}>`);
     console.log(`Subject: Confirmed Appointment Request - ${booking.userName}`);
-    console.log(`Body:\nDear ${booking.doctorName},\n\nYou have a new medical appointment scheduled.\n\nDetails:\n- Occupant: ${booking.userName}\n- Phone: ${booking.userPhone}\n- Email: ${booking.userEmail}\n- Date: ${booking.date}\n- Time: ${booking.time}\n- Reason/Notes: ${booking.message}\n\nThis is a system-generated request dispatched via the Kohinoor Services Hub.`);
+    console.log(`Body:\nDear Doctor and Managers,\n\nYou have a new medical appointment scheduled.\n\nDetails:\n- Occupant: ${booking.userName}\n- Phone: ${booking.userPhone}\n- Email: ${booking.userEmail}\n- Date: ${booking.date}\n- Time: ${booking.time}\n- Reason/Notes: ${booking.message}\n\nThis is a system-generated request dispatched via the Kohinoor Services Hub.`);
     console.log(`========================================\n`);
 
     return { success: true };
@@ -857,13 +860,15 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     // Asynchronously trigger background retry worker for any failed receipts
     Promise.resolve().then(() => retryFailedWhatsAppSends());
 
-    // Simulate sending email to nursery manager & purchaser
+    // Simulate sending email to nursery manager, both building managers & purchaser
     console.log(`\n========================================`);
     console.log(`[EMAIL DISPATCH] Nursery Order Received`);
     console.log(`To Nursery Manager: nursery@kohinoorcommercial2.in`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
     console.log(`Cc Purchaser: ${order.userName} <${order.userEmail}>`);
     console.log(`Subject: New Plant Purchase Confirmation - Order #${newOrder.id}`);
-    console.log(`Body:\nDear Nursery Team,\n\nA new plant purchase order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Plant Name: ${newOrder.plantName}\n- Quantity: ${newOrder.quantity}\n- Total Price: ₹${newOrder.totalPrice}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Delivery Method: Self-Pickup\n\nPlease prepare the order for handoff.\n\nBest Regards,\nKohinoor Facility Hub`);
+    console.log(`Body:\nDear Nursery Team and Managers,\n\nA new plant purchase order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Plant Name: ${newOrder.plantName}\n- Quantity: ${newOrder.quantity}\n- Total Price: ₹${newOrder.totalPrice}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Delivery Method: Self-Pickup\n\nPlease prepare the order for handoff.\n\nBest Regards,\nKohinoor Facility Hub`);
     console.log(`========================================\n`);
 
     // Keep console log simulation for visibility
@@ -1016,13 +1021,15 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     // Asynchronously trigger background retry worker for any failed receipts
     Promise.resolve().then(() => retryFailedWhatsAppSends());
 
-    // Simulate sending email to Cafeteria Manager & Purchaser
+    // Simulate sending email to Cafeteria Manager, both building managers & Purchaser
     console.log(`\n========================================`);
     console.log(`[EMAIL DISPATCH] Cafeteria Order Received`);
     console.log(`To Cafeteria Manager: cafeteria@kohinoorcommercial2.in`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
     console.log(`Cc Purchaser: ${order.userName} <${order.userEmail}>`);
     console.log(`Subject: New Cafeteria Order Confirmation - Order #${newOrder.id}`);
-    console.log(`Body:\nDear Cafeteria Team,\n\nA new food & beverage order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Total Price: ₹${newOrder.totalPrice}\n\nItems Ordered:\n${order.items.map(item => `- ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n')}\n\nPlease prepare the order for self-pickup.\n\nBest Regards,\nKohinoor Facility Hub`);
+    console.log(`Body:\nDear Cafeteria Team and Managers,\n\nA new food & beverage order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Total Price: ₹${newOrder.totalPrice}\n\nItems Ordered:\n${order.items.map(item => `- ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n')}\n\nPlease prepare the order for self-pickup.\n\nBest Regards,\nKohinoor Facility Hub`);
     console.log(`========================================\n`);
 
     // Console log for server-side visibility
@@ -1307,6 +1314,7 @@ export async function verifyRazorpayPaymentAction({
       paymentStatus: "completed",
       receiptNumber: receiptNumber,
       createdAt: new Date().toISOString(),
+      orderStatus: "placed",
     };
     db.orders.push(newOrder);
 
@@ -1443,3 +1451,66 @@ export async function verifyReceiptOwnershipAction(receiptNumber: string, emailO
     return { success: false, error: "Verification server error." };
   }
 }
+
+// Fetch current order status (Swiggy/Zomato style)
+export async function getOrderStatusAction(receiptNumber: string): Promise<{ success: boolean; status?: "placed" | "preparing" | "ready" | "completed"; error?: string }> {
+  try {
+    const db = await getDb();
+    const order = db.orders?.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
+    return { success: true, status: order.orderStatus || "placed" };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to fetch order status" };
+  }
+}
+
+// Update order status (Swiggy/Zomato style) and log notifications to managers and customer
+export async function updateOrderStatusAction(
+  receiptNumber: string,
+  status: "placed" | "preparing" | "ready" | "completed"
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    
+    // 1. Update in db.orders
+    const order = db.orders?.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
+    order.orderStatus = status;
+
+    // 2. Sync with legacy arrays
+    if (order.serviceType === "Nursery" && db.nursery?.orders) {
+      const nurseryOrder = db.nursery.orders.find(o => o.receiptId === receiptNumber || o.id === order.orderId);
+      if (nurseryOrder) {
+        nurseryOrder.status = status === "completed" ? "completed" : "pending";
+      }
+    } else if (order.serviceType === "Cafeteria" && db.cafeteria?.orders) {
+      const cafeOrder = db.cafeteria.orders.find(o => o.receiptId === receiptNumber || o.id === order.orderId);
+      if (cafeOrder) {
+        cafeOrder.status = status === "completed" ? "completed" : "pending";
+      }
+    }
+
+    // 3. Save database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    // Simulate sending status update message to managers and customer
+    console.log(`\n========================================`);
+    console.log(`[STATUS UPDATE NOTIFICATION] Order #${order.orderId} status changed to: ${status.toUpperCase()}`);
+    console.log(`To Customer: ${order.customerName} <${order.customerEmail}>`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
+    console.log(`Subject: Kohinoor Facility Hub - Order status: ${status.toUpperCase()}`);
+    console.log(`Body:\nDear Customer and Managers,\n\nYour order #${order.orderId} for ${order.serviceType} is now ${status.toUpperCase()}.\n\nThank you for using Kohinoor Services Hub.`);
+    console.log(`========================================\n`);
+
+    return { success: true };
+  } catch (err: any) {
+    console.error("Error updating order status:", err);
+    return { success: false, error: err.message || "Failed to update order status" };
+  }
+}
+

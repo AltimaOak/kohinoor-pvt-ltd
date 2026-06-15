@@ -106,26 +106,8 @@ export default async function ReceiptPage({ params }: { params: any }) {
 
       </div>
 
-<<<<<<< HEAD
-      {/* Back to Site Button (Hidden during print) */}
-      <div className="mt-8 flex gap-4 print:hidden">
-        <Link
-          href="/services"
-          className="px-6 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-colors shadow-md"
-        >
-          Back to Hub
-        </Link>
-        <button
-          onClick={() => window.print()}
-          className="px-6 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
-        >
-          Print Reciept
-        </button>
-      </div>
-=======
       {/* Action Buttons */}
       <ReceiptActions pdfUrl={receipt.pdfUrl} receiptId={receipt.id} />
->>>>>>> origin/tamy
 
     </div>
   );
