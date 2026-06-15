@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { Receipt } from "../actions";
+import { Order } from "../actions";
 
 export interface EmailSendResult {
   success: boolean;
@@ -49,7 +49,7 @@ async function getTransporter(): Promise<nodemailer.Transporter> {
  * Sends a PDF receipt email to the exact email address provided during checkout.
  */
 export async function sendReceiptEmail(
-  receipt: Receipt,
+  order: Order,
   pdfBuffer: Buffer,
   customerEmail: string
 ): Promise<EmailSendResult> {
@@ -63,25 +63,33 @@ export async function sendReceiptEmail(
   try {
     const transporter = await getTransporter();
     const fromAddress = process.env.SMTP_FROM || "Kohinoor Facilities <receipts@kohinoorfacilities.com>";
-    const filename = `Kohinoor_Receipt_${receipt.id}.pdf`;
+    const filename = `Kohinoor_Receipt_${order.receiptNumber}.pdf`;
 
     const mailOptions = {
       from: fromAddress,
       to: customerEmail,
       subject: "Kohinoor Facilities - Order Receipt",
-      text: `Dear ${receipt.customerName},
+      text: `Dear ${order.customerName},
 
-Thank you for your order with Kohinoor Facilities.
+Thank you for your order.
 
 Your payment has been successfully received.
 
-Order Details:
-* Order ID: ${receipt.orderId}
-* Service: ${receipt.serviceType}
-* Amount Paid: ₹${receipt.totalAmountPaid}
-* Order Date: ${new Date(receipt.date).toLocaleString("en-IN")}
+Order ID:
+${order.orderId}
 
-Your official receipt is attached to this email as a PDF.
+Receipt Number:
+${order.receiptNumber}
+
+Service:
+${order.serviceType}
+
+Amount:
+₹${order.amount}
+
+Your official receipt is attached to this email.
+
+You can also access your receipt online using the secure receipt portal.
 
 Thank you for choosing Kohinoor Facilities.
 

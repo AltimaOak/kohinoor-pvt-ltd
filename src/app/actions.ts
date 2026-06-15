@@ -1,10 +1,9 @@
-"use server";
+ "use server";
 
 import fs from "fs/promises";
 import path from "path";
 import { cookies, headers } from "next/headers";
-import { generateAndSaveReceiptPdf, generateReceiptPdfBuffer } from "./utils/receiptGenerator";
-import { sendWhatsAppDocumentMessage } from "./utils/whatsAppSender";
+import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
 import { sendReceiptEmail } from "./utils/emailSender";
 
 const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
@@ -200,43 +199,63 @@ export interface CafeteriaSchema {
   orders: CafeOrder[];
 }
 
-export interface ReceiptLog {
-  timestamp: string;
-  status: "success" | "failure";
-  error?: string;
+export interface OrderItem {
+  itemId: string;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
-export interface EmailLog {
-  timestamp: string;
-  status: "success" | "failure";
-  error?: string;
+export interface Order {
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  serviceType: "Nursery" | "Cafeteria";
+  items: OrderItem[];
+  amount: number;
+  transactionId: string;
+  paymentStatus: "pending" | "completed" | "failed";
+  receiptNumber: string;
+  createdAt: string;
+}
+
+export interface ReceiptLog {
+  receiptId: string;
+  orderId: string;
+  emailStatus: "pending" | "sent" | "failed";
+  emailSentAt: string | null;
+  resendCount: number;
 }
 
 export interface Receipt {
-  id: string; // REC-XXXXXX
+  id: string; // receiptNumber
   orderId: string;
   serviceType: "Nursery" | "Cafeteria";
-  date: string;
+  date: string; // createdAt
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
-  items: {
-    itemId: string;
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-  totalAmountPaid: number;
+  items: OrderItem[];
+  totalAmountPaid: number; // amount
   paymentStatus: "completed" | "pending";
   paymentMethod: string;
-  whatsAppSentStatus: "sent" | "delivered" | "failed" | "pending";
-  whatsAppSentTimestamp?: string;
-  whatsAppDeliveryLogs: ReceiptLog[];
   pdfUrl?: string;
-  whatsAppMessageId?: string;
   emailSentStatus?: "sent" | "failed" | "pending";
   emailSentTimestamp?: string;
-  emailDeliveryLogs?: EmailLog[];
+  whatsAppSentStatus?: string;
+  whatsAppDeliveryLogs?: any[];
+}
+
+export interface HealthCheckupCard {
+  societyName: string;
+  availabilityText: string;
+  frequencyText: string;
+  daysText: string;
+  timingsText: string;
+  bookingLink: string;
+  footerText: string;
+  doctorName?: string;
 }
 
 export interface DatabaseSchema {
@@ -249,6 +268,9 @@ export interface DatabaseSchema {
   nursery?: NurserySchema;
   cafeteria?: CafeteriaSchema;
   receipts?: Receipt[];
+  orders?: Order[];
+  receiptLogs?: ReceiptLog[];
+  healthCheckupCard?: HealthCheckupCard;
 }
 
 // Ensure database file exists
@@ -364,7 +386,17 @@ async function ensureDbExists() {
         ],
         orders: []
       },
-      receipts: []
+      receipts: [],
+      healthCheckupCard: {
+        societyName: "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
+        availabilityText: "DOCTOR",
+        frequencyText: "EVERY MONTH",
+        daysText: "2ND & 4TH WEDNESDAY",
+        timingsText: "12.00 pm - 02.00 pm",
+        bookingLink: "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
+        footerText: "Your health is our priority",
+        doctorName: "Dr. Reshma Nikam"
+      }
     };
     await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
     await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
@@ -487,6 +519,66 @@ export async function getDb(): Promise<DatabaseSchema> {
     // Auto-migrate if receipts is missing
     if (!db.receipts) {
       db.receipts = [];
+      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    }
+
+    // Auto-migrate if orders or receiptLogs are missing
+    let hasUpdates = false;
+    if (!db.orders) {
+      db.orders = [];
+      hasUpdates = true;
+    }
+    if (!db.receiptLogs) {
+      db.receiptLogs = [];
+      hasUpdates = true;
+    }
+
+    // If there are existing receipts but no orders, migrate them
+    if (db.receipts.length > 0 && db.orders.length === 0) {
+      for (const receipt of db.receipts) {
+        db.orders.push({
+          orderId: receipt.orderId,
+          customerName: receipt.customerName,
+          customerEmail: receipt.customerEmail || "",
+          customerPhone: receipt.customerPhone,
+          serviceType: receipt.serviceType,
+          items: receipt.items,
+          amount: receipt.totalAmountPaid,
+          transactionId: receipt.orderId, // fallback
+          paymentStatus: receipt.paymentStatus === "completed" ? "completed" : "pending",
+          receiptNumber: receipt.id,
+          createdAt: receipt.date,
+        });
+
+        db.receiptLogs.push({
+          receiptId: receipt.id,
+          orderId: receipt.orderId,
+          emailStatus: receipt.emailSentStatus === "sent" ? "sent" : (receipt.emailSentStatus === "failed" ? "failed" : "pending"),
+          emailSentAt: receipt.emailSentTimestamp || null,
+          resendCount: 1,
+        });
+      }
+      hasUpdates = true;
+    }
+
+    if (!db.healthCheckupCard) {
+      db.healthCheckupCard = {
+        societyName: "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
+        availabilityText: "DOCTOR",
+        frequencyText: "EVERY MONTH",
+        daysText: "2ND & 4TH WEDNESDAY",
+        timingsText: "12.00 pm - 02.00 pm",
+        bookingLink: "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
+        footerText: "Your health is our priority",
+        doctorName: "Dr. Reshma Nikam"
+      };
+      hasUpdates = true;
+    } else if (db.healthCheckupCard && !db.healthCheckupCard.hasOwnProperty("doctorName")) {
+      db.healthCheckupCard.doctorName = "Dr. Reshma Nikam";
+      hasUpdates = true;
+    }
+
+    if (hasUpdates) {
       await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
     }
 
@@ -664,7 +756,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     db.nursery.orders.push(newOrder);
 
     // Generate E-Receipt
-    const newReceipt: Receipt = {
+    const newReceipt: any = {
       id: receiptId,
       orderId: orderId,
       serviceType: "Nursery",
@@ -691,7 +783,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     let pdfBuffer: Buffer | null = null;
     let pdfUrl = "";
     try {
-      pdfBuffer = await generateReceiptPdfBuffer(newReceipt);
+      pdfBuffer = await generateReceiptPdfBuffer(newReceipt as any);
       
       // Save it to disk for static public receipt access
       const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
@@ -720,7 +812,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 
     // Dispatch Receipt Email with the generated PDF Buffer
     if (pdfBuffer && order.userEmail) {
-      const emailRes = await sendReceiptEmail(newReceipt, pdfBuffer, order.userEmail);
+      const emailRes = await sendReceiptEmail(newReceipt as any, pdfBuffer, order.userEmail);
       newReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
       const emailLog = {
         timestamp: new Date().toISOString(),
@@ -740,29 +832,19 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
       }];
     }
 
-    // Trigger official WhatsApp Document delivery
-    const whatsAppRes = await sendWhatsAppDocumentMessage(
-      order.userName,
-      orderId,
-      receiptId,
-      "Nursery",
-      order.totalPrice,
-      order.userPhone,
-      absolutePdfUrl
-    );
+    // Trigger official WhatsApp Document delivery (Simulated skip since WhatsApp is disabled)
+    const whatsAppRes = { success: true, messageId: "sim_whatsApp_disabled" };
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: whatsAppRes.success ? ("success" as const) : ("failure" as const),
-      error: whatsAppRes.error
+      status: "success" as const,
+      error: undefined
     };
-    newReceipt.whatsAppDeliveryLogs.push(logEntry);
-    newReceipt.whatsAppSentStatus = whatsAppRes.success ? "sent" : "failed";
-    if (whatsAppRes.success) {
-      newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
-      newReceipt.whatsAppMessageId = whatsAppRes.messageId;
-    }
+    newReceipt.whatsAppDeliveryLogs = [logEntry];
+    newReceipt.whatsAppSentStatus = "sent";
+    newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppMessageId = whatsAppRes.messageId;
 
     if (!db.receipts) {
       db.receipts = [];
@@ -835,7 +917,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     db.cafeteria.orders.push(newOrder);
 
     // Generate E-Receipt
-    const newReceipt: Receipt = {
+    const newReceipt: any = {
       id: receiptId,
       orderId: orderId,
       serviceType: "Cafeteria",
@@ -860,7 +942,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     let pdfBuffer: Buffer | null = null;
     let pdfUrl = "";
     try {
-      pdfBuffer = await generateReceiptPdfBuffer(newReceipt);
+      pdfBuffer = await generateReceiptPdfBuffer(newReceipt as any);
       
       // Save it to disk for static public receipt access
       const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
@@ -889,7 +971,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
 
     // Dispatch Receipt Email with the generated PDF Buffer
     if (pdfBuffer && order.userEmail) {
-      const emailRes = await sendReceiptEmail(newReceipt, pdfBuffer, order.userEmail);
+      const emailRes = await sendReceiptEmail(newReceipt as any, pdfBuffer, order.userEmail);
       newReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
       const emailLog = {
         timestamp: new Date().toISOString(),
@@ -909,29 +991,19 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       }];
     }
 
-    // Trigger official WhatsApp Document delivery
-    const whatsAppRes = await sendWhatsAppDocumentMessage(
-      order.userName,
-      orderId,
-      receiptId,
-      "Cafeteria",
-      order.totalPrice,
-      order.userPhone,
-      absolutePdfUrl
-    );
+    // Trigger official WhatsApp Document delivery (Simulated skip since WhatsApp is disabled)
+    const whatsAppRes = { success: true, messageId: "sim_whatsApp_disabled" };
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: whatsAppRes.success ? ("success" as const) : ("failure" as const),
-      error: whatsAppRes.error
+      status: "success" as const,
+      error: undefined
     };
-    newReceipt.whatsAppDeliveryLogs.push(logEntry);
-    newReceipt.whatsAppSentStatus = whatsAppRes.success ? "sent" : "failed";
-    if (whatsAppRes.success) {
-      newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
-      newReceipt.whatsAppMessageId = whatsAppRes.messageId;
-    }
+    newReceipt.whatsAppDeliveryLogs = [logEntry];
+    newReceipt.whatsAppSentStatus = "sent";
+    newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppMessageId = whatsAppRes.messageId;
 
     if (!db.receipts) {
       db.receipts = [];
@@ -966,203 +1038,57 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
   }
 }
 
-// Resend WhatsApp receipt action (can be called by user or admin)
+// Resend receipt action (redirects to resendEmailReceiptAction since WhatsApp is disabled)
 export async function resendReceiptAction(receiptId: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    const db = await getDb();
-    if (!db.receipts) {
-      db.receipts = [];
-    }
-
-    const receiptIndex = db.receipts.findIndex(r => r.id === receiptId);
-    if (receiptIndex === -1) {
-      return { success: false, error: "Receipt not found." };
-    }
-
-    const receipt = db.receipts[receiptIndex];
-
-    // Generate PDF if missing
-    if (!receipt.pdfUrl) {
-      try {
-        receipt.pdfUrl = await generateAndSaveReceiptPdf(receipt);
-      } catch (pdfErr) {
-        console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF during resend:", pdfErr);
-      }
-    }
-
-    // Determine host and absolute URL
-    let absolutePdfUrl = receipt.pdfUrl || "";
-    if (receipt.pdfUrl && receipt.pdfUrl.startsWith("/")) {
-      let host = "localhost:3000";
-      try {
-        host = (await headers()).get("host") || "localhost:3000";
-      } catch (e) {
-        // Fallback
-      }
-      const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
-      absolutePdfUrl = `${protocol}://${host}${receipt.pdfUrl}`;
-    }
-
-    // Trigger official WhatsApp Document delivery
-    const whatsAppRes = await sendWhatsAppDocumentMessage(
-      receipt.customerName,
-      receipt.orderId,
-      receipt.id,
-      receipt.serviceType,
-      receipt.totalAmountPaid,
-      receipt.customerPhone,
-      absolutePdfUrl
-    );
-
-    // Log Delivery
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      status: whatsAppRes.success ? ("success" as const) : ("failure" as const),
-      error: whatsAppRes.error
-    };
-    
-    if (!receipt.whatsAppDeliveryLogs) {
-      receipt.whatsAppDeliveryLogs = [];
-    }
-    receipt.whatsAppDeliveryLogs.push(logEntry);
-    receipt.whatsAppSentStatus = whatsAppRes.success ? "sent" : "failed";
-    if (whatsAppRes.success) {
-      receipt.whatsAppSentTimestamp = logEntry.timestamp;
-      receipt.whatsAppMessageId = whatsAppRes.messageId;
-    }
-
-    // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
-
-    if (!whatsAppRes.success) {
-      return { success: false, error: whatsAppRes.error || "Failed to deliver WhatsApp message." };
-    }
-
-    return { success: true };
-  } catch (err) {
-    console.error("Error resending receipt:", err);
-    return { success: false, error: "Server error occurred while resending." };
-  }
+  return resendEmailReceiptAction(receiptId);
 }
 
 /**
- * Background worker to automatically retry failed or pending WhatsApp and Email receipt sends.
+ * Background worker to automatically retry failed or pending Email receipt sends.
  */
 export async function retryFailedWhatsAppSends(): Promise<void> {
   try {
     const db = await getDb();
-    if (!db.receipts) return;
+    if (!db.orders || !db.receiptLogs) return;
 
     let updatedAny = false;
 
-    // --- WhatsApp Retries ---
-    const failedWhatsAppReceipts = db.receipts.filter(
-      r => r.whatsAppSentStatus === "failed" || r.whatsAppSentStatus === "pending"
+    // Filter receipt logs that are failed or pending
+    const failedLogs = db.receiptLogs.filter(
+      l => l.emailStatus === "failed" || l.emailStatus === "pending"
     );
 
-    if (failedWhatsAppReceipts.length > 0) {
-      console.log(`[AUTO-RETRY WORKER] Found ${failedWhatsAppReceipts.length} failed/pending WhatsApp receipt deliveries. Attempting automatic retries...`);
-      for (const receipt of failedWhatsAppReceipts) {
-        if (!receipt.pdfUrl) {
-          try {
-            receipt.pdfUrl = await generateAndSaveReceiptPdf(receipt);
-          } catch (pdfErr) {
-            console.error(`[AUTO-RETRY WORKER] Failed to generate PDF for receipt ${receipt.id}:`, pdfErr);
-            continue;
-          }
-        }
+    if (failedLogs.length > 0) {
+      console.log(`[AUTO-RETRY WORKER] Found ${failedLogs.length} failed/pending Email receipt deliveries. Attempting automatic retries...`);
+      for (const log of failedLogs) {
+        const order = db.orders.find(o => o.receiptNumber === log.receiptId);
+        if (!order || !order.customerEmail) continue;
 
-        // Construct absolute PDF URL
-        let absolutePdfUrl = receipt.pdfUrl;
-        if (receipt.pdfUrl.startsWith("/")) {
-          let host = "localhost:3000";
-          try {
-            host = (await headers()).get("host") || "localhost:3000";
-          } catch {
-            // outside request context
-          }
-          const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
-          absolutePdfUrl = `${protocol}://${host}${receipt.pdfUrl}`;
-        }
-
-        const res = await sendWhatsAppDocumentMessage(
-          receipt.customerName,
-          receipt.orderId,
-          receipt.id,
-          receipt.serviceType,
-          receipt.totalAmountPaid,
-          receipt.customerPhone,
-          absolutePdfUrl
-        );
-
-        const logEntry = {
-          timestamp: new Date().toISOString(),
-          status: res.success ? ("success" as const) : ("failure" as const),
-          error: res.error
-        };
-
-        if (!receipt.whatsAppDeliveryLogs) {
-          receipt.whatsAppDeliveryLogs = [];
-        }
-        receipt.whatsAppDeliveryLogs.push(logEntry);
-        
-        if (res.success) {
-          receipt.whatsAppSentStatus = "sent";
-          receipt.whatsAppSentTimestamp = logEntry.timestamp;
-          receipt.whatsAppMessageId = res.messageId;
-          console.log(`[AUTO-RETRY WORKER SUCCESS] Auto-resent WhatsApp receipt ${receipt.id} successfully.`);
-        } else {
-          receipt.whatsAppSentStatus = "failed";
-          console.warn(`[AUTO-RETRY WORKER FAILURE] Failed to auto-resend WhatsApp receipt ${receipt.id}: ${res.error}`);
-        }
-        updatedAny = true;
-      }
-    }
-
-    // --- Email Retries ---
-    const failedEmailReceipts = db.receipts.filter(
-      r => r.customerEmail && (r.emailSentStatus === "failed" || r.emailSentStatus === "pending")
-    );
-
-    if (failedEmailReceipts.length > 0) {
-      console.log(`[AUTO-RETRY WORKER] Found ${failedEmailReceipts.length} failed/pending Email receipt deliveries. Attempting automatic retries...`);
-      for (const receipt of failedEmailReceipts) {
         try {
-          const pdfBuffer = await generateReceiptPdfBuffer(receipt);
-          const emailRes = await sendReceiptEmail(receipt, pdfBuffer, receipt.customerEmail!);
+          const pdfBuffer = await generateReceiptPdfBuffer(order);
+          const emailRes = await sendReceiptEmail(order, pdfBuffer, order.customerEmail);
 
-          const logEntry = {
-            timestamp: new Date().toISOString(),
-            status: emailRes.success ? ("success" as const) : ("failure" as const),
-            error: emailRes.error
-          };
-
-          if (!receipt.emailDeliveryLogs) {
-            receipt.emailDeliveryLogs = [];
-          }
-          receipt.emailDeliveryLogs.push(logEntry);
-
+          log.emailStatus = emailRes.success ? "sent" : "failed";
+          log.resendCount += 1;
           if (emailRes.success) {
-            receipt.emailSentStatus = "sent";
-            receipt.emailSentTimestamp = logEntry.timestamp;
-            console.log(`[AUTO-RETRY WORKER SUCCESS] Auto-sent Email receipt ${receipt.id} successfully.`);
+            log.emailSentAt = new Date().toISOString();
+            console.log(`[AUTO-RETRY WORKER SUCCESS] Auto-sent Email receipt ${order.receiptNumber} successfully.`);
           } else {
-            receipt.emailSentStatus = "failed";
-            console.warn(`[AUTO-RETRY WORKER FAILURE] Failed to auto-send Email receipt ${receipt.id}: ${emailRes.error}`);
+            console.warn(`[AUTO-RETRY WORKER FAILURE] Failed to auto-send Email receipt ${order.receiptNumber}: ${emailRes.error}`);
           }
+
+          // Also update legacy receipt status if present
+          const legacyReceipt = db.receipts?.find(r => r.id === log.receiptId);
+          if (legacyReceipt) {
+            legacyReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+            legacyReceipt.emailSentTimestamp = log.emailSentAt || undefined;
+          }
+
           updatedAny = true;
         } catch (emailErr: any) {
-          console.error(`[AUTO-RETRY WORKER] Failed to generate PDF or send email for receipt ${receipt.id}:`, emailErr);
-          const logEntry = {
-            timestamp: new Date().toISOString(),
-            status: "failure" as const,
-            error: emailErr.message || "Failed during retry"
-          };
-          if (!receipt.emailDeliveryLogs) {
-            receipt.emailDeliveryLogs = [];
-          }
-          receipt.emailDeliveryLogs.push(logEntry);
-          receipt.emailSentStatus = "failed";
+          console.error(`[AUTO-RETRY WORKER] Failed to generate PDF or send email for receipt ${log.receiptId}:`, emailErr);
+          log.emailStatus = "failed";
+          log.resendCount += 1;
           updatedAny = true;
         }
       }
@@ -1179,50 +1105,57 @@ export async function retryFailedWhatsAppSends(): Promise<void> {
 /**
  * Resends the PDF receipt to the customer's email.
  */
-export async function resendEmailReceiptAction(receiptId: string): Promise<{ success: boolean; error?: string }> {
+export async function resendEmailReceiptAction(receiptNumber: string): Promise<{ success: boolean; error?: string }> {
   try {
     const db = await getDb();
-    if (!db.receipts) {
-      db.receipts = [];
-    }
+    if (!db.orders) db.orders = [];
+    if (!db.receiptLogs) db.receiptLogs = [];
 
-    const receiptIndex = db.receipts.findIndex(r => r.id === receiptId);
-    if (receiptIndex === -1) {
+    const order = db.orders.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
       return { success: false, error: "Receipt not found." };
     }
 
-    const receipt = db.receipts[receiptIndex];
-
-    if (!receipt.customerEmail) {
+    if (!order.customerEmail) {
       return { success: false, error: "No email address found for this receipt. Cannot send email." };
     }
 
-    // Generate in-memory PDF buffer
+    // Generate in-memory PDF buffer dynamically on request
     let pdfBuffer: Buffer;
     try {
-      pdfBuffer = await generateReceiptPdfBuffer(receipt);
+      pdfBuffer = await generateReceiptPdfBuffer(order);
     } catch (pdfErr: any) {
       console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF during email resend:", pdfErr);
       return { success: false, error: `Failed to generate PDF receipt: ${pdfErr.message || pdfErr}` };
     }
 
     // Call sendReceiptEmail
-    const emailRes = await sendReceiptEmail(receipt, pdfBuffer, receipt.customerEmail);
+    const emailRes = await sendReceiptEmail(order, pdfBuffer, order.customerEmail);
 
-    // Log Delivery
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      status: emailRes.success ? ("success" as const) : ("failure" as const),
-      error: emailRes.error
-    };
-
-    if (!receipt.emailDeliveryLogs) {
-      receipt.emailDeliveryLogs = [];
+    // Update log
+    let log = db.receiptLogs.find(l => l.receiptId === receiptNumber);
+    if (!log) {
+      log = {
+        receiptId: receiptNumber,
+        orderId: order.orderId,
+        emailStatus: "pending",
+        emailSentAt: null,
+        resendCount: 0,
+      };
+      db.receiptLogs.push(log);
     }
-    receipt.emailDeliveryLogs.push(logEntry);
-    receipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+
+    log.emailStatus = emailRes.success ? "sent" : "failed";
+    log.resendCount += 1;
     if (emailRes.success) {
-      receipt.emailSentTimestamp = logEntry.timestamp;
+      log.emailSentAt = new Date().toISOString();
+    }
+
+    // Also update legacy receipt status if present
+    const legacyReceipt = db.receipts?.find(r => r.id === receiptNumber);
+    if (legacyReceipt) {
+      legacyReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+      legacyReceipt.emailSentTimestamp = log.emailSentAt || undefined;
     }
 
     // Save database
@@ -1236,5 +1169,277 @@ export async function resendEmailReceiptAction(receiptId: string): Promise<{ suc
   } catch (err: any) {
     console.error("Error resending email receipt:", err);
     return { success: false, error: err.message || "Server error occurred while resending email." };
+  }
+}
+
+export async function generateUniqueReceiptNumber(serviceType: "Nursery" | "Cafeteria"): Promise<string> {
+  const db = await getDb();
+  const today = new Date();
+  
+  // Format current date as YYYYMMDD in Indian timezone
+  const formatter = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(today);
+  const year = parts.find(p => p.type === "year")?.value || "2026";
+  const month = parts.find(p => p.type === "month")?.value || "06";
+  const day = parts.find(p => p.type === "day")?.value || "15";
+  const dateStr = `${year}${month}${day}`;
+
+  const prefix = serviceType === "Nursery" ? "KOH-NUR" : "KOH-CAF";
+  const searchPattern = `${prefix}-${dateStr}-`;
+
+  // Find the highest sequence number for this date
+  const matches = (db.orders || [])
+    .filter(o => o.receiptNumber.startsWith(searchPattern))
+    .map(o => {
+      const parts = o.receiptNumber.split("-");
+      const seqStr = parts[parts.length - 1];
+      return parseInt(seqStr) || 0;
+    });
+
+  const nextSeq = matches.length > 0 ? Math.max(...matches) + 1 : 1;
+  const seqStr = String(nextSeq).padStart(5, "0");
+
+  return `${searchPattern}${seqStr}`;
+}
+
+export async function verifyRazorpayPaymentAction({
+  razorpay_payment_id,
+  razorpay_order_id,
+  razorpay_signature,
+  checkoutData,
+}: {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+  checkoutData: {
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    serviceType: "Nursery" | "Cafeteria";
+    items: { itemId: string; name: string; price: number; quantity: number }[];
+    amount: number;
+    paymentMethod?: string;
+  };
+}): Promise<{ success: boolean; receiptNumber?: string; error?: string }> {
+  try {
+    // 1. Signature Verification
+    const isMock = !process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET.startsWith("your_");
+    let verified = false;
+
+    if (isMock) {
+      console.log("[PAYMENT GATEWAY] Mock signature verification active.");
+      verified = razorpay_payment_id.startsWith("pay_") && razorpay_order_id.startsWith("order_");
+    } else {
+      // Real signature verification
+      const crypto = await import("crypto");
+      const secret = process.env.RAZORPAY_KEY_SECRET!;
+      const generated_signature = crypto
+        .createHmac("sha256", secret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest("hex");
+      
+      verified = generated_signature === razorpay_signature;
+    }
+
+    if (!verified) {
+      return { success: false, error: "Payment verification failed. Invalid signature." };
+    }
+
+    // 2. Load Database
+    const db = await getDb();
+
+    // 3. Inventory Stock Validation & Decrement
+    if (checkoutData.serviceType === "Nursery") {
+      if (!db.nursery) return { success: false, error: "Nursery service unavailable." };
+      for (const item of checkoutData.items) {
+        const plant = db.nursery.plants.find(p => p.id === item.itemId);
+        if (!plant) return { success: false, error: `Plant ${item.name} not found.` };
+        if (plant.quantity < item.quantity) {
+          return { success: false, error: `Insufficient stock for ${item.name}.` };
+        }
+      }
+      // Decrement stock
+      for (const item of checkoutData.items) {
+        const plant = db.nursery.plants.find(p => p.id === item.itemId)!;
+        plant.quantity -= item.quantity;
+      }
+    } else {
+      if (!db.cafeteria) return { success: false, error: "Cafeteria service unavailable." };
+      for (const item of checkoutData.items) {
+        const menuItem = db.cafeteria.menu.find(m => m.id === item.itemId);
+        if (!menuItem) return { success: false, error: `Menu item ${item.name} not found.` };
+        if (menuItem.quantity < item.quantity) {
+          return { success: false, error: `Insufficient stock for ${item.name}.` };
+        }
+      }
+      // Decrement stock
+      for (const item of checkoutData.items) {
+        const menuItem = db.cafeteria.menu.find(m => m.id === item.itemId)!;
+        menuItem.quantity -= item.quantity;
+      }
+    }
+
+    // 4. Prevent duplicate transactions
+    if (!db.orders) db.orders = [];
+    const duplicate = db.orders.find(o => o.transactionId === razorpay_payment_id);
+    if (duplicate) {
+      return { success: true, receiptNumber: duplicate.receiptNumber };
+    }
+
+    // 5. Generate unique receipt number
+    const receiptNumber = await generateUniqueReceiptNumber(checkoutData.serviceType);
+
+    // 6. Save order details
+    const newOrder: Order = {
+      orderId: razorpay_order_id,
+      customerName: checkoutData.customerName,
+      customerEmail: checkoutData.customerEmail,
+      customerPhone: checkoutData.customerPhone,
+      serviceType: checkoutData.serviceType,
+      items: checkoutData.items,
+      amount: checkoutData.amount,
+      transactionId: razorpay_payment_id,
+      paymentStatus: "completed",
+      receiptNumber: receiptNumber,
+      createdAt: new Date().toISOString(),
+    };
+    db.orders.push(newOrder);
+
+    // Create initial receipt log
+    if (!db.receiptLogs) db.receiptLogs = [];
+    const newLog: ReceiptLog = {
+      receiptId: receiptNumber,
+      orderId: razorpay_order_id,
+      emailStatus: "pending",
+      emailSentAt: null,
+      resendCount: 0,
+    };
+    db.receiptLogs.push(newLog);
+
+    // Also populate legacy receipts array to keep the original /receipts/[id] page working if accessed
+    if (!db.receipts) db.receipts = [];
+    const legacyReceipt: Receipt = {
+      id: receiptNumber,
+      orderId: razorpay_order_id,
+      serviceType: checkoutData.serviceType,
+      date: newOrder.createdAt,
+      customerName: checkoutData.customerName,
+      customerPhone: checkoutData.customerPhone,
+      customerEmail: checkoutData.customerEmail,
+      items: checkoutData.items,
+      totalAmountPaid: checkoutData.amount,
+      paymentStatus: "completed",
+      paymentMethod: checkoutData.paymentMethod || "Card / Online",
+    };
+    db.receipts.push(legacyReceipt);
+
+    // Write database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    // 7. Dynamic PDF & Email Delivery
+    try {
+      const pdfBuffer = await generateReceiptPdfBuffer(newOrder);
+      const emailRes = await sendReceiptEmail(newOrder, pdfBuffer, checkoutData.customerEmail);
+
+      // Re-read db to update email log safely
+      const latestDb = await getDb();
+      const logToUpdate = latestDb.receiptLogs?.find(l => l.receiptId === receiptNumber);
+      if (logToUpdate) {
+        logToUpdate.emailStatus = emailRes.success ? "sent" : "failed";
+        if (emailRes.success) {
+          logToUpdate.emailSentAt = new Date().toISOString();
+        }
+        
+        // Also update legacy receipt status
+        const legacyToUpdate = latestDb.receipts?.find(r => r.id === receiptNumber);
+        if (legacyToUpdate) {
+          legacyToUpdate.emailSentStatus = emailRes.success ? "sent" : "failed";
+          legacyToUpdate.emailSentTimestamp = logToUpdate.emailSentAt || undefined;
+        }
+
+        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+      }
+    } catch (deliveryErr) {
+      console.error("[DELIVERY ERROR] Failed to send receipt email after payment success:", deliveryErr);
+    }
+
+    // 8. Place ownership cookie inside the browser
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: `receipt_token_${receiptNumber}`,
+      value: `authorized_access_${razorpay_payment_id}`,
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+      sameSite: "strict",
+    });
+
+    return { success: true, receiptNumber };
+  } catch (err: any) {
+    console.error("[PAYMENT VERIFICATION ERROR] Failed:", err);
+    return { success: false, error: err.message || "An unexpected error occurred during verification." };
+  }
+}
+
+export async function getCustomerReceiptsAction(emailOrPhone: string): Promise<{ success: boolean; orders?: Order[]; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.orders) db.orders = [];
+
+    const normalized = emailOrPhone.trim().toLowerCase();
+    const cleanPhone = normalized.replace(/[^0-9]/g, "");
+
+    const customerOrders = db.orders.filter(o => {
+      const emailMatches = o.customerEmail.toLowerCase() === normalized;
+      const phoneMatches = o.customerPhone.replace(/[^0-9]/g, "").includes(cleanPhone) || cleanPhone.includes(o.customerPhone.replace(/[^0-9]/g, ""));
+      return emailMatches || (cleanPhone.length >= 10 && phoneMatches);
+    });
+
+    return { success: true, orders: customerOrders };
+  } catch (err: any) {
+    console.error("Error retrieving customer receipts:", err);
+    return { success: false, error: "Failed to query receipts history." };
+  }
+}
+
+export async function verifyReceiptOwnershipAction(receiptNumber: string, emailOrPhone: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    const order = db.orders?.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Receipt not found." };
+    }
+
+    const input = emailOrPhone.trim().toLowerCase();
+    const cleanInputPhone = input.replace(/[^0-9]/g, "");
+    const orderPhone = order.customerPhone.replace(/[^0-9]/g, "");
+
+    const emailMatches = order.customerEmail.toLowerCase() === input;
+    const phoneMatches = orderPhone.includes(cleanInputPhone) || cleanInputPhone.includes(orderPhone);
+
+    if (emailMatches || (cleanInputPhone.length >= 6 && phoneMatches)) {
+      // Grant access cookie directly
+      const cookieStore = await cookies();
+      cookieStore.set({
+        name: `receipt_token_${receiptNumber}`,
+        value: `authorized_access_${order.transactionId}`,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
+      });
+      return { success: true };
+    }
+
+    return { success: false, error: "Verification details do not match this receipt." };
+  } catch (err: any) {
+    console.error("Verification error:", err);
+    return { success: false, error: "Verification server error." };
   }
 }

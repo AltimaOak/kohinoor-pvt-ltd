@@ -1,21 +1,19 @@
 import PDFDocument from "pdfkit";
-import fs from "fs";
-import path from "path";
 import QRCode from "qrcode";
-import { Receipt } from "../actions";
+import { Order } from "../actions";
 
 /**
  * Generates a professional PDF receipt in memory and returns it as a Buffer.
  * Embeds a QR Code containing the Order ID.
  * 
- * @param receipt The Receipt object
+ * @param order The Order object
  * @returns Promise resolving to a PDF Buffer
  */
-export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer> {
+export async function generateReceiptPdfBuffer(order: Order): Promise<Buffer> {
   // Generate QR Code containing the Order ID
   let qrCodeBuffer: Buffer;
   try {
-    qrCodeBuffer = await QRCode.toBuffer(receipt.orderId, {
+    qrCodeBuffer = await QRCode.toBuffer(order.orderId, {
       margin: 1,
       width: 80,
       color: {
@@ -25,7 +23,6 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
     });
   } catch (qrErr) {
     console.error("[QR GENERATION ERROR] Failed to generate QR code:", qrErr);
-    // Fallback QR placeholder (empty white 1x1 png or simple code)
     qrCodeBuffer = Buffer.from("");
   }
 
@@ -43,7 +40,7 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       
       // Kohinoor Branding
       doc.fillColor("#ffffff")
-         .fontSize(22)
+         .fontSize(20)
          .font("Helvetica-Bold")
          .text("KOHINOOR CITY OFFICE TOWERS", 50, 30);
          
@@ -54,7 +51,7 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       doc.fillColor("#38bdf8") // Sky-400 accent for subtitle
          .fontSize(9)
          .font("Helvetica-Bold")
-         .text("KOHINOOR FACILITY HUB SERVICES", 50, 75);
+         .text("KOHINOOR FACILITY HUB SERVICES - " + order.serviceType.toUpperCase() + " SERVICE", 50, 75);
       
       // 2. Title & QR Code
       doc.fillColor("#0f172a")
@@ -90,36 +87,39 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       
       // Metadata (Left Side)
       doc.text(`Receipt Number:`, 50, currentY);
-      doc.font("Helvetica-Bold").text(`${receipt.id}`, 140, currentY);
+      doc.font("Helvetica-Bold").text(`${order.receiptNumber}`, 140, currentY);
       
       // Customer Info (Right Side)
       doc.font("Helvetica").text(`Customer Name:`, 320, currentY);
-      doc.font("Helvetica-Bold").text(`${receipt.customerName}`, 410, currentY);
+      doc.font("Helvetica-Bold").text(`${order.customerName}`, 410, currentY);
       
       currentY += 16;
       doc.font("Helvetica").text(`Date & Time:`, 50, currentY);
-      doc.text(`${new Date(receipt.date).toLocaleString("en-IN")}`, 140, currentY);
+      doc.text(`${new Date(order.createdAt).toLocaleString("en-IN")}`, 140, currentY);
       
       doc.text(`Phone Number:`, 320, currentY);
-      doc.text(`+91 ${receipt.customerPhone}`, 410, currentY);
+      doc.text(`+91 ${order.customerPhone}`, 410, currentY);
       
       currentY += 16;
       doc.text(`Service Type:`, 50, currentY);
-      doc.font("Helvetica-Bold").text(`${receipt.serviceType} Hub`, 140, currentY);
+      doc.font("Helvetica-Bold").text(`${order.serviceType} Services`, 140, currentY);
       
       doc.font("Helvetica").text(`Email Address:`, 320, currentY);
-      doc.font("Helvetica-Bold").text(`${receipt.customerEmail || "N/A"}`, 410, currentY, { width: 135, lineBreak: false });
+      doc.font("Helvetica-Bold").text(`${order.customerEmail || "N/A"}`, 410, currentY, { width: 135, lineBreak: false });
       
       currentY += 16;
       doc.font("Helvetica").text(`Payment Status:`, 50, currentY);
-      doc.font("Helvetica-Bold").fillColor("#16a34a").text(`${receipt.paymentStatus.toUpperCase()}`, 140, currentY);
+      doc.font("Helvetica-Bold").fillColor("#16a34a").text(`${order.paymentStatus.toUpperCase()}`, 140, currentY);
       
       doc.fillColor("#0f172a").font("Helvetica").text(`Order Reference:`, 320, currentY);
-      doc.font("Helvetica-Oblique").text(`${receipt.orderId}`, 410, currentY);
+      doc.font("Helvetica-Oblique").text(`${order.orderId}`, 410, currentY);
       
       currentY += 16;
       doc.fillColor("#0f172a").font("Helvetica").text(`Payment Method:`, 50, currentY);
-      doc.text(`${receipt.paymentMethod}`, 140, currentY);
+      doc.text(`${(order as any).paymentMethod || "Card / Online"}`, 140, currentY);
+
+      doc.text(`Transaction ID:`, 320, currentY);
+      doc.font("Helvetica-Bold").text(`${order.transactionId}`, 410, currentY);
       
       currentY += 25;
       
@@ -152,7 +152,7 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       currentY += 10;
       doc.font("Helvetica").fontSize(10).fillColor("#0f172a");
       
-      for (const item of receipt.items) {
+      for (const item of order.items) {
         doc.font("Helvetica-Bold").text(item.name, 50, currentY, { width: 250 });
         doc.font("Helvetica").text(String(item.quantity), 320, currentY, { width: 50, align: "center" });
         doc.text(`₹${item.price}`, 390, currentY, { width: 70, align: "right" });
@@ -174,7 +174,7 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       doc.rect(320, currentY - 5, 225, 40).fill("#f8fafc");
       doc.fillColor("#0f172a").fontSize(11).font("Helvetica-Bold");
       doc.text("Total Paid Amount:", 335, currentY);
-      doc.fillColor("#0f172a").text(`₹${receipt.totalAmountPaid}`, 465, currentY, { width: 70, align: "right" });
+      doc.fillColor("#0f172a").text(`₹${order.amount}`, 465, currentY, { width: 70, align: "right" });
       
       currentY += 65;
       
@@ -182,12 +182,12 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       doc.fillColor("#64748b")
          .fontSize(9)
          .font("Helvetica-Bold")
-         .text("Thank you for choosing Kohinoor Facilities!", 50, currentY, { align: "center" });
+         .text("Thank you for choosing Kohinoor Facilities.", 50, currentY, { align: "center" });
          
       currentY += 15;
       doc.font("Helvetica")
          .fontSize(8)
-         .text("For any queries regarding this receipt, please contact Kohinoor Facility Hub admin desk.", 50, currentY, { align: "center" });
+         .text("This is a computer-generated receipt.", 50, currentY, { align: "center" });
          
       currentY += 12;
       doc.fontSize(7.5)
@@ -200,28 +200,4 @@ export async function generateReceiptPdfBuffer(receipt: Receipt): Promise<Buffer
       reject(error);
     }
   });
-}
-
-/**
- * Generates a professional PDF receipt and saves it to public uploads directory.
- * Reuse the buffer generator function.
- * 
- * @param receipt The Receipt object
- * @returns The relative public URL path of the generated PDF receipt
- */
-export async function generateAndSaveReceiptPdf(receipt: Receipt): Promise<string> {
-  const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
-  
-  // Ensure receipts directory exists
-  if (!fs.existsSync(receiptsDir)) {
-    fs.mkdirSync(receiptsDir, { recursive: true });
-  }
-
-  const filename = `Kohinoor_Receipt_${receipt.id}.pdf`;
-  const filePath = path.join(receiptsDir, filename);
-
-  const pdfBuffer = await generateReceiptPdfBuffer(receipt);
-  await fs.promises.writeFile(filePath, pdfBuffer);
-  
-  return `/uploads/receipts/${filename}`;
 }

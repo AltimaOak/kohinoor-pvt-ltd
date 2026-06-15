@@ -206,7 +206,7 @@
         "description": "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
         "price": 250,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 11
+        "quantity": 10
       },
       {
         "id": "plant-areca",
@@ -544,7 +544,7 @@
         "description": "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
         "price": 50,
         "imageSrc": "/images/tea.png",
-        "quantity": 93
+        "quantity": 92
       },
       {
         "id": "cafe-sandwich",
@@ -1266,6 +1266,442 @@
       "emailSentTimestamp": "2026-06-12T06:53:25.598Z",
       "whatsAppSentTimestamp": "2026-06-12T06:53:25.630Z",
       "whatsAppMessageId": "wamid.HBgMOTE4NjU3OTAyODA5FQIAERgSRDMxMjNBNzc1OEYwQjQxNjQyNQA="
+    },
+    {
+      "id": "KOH-NUR-20260615-00001",
+      "orderId": "order_mock_1781532241847",
+      "serviceType": "Nursery",
+      "date": "2026-06-15T14:04:23.833Z",
+      "customerName": "Adrian Carter",
+      "customerPhone": "9876543210",
+      "customerEmail": "adrian@corp.com",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 250,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-06-15T14:04:30.384Z"
+    },
+    {
+      "id": "KOH-CAF-20260615-00001",
+      "orderId": "order_mock_1781532599886",
+      "serviceType": "Cafeteria",
+      "date": "2026-06-15T14:10:06.481Z",
+      "customerName": "Tanmay",
+      "customerPhone": "9372025677",
+      "customerEmail": "mhatretanmay12@gmail.com",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 50,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-06-15T14:10:12.704Z"
     }
-  ]
+  ],
+  "orders": [
+    {
+      "orderId": "ord-1781074751046",
+      "customerName": "John Doe",
+      "customerEmail": "",
+      "customerPhone": "9876543210",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 1
+        }
+      ],
+      "amount": 250,
+      "transactionId": "ord-1781074751046",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781074751046",
+      "createdAt": "2026-06-10T06:59:11.046Z"
+    },
+    {
+      "orderId": "cafe-1781076110178",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerEmail": "",
+      "customerPhone": "9372025677",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-1781076047502",
+          "name": "Vegetable Salad",
+          "price": 110,
+          "quantity": 1
+        }
+      ],
+      "amount": 110,
+      "transactionId": "cafe-1781076110178",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781076110178",
+      "createdAt": "2026-06-10T07:21:50.178Z"
+    },
+    {
+      "orderId": "ord-1781161462478",
+      "customerName": "Tanisha Mhatre",
+      "customerEmail": "",
+      "customerPhone": "7738578382",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 7
+        }
+      ],
+      "amount": 980,
+      "transactionId": "ord-1781161462478",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781161462478",
+      "createdAt": "2026-06-11T07:04:22.478Z"
+    },
+    {
+      "orderId": "ord-1781161573606",
+      "customerName": "Tanisha Mhatre",
+      "customerEmail": "",
+      "customerPhone": "7738578382",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 3
+        }
+      ],
+      "amount": 1050,
+      "transactionId": "ord-1781161573606",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781161573607",
+      "createdAt": "2026-06-11T07:06:13.608Z"
+    },
+    {
+      "orderId": "cafe-1781161749317",
+      "customerName": "Tanisha Mhatre",
+      "customerEmail": "",
+      "customerPhone": "9372025677",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 3
+        }
+      ],
+      "amount": 150,
+      "transactionId": "cafe-1781161749317",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781161749317",
+      "createdAt": "2026-06-11T07:09:09.317Z"
+    },
+    {
+      "orderId": "ord-1781162727800",
+      "customerName": "Tanmay Mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 3
+        }
+      ],
+      "amount": 420,
+      "transactionId": "ord-1781162727800",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781162727800",
+      "createdAt": "2026-06-11T07:25:27.800Z"
+    },
+    {
+      "orderId": "ord-1781163008366",
+      "customerName": "tanmay",
+      "customerEmail": "mhatretanmay12@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 1
+        }
+      ],
+      "amount": 250,
+      "transactionId": "ord-1781163008366",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781163008366",
+      "createdAt": "2026-06-11T07:30:08.366Z"
+    },
+    {
+      "orderId": "ord-1781245514483",
+      "customerName": "Tanmay Mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 1
+        }
+      ],
+      "amount": 250,
+      "transactionId": "ord-1781245514483",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781245514483",
+      "createdAt": "2026-06-12T06:25:14.483Z"
+    },
+    {
+      "orderId": "cafe-1781245661707",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 3
+        }
+      ],
+      "amount": 150,
+      "transactionId": "cafe-1781245661707",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781245661707",
+      "createdAt": "2026-06-12T06:27:41.707Z"
+    },
+    {
+      "orderId": "ord-1781247037193",
+      "customerName": "Tanmay Mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "amount": 350,
+      "transactionId": "ord-1781247037193",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781247037193",
+      "createdAt": "2026-06-12T06:50:37.194Z"
+    },
+    {
+      "orderId": "ord-1781247055067",
+      "customerName": "Tanmay Mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 4
+        }
+      ],
+      "amount": 560,
+      "transactionId": "ord-1781247055067",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781247055067",
+      "createdAt": "2026-06-12T06:50:55.067Z"
+    },
+    {
+      "orderId": "cafe-1781247202990",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-poha",
+          "name": "Indori Kanda Poha",
+          "price": 70,
+          "quantity": 3
+        }
+      ],
+      "amount": 210,
+      "transactionId": "cafe-1781247202990",
+      "paymentStatus": "completed",
+      "receiptNumber": "REC-1781247202990",
+      "createdAt": "2026-06-12T06:53:22.990Z"
+    },
+    {
+      "orderId": "order_mock_1781532241847",
+      "customerName": "Adrian Carter",
+      "customerEmail": "adrian@corp.com",
+      "customerPhone": "9876543210",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 1
+        }
+      ],
+      "amount": 250,
+      "transactionId": "pay_sim_1781532260581",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260615-00001",
+      "createdAt": "2026-06-15T14:04:23.833Z"
+    },
+    {
+      "orderId": "order_mock_1781532599886",
+      "customerName": "Tanmay",
+      "customerEmail": "mhatretanmay12@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 1
+        }
+      ],
+      "amount": 50,
+      "transactionId": "pay_sim_1781532605809",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-CAF-20260615-00001",
+      "createdAt": "2026-06-15T14:10:06.481Z"
+    }
+  ],
+  "receiptLogs": [
+    {
+      "receiptId": "REC-1781074751046",
+      "orderId": "ord-1781074751046",
+      "emailStatus": "pending",
+      "emailSentAt": null,
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781076110178",
+      "orderId": "cafe-1781076110178",
+      "emailStatus": "pending",
+      "emailSentAt": null,
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781161462478",
+      "orderId": "ord-1781161462478",
+      "emailStatus": "pending",
+      "emailSentAt": null,
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781161573607",
+      "orderId": "ord-1781161573606",
+      "emailStatus": "pending",
+      "emailSentAt": null,
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781161749317",
+      "orderId": "cafe-1781161749317",
+      "emailStatus": "pending",
+      "emailSentAt": null,
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781162727800",
+      "orderId": "ord-1781162727800",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-11T07:30:18.503Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781163008366",
+      "orderId": "ord-1781163008366",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-11T07:30:56.624Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781245514483",
+      "orderId": "ord-1781245514483",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-12T06:25:19.209Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781245661707",
+      "orderId": "cafe-1781245661707",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-12T06:27:46.259Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781247037193",
+      "orderId": "ord-1781247037193",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-12T06:50:41.627Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781247055067",
+      "orderId": "ord-1781247055067",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-12T06:50:58.093Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "REC-1781247202990",
+      "orderId": "cafe-1781247202990",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-12T06:53:25.598Z",
+      "resendCount": 1
+    },
+    {
+      "receiptId": "KOH-NUR-20260615-00001",
+      "orderId": "order_mock_1781532241847",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-15T14:04:30.384Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-CAF-20260615-00001",
+      "orderId": "order_mock_1781532599886",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-15T14:10:12.704Z",
+      "resendCount": 0
+    }
+  ],
+  "healthCheckupCard": {
+    "societyName": "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
+    "availabilityText": "DOCTOR",
+    "frequencyText": "EVERY MONTH",
+    "daysText": "2ND & 4TH WEDNESDAY",
+    "timingsText": "12.00 pm - 02.00 pm",
+    "bookingLink": "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
+    "footerText": "Your health is our priority",
+    "doctorName": "Dr.Reshma Nikam"
+  }
 }
