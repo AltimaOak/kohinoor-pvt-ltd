@@ -222,7 +222,7 @@
         "description": "Lush green test plant",
         "price": 140,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 1001
+        "quantity": 1000
       }
     ],
     "orders": [
@@ -1310,6 +1310,28 @@
       "paymentMethod": "Card / Online",
       "emailSentStatus": "sent",
       "emailSentTimestamp": "2026-06-15T14:10:12.704Z"
+    },
+    {
+      "id": "KOH-NUR-20260615-00002",
+      "orderId": "order_mock_1781537995845",
+      "serviceType": "Nursery",
+      "date": "2026-06-15T15:40:25.114Z",
+      "customerName": "tanmay mhatre",
+      "customerPhone": "9372025677",
+      "customerEmail": "mhatretanmay12@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 140,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-06-15T15:40:32.384Z"
     }
   ],
   "orders": [
@@ -1592,6 +1614,26 @@
       "paymentStatus": "completed",
       "receiptNumber": "KOH-CAF-20260615-00001",
       "createdAt": "2026-06-15T14:10:06.481Z"
+    },
+    {
+      "orderId": "order_mock_1781537995845",
+      "customerName": "tanmay mhatre",
+      "customerEmail": "mhatretanmay12@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 1
+        }
+      ],
+      "amount": 140,
+      "transactionId": "pay_sim_1781538024074",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260615-00002",
+      "createdAt": "2026-06-15T15:40:25.114Z"
     }
   ],
   "receiptLogs": [
@@ -1691,6 +1733,13 @@
       "orderId": "order_mock_1781532599886",
       "emailStatus": "sent",
       "emailSentAt": "2026-06-15T14:10:12.704Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260615-00002",
+      "orderId": "order_mock_1781537995845",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-15T15:40:32.384Z",
       "resendCount": 0
     }
   ],

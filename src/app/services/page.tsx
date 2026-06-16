@@ -125,7 +125,7 @@ export default function ServicesPage() {
   const [cafeCart, setCafeCart] = useState<Record<string, number>>({});
   const [cafeActiveTab, setCafeActiveTab] = useState<"Drinks" | "Breakfast" | "Lunch">("Drinks");
   const [cafeStep, setCafeStep] = useState<"menu" | "checkout" | "payment" | "success">("menu");
-  
+
   // Cafeteria Form State
   const [cafeName, setCafeName] = useState("");
   const [cafeEmail, setCafeEmail] = useState("");
@@ -317,7 +317,7 @@ export default function ServicesPage() {
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="lazyOnload"
       />
-      
+
       {/* 1. HEADER SECTION */}
       <section className="relative pt-24 pb-20 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Glow backdrop */}
@@ -332,7 +332,7 @@ export default function ServicesPage() {
             <Compass className="w-3.5 h-3.5 text-sky-400" />
             <span>Wellness & Support</span>
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -341,7 +341,7 @@ export default function ServicesPage() {
           >
             Occupant Services
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -399,7 +399,7 @@ export default function ServicesPage() {
                     {/* Icon Wrapper */}
                     <div className={cn(
                       "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 shrink-0",
-                      isMassageChair 
+                      isMassageChair
                         ? "bg-amber-500/10 border border-amber-400/20 text-amber-500 group-hover:bg-amber-500 group-hover:text-white"
                         : isAmbulance
                           ? "bg-rose-500/10 border border-rose-400/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white"
@@ -431,8 +431,8 @@ export default function ServicesPage() {
                           <li key={i} className="flex items-start gap-3">
                             <div className={cn(
                               "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 border",
-                              isMassageChair 
-                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600" 
+                              isMassageChair
+                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600"
                                 : isAmbulance
                                   ? "bg-rose-500/10 border-rose-400/20 text-rose-600"
                                   : "bg-sky-500/10 border-sky-400/20 text-sky-600"
@@ -768,7 +768,7 @@ export default function ServicesPage() {
                 <svg className="w-12 h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
                 </svg>
-              </div>
+              </div>fe
 
               {/* Schedule and calendar column cards */}
               <div className="w-full mt-4 bg-white border border-slate-100 rounded-2xl p-3 shadow-[0_4px_15px_rgba(0,0,0,0.02)] grid grid-cols-2 divide-x divide-slate-100 gap-1.5 items-center select-none">
@@ -865,7 +865,7 @@ export default function ServicesPage() {
 
               {/* Content Body */}
               <div className="flex flex-col gap-5 relative z-10 w-full">
-                
+
                 {/* Header row with icon & badge */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-amber-500/[0.02] border border-amber-500/10 rounded-2xl p-3">
                   <div className="flex items-center gap-3">
@@ -877,7 +877,7 @@ export default function ServicesPage() {
                       <span className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
                     </div>
                   </div>
-                  
+
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
                     <Ticket className="w-3 h-3" />
                     Special Offer
@@ -908,7 +908,7 @@ export default function ServicesPage() {
                       <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
                       <CalendarRange className="w-4 h-4" />
@@ -1003,7 +1003,7 @@ export default function ServicesPage() {
                 <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
                   {nursery.description}
                 </p>
-                
+
                 {/* Nursery Details strip */}
                 <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500">
                   <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/50 shadow-sm">
@@ -1049,12 +1049,12 @@ export default function ServicesPage() {
                               <Leaf className="w-12 h-12 stroke-[1]" />
                             </div>
                           )}
-                          
+
                           {/* Stock status indicator */}
                           <div className={cn(
                             "absolute top-3 right-3 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider border shadow-sm",
-                            plant.quantity > 0 
-                              ? "bg-emerald-500/90 text-white border-emerald-400" 
+                            plant.quantity > 0
+                              ? "bg-emerald-500/90 text-white border-emerald-400"
                               : "bg-rose-500/90 text-white border-rose-400"
                           )}>
                             {plant.quantity > 0 ? `${plant.quantity} In Stock` : "Out of Stock"}
@@ -1091,8 +1091,8 @@ export default function ServicesPage() {
                         }}
                         className={cn(
                           "w-full mt-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm",
-                          plant.quantity > 0 
-                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md" 
+                          plant.quantity > 0
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md"
                             : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
                         )}
                       >
@@ -1564,7 +1564,7 @@ export default function ServicesPage() {
                   <p className="text-slate-500 text-xs max-w-xl leading-relaxed">
                     {cafeteria.description}
                   </p>
-                  
+
                   {/* Cafeteria Details strip */}
                   <div className="flex flex-wrap gap-3 mt-1.5 text-[10px] md:text-xs text-slate-500">
                     <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-200/50 shadow-sm">
@@ -1632,8 +1632,8 @@ export default function ServicesPage() {
                                 )}
                                 <div className={cn(
                                   "absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border shadow-sm",
-                                  item.quantity > 0 
-                                    ? "bg-amber-500/90 text-white border-amber-400" 
+                                  item.quantity > 0
+                                    ? "bg-amber-500/90 text-white border-amber-400"
                                     : "bg-rose-500/90 text-white border-rose-400"
                                 )}>
                                   {item.quantity > 0 ? `${item.quantity} Available` : "Sold Out"}
@@ -1681,8 +1681,8 @@ export default function ServicesPage() {
                                   onClick={() => setCafeCart({ ...cafeCart, [item.id]: 1 })}
                                   className={cn(
                                     "w-full py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm border",
-                                    item.quantity > 0 
-                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500" 
+                                    item.quantity > 0
+                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500"
                                       : "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
                                   )}
                                 >
@@ -1749,7 +1749,7 @@ export default function ServicesPage() {
                   className="flex flex-col gap-4 text-left"
                 >
                   <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2">Customer Details</h3>
-                  
+
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Full Name</label>
                     <input
@@ -1891,7 +1891,7 @@ export default function ServicesPage() {
                   >
                     <div className="p-4 border border-amber-100 bg-amber-500/[0.02] rounded-xl flex flex-col gap-3">
                       <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Select Payment Method</span>
-                      
+
                       <div className="grid grid-cols-3 gap-2">
                         <div className="p-3 rounded-lg border border-amber-300 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer text-center">
                           <CreditCard className="w-5 h-5 text-amber-500" />
@@ -1993,7 +1993,7 @@ export default function ServicesPage() {
                   {/* Order Ready Status Indicator */}
                   <div className="w-full max-w-md p-4 rounded-2xl bg-white border border-slate-200/60 shadow-sm text-left flex flex-col gap-3">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Preparation Live Tracker</span>
-                    
+
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
@@ -2016,7 +2016,7 @@ export default function ServicesPage() {
 
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
-                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold", 
+                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold",
                           orderReadyState === "ready" ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400 border border-slate-200"
                         )}>
                           {orderReadyState === "ready" ? "✓" : "3"}
@@ -2425,7 +2425,7 @@ export default function ServicesPage() {
                       type="button"
                       onClick={async () => {
                         setPaymentSimStep("processing");
-                        
+
                         // Simulate network call
                         setTimeout(async () => {
                           try {
