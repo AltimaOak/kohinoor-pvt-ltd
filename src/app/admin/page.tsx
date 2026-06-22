@@ -55,6 +55,7 @@ import {
   uploadPhotoAction,
   resendReceiptAction,
   resendEmailReceiptAction,
+  updateOrderStatusAction,
   DatabaseSchema,
   EventItem,
   ServiceItem,
@@ -595,6 +596,28 @@ export default function AdminPage() {
       showToast("error", "Server communication failed while resending email.");
     } finally {
       setResendingEmailReceiptId(null);
+    }
+  };
+
+  const [updatingOrderStatusId, setUpdatingOrderStatusId] = useState<string | null>(null);
+
+  const handleUpdateOrderStatus = async (receiptId: string, nextStatus: "placed" | "preparing" | "ready" | "completed") => {
+    setUpdatingOrderStatusId(receiptId);
+    showToast("info", `Updating order status to ${nextStatus.toUpperCase()}...`);
+    try {
+      const res = await updateOrderStatusAction(receiptId, nextStatus);
+      if (res.success) {
+        showToast("success", `Order status updated to ${nextStatus.toUpperCase()} successfully!`);
+        // Refresh database to get updated logs/status
+        const updatedDb = await getDb();
+        setDb(updatedDb);
+      } else {
+        showToast("error", res.error || "Failed to update order status.");
+      }
+    } catch (err) {
+      showToast("error", "Server communication failed while updating status.");
+    } finally {
+      setUpdatingOrderStatusId(null);
     }
   };
 
@@ -2510,6 +2533,46 @@ export default function AdminPage() {
                             <div className="bg-sky-50/30 px-4 py-3 border-t border-slate-100 font-black text-slate-900 flex justify-between items-center">
                               <span>Total Paid:</span>
                               <span>₹{order.amount}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Live Order Status (Zomato/Swiggy style) */}
+                        <div className="flex flex-col gap-2">
+                          <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Live Order Status (Swiggy / Zomato)</h4>
+                          <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl flex flex-col gap-3 text-xs">
+                            <div className="flex justify-between items-center">
+                              <span className="text-slate-500 font-medium">Current Status:</span>
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                order.orderStatus === "completed"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  : order.orderStatus === "ready"
+                                  ? "bg-sky-50 text-sky-700 border border-sky-200"
+                                  : order.orderStatus === "preparing"
+                                  ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                  : "bg-blue-50 text-blue-700 border border-blue-200"
+                              }`}>
+                                {order.orderStatus || "placed"}
+                              </span>
+                            </div>
+                            <div className="flex flex-col gap-1.5 pt-2 border-t border-slate-100">
+                              <span className="text-[10px] text-slate-400 font-bold uppercase">Update Status:</span>
+                              <div className="grid grid-cols-4 gap-1.5">
+                                {["placed", "preparing", "ready", "completed"].map((st) => (
+                                  <button
+                                    key={st}
+                                    onClick={() => handleUpdateOrderStatus(order.receiptNumber, st as any)}
+                                    disabled={updatingOrderStatusId === order.receiptNumber}
+                                    className={`py-2 rounded-lg text-[8.5px] font-black uppercase tracking-wider transition-all border text-center ${
+                                      (order.orderStatus || "placed") === st
+                                        ? "bg-sky-500 text-white border-sky-500 shadow-sm"
+                                        : "bg-white text-slate-650 border-slate-200 hover:bg-slate-50 cursor-pointer"
+                                    }`}
+                                  >
+                                    {st === "placed" ? "Confirm" : st === "preparing" ? "Cook" : st === "ready" ? "Ready" : "Done"}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>

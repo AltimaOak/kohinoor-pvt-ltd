@@ -68,6 +68,7 @@ export async function sendReceiptEmail(
     const mailOptions = {
       from: fromAddress,
       to: customerEmail,
+      cc: ["devendra.sali@kohinoorcommercial2.in", "roshan.patil@kohinoorcommercial2.in"],
       subject: "Kohinoor Facilities - Order Receipt",
       text: `Dear ${order.customerName},
 

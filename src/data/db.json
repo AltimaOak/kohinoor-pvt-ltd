@@ -222,7 +222,7 @@
         "description": "Lush green test plant",
         "price": 140,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 1000
+        "quantity": 1001
       }
     ],
     "orders": [
@@ -544,7 +544,7 @@
         "description": "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
         "price": 50,
         "imageSrc": "/images/tea.png",
-        "quantity": 92
+        "quantity": 91
       },
       {
         "id": "cafe-sandwich",
@@ -1312,26 +1312,26 @@
       "emailSentTimestamp": "2026-06-15T14:10:12.704Z"
     },
     {
-      "id": "KOH-NUR-20260615-00002",
-      "orderId": "order_mock_1781537995845",
-      "serviceType": "Nursery",
-      "date": "2026-06-15T15:40:25.114Z",
-      "customerName": "tanmay mhatre",
-      "customerPhone": "9372025677",
-      "customerEmail": "mhatretanmay12@gmail.com",
+      "id": "KOH-CAF-20260616-00001",
+      "orderId": "order_mock_1781554551453",
+      "serviceType": "Cafeteria",
+      "date": "2026-06-15T20:16:20.110Z",
+      "customerName": "adityd",
+      "customerPhone": "8108839330",
+      "customerEmail": "demo@gmail.com",
       "items": [
         {
-          "itemId": "plant-1781075621847",
-          "name": "Test Fern",
-          "price": 140,
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
           "quantity": 1
         }
       ],
-      "totalAmountPaid": 140,
+      "totalAmountPaid": 50,
       "paymentStatus": "completed",
       "paymentMethod": "Card / Online",
       "emailSentStatus": "sent",
-      "emailSentTimestamp": "2026-06-15T15:40:32.384Z"
+      "emailSentTimestamp": "2026-06-15T20:16:28.314Z"
     }
   ],
   "orders": [
@@ -1616,24 +1616,25 @@
       "createdAt": "2026-06-15T14:10:06.481Z"
     },
     {
-      "orderId": "order_mock_1781537995845",
-      "customerName": "tanmay mhatre",
-      "customerEmail": "mhatretanmay12@gmail.com",
-      "customerPhone": "9372025677",
-      "serviceType": "Nursery",
+      "orderId": "order_mock_1781554551453",
+      "customerName": "adityd",
+      "customerEmail": "demo@gmail.com",
+      "customerPhone": "8108839330",
+      "serviceType": "Cafeteria",
       "items": [
         {
-          "itemId": "plant-1781075621847",
-          "name": "Test Fern",
-          "price": 140,
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
           "quantity": 1
         }
       ],
-      "amount": 140,
-      "transactionId": "pay_sim_1781538024074",
+      "amount": 50,
+      "transactionId": "pay_sim_1781554560357",
       "paymentStatus": "completed",
-      "receiptNumber": "KOH-NUR-20260615-00002",
-      "createdAt": "2026-06-15T15:40:25.114Z"
+      "receiptNumber": "KOH-CAF-20260616-00001",
+      "createdAt": "2026-06-15T20:16:20.110Z",
+      "orderStatus": "placed"
     }
   ],
   "receiptLogs": [
@@ -1736,10 +1737,10 @@
       "resendCount": 0
     },
     {
-      "receiptId": "KOH-NUR-20260615-00002",
-      "orderId": "order_mock_1781537995845",
+      "receiptId": "KOH-CAF-20260616-00001",
+      "orderId": "order_mock_1781554551453",
       "emailStatus": "sent",
-      "emailSentAt": "2026-06-15T15:40:32.384Z",
+      "emailSentAt": "2026-06-15T20:16:28.314Z",
       "resendCount": 0
     }
   ],

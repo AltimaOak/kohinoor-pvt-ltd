@@ -677,7 +677,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md bg-white border border-slate-100/80 rounded-[32px] shadow-2xl p-6 sm:p-8 flex flex-col gap-1.5 my-auto overflow-hidden items-center"
+              className="relative w-full max-w-[340px] sm:max-w-md bg-white border border-slate-100/80 rounded-[24px] sm:rounded-[32px] shadow-2xl p-4 sm:p-8 flex flex-col gap-1 sm:gap-1.5 my-auto overflow-hidden items-center"
             >
               {/* Close Button */}
               <button
@@ -689,7 +689,7 @@ export default function ServicesPage() {
 
               {/* Card Header visual */}
               <div className="flex items-center gap-2 w-full justify-between pb-1 select-none">
-                <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 relative flex items-center justify-center">
                   <img src="/images/logo.png" alt="KC Logo" className="object-contain w-full h-full" />
                 </div>
                 <div className="flex gap-1">
@@ -700,96 +700,82 @@ export default function ServicesPage() {
               </div>
 
               {/* Society / Org Title */}
-              <h3 className="text-[11px] font-black text-[#0B355B] tracking-tight leading-snug text-center px-2 select-none uppercase">
+              <h3 className="text-[9px] sm:text-[11px] font-black text-[#0B355B] tracking-tight leading-snug text-center px-1 sm:px-2 select-none uppercase">
                 {healthCheckupCard?.societyName || "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd"}
               </h3>
 
               {/* Divider element with medical cross indicator */}
-              <div className="relative w-full flex items-center justify-center my-3 select-none">
+              <div className="relative w-full flex items-center justify-center my-1.5 sm:my-3 select-none">
                 <div className="h-[2px] bg-gradient-to-r from-transparent via-sky-300 to-transparent w-full" />
                 <span className="absolute bg-white px-2 text-sky-500 flex items-center justify-center">
-                  <LucideIcons.Plus className="w-4.5 h-4.5 stroke-[3.5] text-[#1E57A5]" />
+                  <LucideIcons.Plus className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[3.5] text-[#1E57A5]" />
                 </span>
               </div>
 
-              {/* Dotted spin wheel calendar layout and QR code display grid */}
-              <div className="flex items-center justify-between w-full gap-4 mt-2 px-1">
+              {/* Dotted spin wheel calendar layout */}
+              <div className="flex items-center justify-center w-full mt-1 sm:mt-2 px-1">
                 {/* Dotted spinning visual container */}
-                <div className="relative flex-grow flex items-center justify-center py-2 shrink-0">
-                  <div className="absolute w-[120px] h-[120px] border-2 border-dashed border-sky-200 rounded-full animate-[spin_50s_linear_infinite]" />
-                  <div className="absolute w-[105px] h-[105px] border border-dashed border-sky-400/30 rounded-full" />
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#1E57A5] to-[#0A2D5C] flex items-center justify-center shadow-lg relative group transition-transform duration-300 hover:scale-105">
-                    <LucideIcons.CalendarRange className="w-11 h-11 text-white stroke-[1.5]" />
-                    <div className="absolute bottom-1 right-1 w-6.5 h-6.5 rounded-full bg-white text-[#0A2D5C] flex items-center justify-center border-2 border-[#0A2D5C] shadow-md">
-                      <LucideIcons.Check className="w-3.5 h-3.5 stroke-[3]" />
+                <div className="relative flex items-center justify-center py-1.5 sm:py-2 shrink-0">
+                  <div className="absolute w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] border-2 border-dashed border-sky-200 rounded-full animate-[spin_50s_linear_infinite]" />
+                  <div className="absolute w-[70px] h-[70px] sm:w-[105px] sm:h-[105px] border border-dashed border-sky-400/30 rounded-full" />
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#1E57A5] to-[#0A2D5C] flex items-center justify-center shadow-lg relative group transition-transform duration-300 hover:scale-105">
+                    <LucideIcons.CalendarRange className="w-7 h-7 sm:w-11 sm:h-11 text-white stroke-[1.5]" />
+                    <div className="absolute bottom-0.5 right-0.5 w-4.5 h-4.5 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-[#0A2D5C] flex items-center justify-center border-2 border-[#0A2D5C] shadow-md">
+                      <LucideIcons.Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 stroke-[3]" />
                     </div>
                   </div>
-                </div>
-
-                {/* QR Code generator box */}
-                <div className="flex flex-col items-center shrink-0 w-28 bg-white rounded-2xl p-2 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)] gap-1">
-                  <div className="aspect-square w-full bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-100 p-0.5">
-                    {qrCodeUrl ? (
-                      <img src={qrCodeUrl} alt="QR Code" className="w-full h-full object-contain" />
-                    ) : (
-                      <LucideIcons.Loader2 className="w-5 h-5 text-sky-500 animate-spin" />
-                    )}
-                  </div>
-                  <span className="text-[6.5px] font-black text-[#0A2D5C] tracking-tight leading-tight select-none">
-                    Please use QR to book appointment
-                  </span>
                 </div>
               </div>
 
               {/* Dynamic redirection book button */}
               <button
                 onClick={handleBookCampAppointment}
-                className="w-full mt-3 py-3.5 px-6 rounded-full bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] hover:from-[#1d5fb9] hover:to-[#0f3d7c] text-white font-extrabold text-xs uppercase tracking-wider shadow-[0_4px_12px_rgba(24,79,155,0.25)] hover:shadow-[0_6px_18px_rgba(24,79,155,0.35)] transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                className="w-full mt-2 sm:mt-3 py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-full bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] hover:from-[#1d5fb9] hover:to-[#0f3d7c] text-white font-extrabold text-[10px] sm:text-xs uppercase tracking-wider shadow-[0_4px_12px_rgba(24,79,155,0.25)] hover:shadow-[0_6px_18px_rgba(24,79,155,0.35)] transition-all flex items-center justify-center gap-1.5 sm:gap-2 group cursor-pointer"
               >
-                <div className="w-6.5 h-6.5 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
-                  <LucideIcons.Calendar className="w-3.5 h-3.5" />
+                <div className="w-5 h-5 sm:w-6.5 sm:h-6.5 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
+                  <LucideIcons.Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
                 <span className="font-bold select-none tracking-widest">Book Appointment</span>
-                <LucideIcons.ChevronRight className="w-4.5 h-4.5 stroke-[3] group-hover:translate-x-1 transition-transform" />
+                <LucideIcons.ChevronRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 stroke-[3] group-hover:translate-x-1 transition-transform" />
               </button>
 
-              <div className="flex items-center justify-center gap-2.5 w-full mt-5 select-none">
-                <svg className="w-12 h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 w-full mt-3.5 sm:mt-5 select-none">
+                <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
                 </svg>
-                <div className="flex flex-col items-center gap-1 text-center">
-                  <h2 className="text-xl sm:text-2xl font-black text-[#0A2D5C] tracking-normal leading-snug" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+                <div className="flex flex-col items-center gap-0.5 sm:gap-1 text-center">
+                  <h2 className="text-base sm:text-2xl font-black text-[#0A2D5C] tracking-normal leading-snug" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
                     {healthCheckupCard?.doctorName || "DOCTOR"}
                   </h2>
-                  <span className="text-[8px] font-bold text-sky-500 tracking-[0.18em] uppercase leading-none">
+                  <span className="text-[7px] sm:text-[8px] font-bold text-sky-500 tracking-[0.18em] uppercase leading-none">
                     Consulting Specialist
                   </span>
                 </div>
-                <svg className="w-12 h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
                 </svg>
               </div>fe
 
               {/* Schedule and calendar column cards */}
-              <div className="w-full mt-4 bg-white border border-slate-100 rounded-2xl p-3 shadow-[0_4px_15px_rgba(0,0,0,0.02)] grid grid-cols-2 divide-x divide-slate-100 gap-1.5 items-center select-none">
-                <div className="flex items-center gap-2.5 px-1 justify-center">
-                  <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
-                    <LucideIcons.CalendarRange className="w-4.5 h-4.5" />
+              <div className="w-full mt-2.5 sm:mt-4 bg-white border border-slate-100 rounded-2xl p-2 sm:p-3 shadow-[0_4px_15px_rgba(0,0,0,0.02)] grid grid-cols-2 divide-x divide-slate-100 gap-1 sm:gap-1.5 items-center select-none">
+                <div className="flex items-center gap-1.5 sm:gap-2.5 px-0.5 sm:px-1 justify-center">
+                  <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
+                    <LucideIcons.CalendarRange className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="text-[7px] uppercase font-black text-slate-400 tracking-wider">Schedule</span>
-                    <span className="text-[9.5px] font-black text-slate-800 leading-tight">
+                    <span className="text-[6px] sm:text-[7px] uppercase font-black text-slate-400 tracking-wider">Schedule</span>
+                    <span className="text-[8px] sm:text-[9.5px] font-black text-slate-800 leading-tight">
                       {healthCheckupCard?.frequencyText || "EVERY MONTH"}
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2.5 px-3 justify-center">
-                  <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
-                    <LucideIcons.Clock className="w-4.5 h-4.5" />
+                <div className="flex items-center gap-1.5 sm:gap-2.5 px-1.5 sm:px-3 justify-center">
+                  <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
+                    <LucideIcons.Clock className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="text-[7px] uppercase font-black text-slate-400 tracking-wider">Visiting Days</span>
-                    <span className="text-[9.5px] font-black text-slate-800 leading-tight">
+                    <span className="text-[6px] sm:text-[7px] uppercase font-black text-slate-400 tracking-wider">Visiting Days</span>
+                    <span className="text-[8px] sm:text-[9.5px] font-black text-slate-800 leading-tight">
                       {healthCheckupCard?.daysText || "2ND & 4TH WEDNESDAY"}
                     </span>
                   </div>
@@ -797,18 +783,18 @@ export default function ServicesPage() {
               </div>
 
               {/* Hours / timings capsule */}
-              <div className="w-full mt-4 py-2.5 px-5 bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] rounded-full text-white flex items-center justify-center gap-3 shadow-inner select-none">
-                <LucideIcons.Clock className="w-4.5 h-4.5 text-sky-300" />
-                <span className="w-px h-3.5 bg-sky-400/30" />
-                <span className="text-[8.5px] font-black uppercase tracking-widest text-sky-100">Timing</span>
-                <span className="text-[10px] font-bold font-mono tracking-tight text-white">
+              <div className="w-full mt-2.5 sm:mt-4 py-1.5 px-3 sm:py-2.5 sm:px-5 bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] rounded-full text-white flex items-center justify-center gap-2 sm:gap-3 shadow-inner select-none">
+                <LucideIcons.Clock className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 text-sky-300" />
+                <span className="w-px h-3 sm:h-3.5 bg-sky-400/30" />
+                <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-widest text-sky-100">Timing</span>
+                <span className="text-[8.5px] sm:text-[10px] font-bold font-mono tracking-tight text-white">
                   {healthCheckupCard?.timingsText || "12.00 pm - 02.00 pm"}
                 </span>
               </div>
 
               {/* Shield health priority badge */}
-              <div className="mt-4 mb-1 py-2 px-4 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center gap-2 text-sky-700 font-extrabold text-[8px] uppercase tracking-wider select-none">
-                <LucideIcons.ShieldAlert className="w-3.5 h-3.5 text-sky-600 fill-sky-200" />
+              <div className="mt-2.5 sm:mt-4 mb-0.5 sm:mb-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center gap-1.5 sm:gap-2 text-sky-700 font-extrabold text-[7px] sm:text-[8px] uppercase tracking-wider select-none">
+                <LucideIcons.ShieldAlert className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-sky-600 fill-sky-200" />
                 <span>{healthCheckupCard?.footerText || "Your health is our priority"}</span>
               </div>
 

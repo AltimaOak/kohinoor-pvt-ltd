@@ -4,6 +4,7 @@ import { Check, CheckCircle2, ArrowRight, Home } from "lucide-react";
 import Link from "next/link";
 import { hasReceiptAccess } from "@/app/utils/security";
 import SuccessPageActions from "./SuccessPageActions";
+import OrderStatusTracker from "@/components/OrderStatusTracker";
 
 export const revalidate = 0; // Fresh database updates on checkout landing
 
@@ -57,22 +58,13 @@ export default async function CheckoutSuccessPage({
           Payment Verified
         </span>
 
-        {/* Processing Checklist */}
-        <div className="w-full flex flex-col gap-3.5 my-8 text-left border-y border-slate-800/60 py-6">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span className="text-xs font-bold text-slate-200">Payment Successful</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span className="text-xs font-bold text-slate-200">Receipt Generated</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span className="text-xs font-bold text-slate-200 truncate">
-              Receipt Sent To Email ({order.customerEmail})
-            </span>
-          </div>
+        {/* Swiggy/Zomato Style Live Order Status Tracker */}
+        <div className="w-full my-6">
+          <OrderStatusTracker 
+            receiptId={order.receiptNumber}
+            serviceType={order.serviceType}
+            initialStatus={order.orderStatus || "placed"}
+          />
         </div>
 
         {/* Metadata Details Card */}
