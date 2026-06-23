@@ -1331,7 +1331,7 @@
       "paymentStatus": "completed",
       "paymentMethod": "Card / Online",
       "emailSentStatus": "sent",
-      "emailSentTimestamp": "2026-06-15T20:16:28.314Z"
+      "emailSentTimestamp": "2026-06-17T16:53:29.965Z"
     }
   ],
   "orders": [
@@ -1740,8 +1740,8 @@
       "receiptId": "KOH-CAF-20260616-00001",
       "orderId": "order_mock_1781554551453",
       "emailStatus": "sent",
-      "emailSentAt": "2026-06-15T20:16:28.314Z",
-      "resendCount": 0
+      "emailSentAt": "2026-06-17T16:53:29.965Z",
+      "resendCount": 1
     }
   ],
   "healthCheckupCard": {
