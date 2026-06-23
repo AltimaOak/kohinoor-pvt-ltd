@@ -324,22 +324,13 @@ export default function ServicesPage() {
         <div className="absolute top-0 left-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
         <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
-          >
-            <Compass className="w-3.5 h-3.5 text-sky-400" />
-            <span>Wellness & Support</span>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
           >
-            Occupant Services
+            Our Services
           </motion.h1>
 
           <motion.p
@@ -348,7 +339,7 @@ export default function ServicesPage() {
             transition={{ delay: 0.2 }}
             className="text-slate-600 text-sm md:text-base leading-relaxed"
           >
-            Explore our on-site wellness facilities, premium robotic therapy sessions, medical checkups, and standby emergency transit systems designed for all occupants.
+            Explore our facilities designed for all occupants.
           </motion.p>
         </div>
       </section>
@@ -754,7 +745,7 @@ export default function ServicesPage() {
                 <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
                 </svg>
-              </div>fe
+              </div>
 
               {/* Schedule and calendar column cards */}
               <div className="w-full mt-2.5 sm:mt-4 bg-white border border-slate-100 rounded-2xl p-2 sm:p-3 shadow-[0_4px_15px_rgba(0,0,0,0.02)] grid grid-cols-2 divide-x divide-slate-100 gap-1 sm:gap-1.5 items-center select-none">
