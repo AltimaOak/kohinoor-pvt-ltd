@@ -1704,7 +1704,7 @@ export default function ServicesPage() {
 
               {cafeStep === "checkout" && (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
                     if (!cafeName.trim() || !cafeEmail.trim() || !cafePhone.trim()) {
                       setCafeOrderError("Please fill in all details.");
@@ -1720,8 +1720,48 @@ export default function ServicesPage() {
                       setCafeOrderError("Please enter a valid 10-digit Indian phone number.");
                       return;
                     }
+
+                    setIsSubmittingCafeOrder(true);
                     setCafeOrderError("");
-                    setCafeStep("payment");
+                    setCafeEmailResendMessage("");
+
+                    try {
+                      const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
+                        const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
+                        return {
+                          itemId,
+                          name: menuItem.name,
+                          price: menuItem.price,
+                          quantity: qty
+                        };
+                      });
+
+                      const totalPrice = Object.entries(cafeCart).reduce((sum, [itemId, qty]) => {
+                        const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
+                        return sum + (menuItem.price * qty);
+                      }, 0);
+
+                      await handleInitiatePayment({
+                        amount: totalPrice,
+                        userName: cafeName.trim(),
+                        userEmail: cafeEmail.trim(),
+                        userPhone: cafePhone.trim(),
+                        serviceType: "Cafeteria",
+                        items: orderItems,
+                        onSuccess: (receiptNumber) => {
+                          setIsSubmittingCafeOrder(false);
+                          setIsCafeteriaModalOpen(false);
+                          window.location.href = `/checkout-success?receiptId=${receiptNumber}`;
+                        },
+                        onFailure: (err) => {
+                          setCafeOrderError(err || "Failed to process payment.");
+                          setIsSubmittingCafeOrder(false);
+                        }
+                      });
+                    } catch (err) {
+                      setCafeOrderError("An unexpected server error occurred.");
+                      setIsSubmittingCafeOrder(false);
+                    }
                   }}
                   className="flex flex-col gap-4 text-left"
                 >
@@ -1764,37 +1804,6 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  {cafeOrderError && (
-                    <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
-                      {cafeOrderError}
-                    </div>
-                  )}
-
-                  <div className="mt-4 flex items-center justify-between gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setCafeStep("menu")}
-                      className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      Back to Menu
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      Proceed to Payment
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {cafeStep === "payment" && (
-                <div className="flex flex-col gap-5 text-left">
-                  <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2 flex items-center gap-1.5">
-                    <CreditCard className="w-5 h-5 text-amber-500" />
-                    <span>Bill Payment (Simulated)</span>
-                  </h3>
-
                   {/* Order summary */}
                   <div className="p-4 bg-slate-100 rounded-xl flex flex-col gap-2.5 text-xs text-slate-600">
                     <span className="font-black text-navy-900 uppercase tracking-wide">Order Summary</span>
@@ -1818,140 +1827,42 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  {/* Payment Form Details */}
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      setIsSubmittingCafeOrder(true);
-                      setCafeOrderError("");
-                      setCafeEmailResendMessage("");
-
-                      try {
-                        const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
-                          const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
-                          return {
-                            itemId,
-                            name: menuItem.name,
-                            price: menuItem.price,
-                            quantity: qty
-                          };
-                        });
-
-                        const totalPrice = Object.entries(cafeCart).reduce((sum, [itemId, qty]) => {
-                          const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
-                          return sum + (menuItem.price * qty);
-                        }, 0);
-
-                        await handleInitiatePayment({
-                          amount: totalPrice,
-                          userName: cafeName.trim(),
-                          userEmail: cafeEmail.trim(),
-                          userPhone: cafePhone.trim(),
-                          serviceType: "Cafeteria",
-                          items: orderItems,
-                          onSuccess: (receiptNumber) => {
-                            setIsSubmittingCafeOrder(false);
-                            setIsCafeteriaModalOpen(false);
-                            window.location.href = `/checkout-success?receiptId=${receiptNumber}`;
-                          },
-                          onFailure: (err) => {
-                            setCafeOrderError(err || "Failed to process payment.");
-                            setIsSubmittingCafeOrder(false);
-                          }
-                        });
-                      } catch (err) {
-                        setCafeOrderError("An unexpected server error occurred.");
-                        setIsSubmittingCafeOrder(false);
-                      }
-                    }}
-                    className="flex flex-col gap-4"
-                  >
-                    <div className="p-4 border border-amber-100 bg-amber-500/[0.02] rounded-xl flex flex-col gap-3">
-                      <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Select Payment Method</span>
-
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="p-3 rounded-lg border border-amber-300 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer text-center">
-                          <CreditCard className="w-5 h-5 text-amber-500" />
-                          <span className="text-[9px] font-bold text-navy-800">Card</span>
-                        </div>
-                        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 cursor-pointer text-center grayscale opacity-60">
-                          <Check className="w-5 h-5 text-slate-500" />
-                          <span className="text-[9px] font-bold text-slate-500">UPI</span>
-                        </div>
-                        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 cursor-pointer text-center grayscale opacity-60">
-                          <Compass className="w-5 h-5 text-slate-500" />
-                          <span className="text-[9px] font-bold text-slate-500">NetBanking</span>
-                        </div>
-                      </div>
-
-                      {/* Mock Card Inputs */}
-                      <div className="flex flex-col gap-2 mt-2">
-                        <input
-                          type="text"
-                          required
-                          maxLength={16}
-                          placeholder="Card Number (e.g. 4111 2222 3333 4444)"
-                          defaultValue="4111222233334444"
-                          className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                        />
-                        <div className="grid grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            required
-                            maxLength={5}
-                            placeholder="MM/YY"
-                            defaultValue="12/29"
-                            className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                          />
-                          <input
-                            type="password"
-                            required
-                            maxLength={3}
-                            placeholder="CVV"
-                            defaultValue="123"
-                            className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                          />
-                        </div>
-                      </div>
+                  {cafeOrderError && (
+                    <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
+                      {cafeOrderError}
                     </div>
+                  )}
 
-                    {cafeOrderError && (
-                      <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
-                        {cafeOrderError}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setCafeStep("checkout")}
-                        className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                      >
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSubmittingCafeOrder}
-                        className={cn(
-                          "px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center gap-1.5 cursor-pointer",
-                          isSubmittingCafeOrder && "opacity-80 cursor-wait"
-                        )}
-                      >
-                        {isSubmittingCafeOrder ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin text-white" />
-                            <span>Processing...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-4 h-4" />
-                            <span>Confirm & Pay</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  <div className="mt-4 flex items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setCafeStep("menu")}
+                      className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      Back to Menu
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingCafeOrder}
+                      className={cn(
+                        "px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2",
+                        isSubmittingCafeOrder && "opacity-80 cursor-wait"
+                      )}
+                    >
+                      {isSubmittingCafeOrder ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4" />
+                          <span>Proceed to Pay</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               )}
 
               {cafeStep === "success" && (
