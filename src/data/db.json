@@ -214,7 +214,7 @@
         "description": "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
         "price": 350,
         "imageSrc": "/images/areca_palm.png",
-        "quantity": 4
+        "quantity": 2
       },
       {
         "id": "plant-1781075621847",
@@ -1332,6 +1332,50 @@
       "paymentMethod": "Card / Online",
       "emailSentStatus": "sent",
       "emailSentTimestamp": "2026-06-15T20:16:28.314Z"
+    },
+    {
+      "id": "KOH-NUR-20260622-00001",
+      "orderId": "order_mock_1782122994824",
+      "serviceType": "Nursery",
+      "date": "2026-06-22T10:09:59.786Z",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerPhone": "9372025677",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 350,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-06-22T10:10:06.058Z"
+    },
+    {
+      "id": "KOH-NUR-20260623-00001",
+      "orderId": "order_mock_1782198321834",
+      "serviceType": "Nursery",
+      "date": "2026-06-23T07:05:30.623Z",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerPhone": "9372025677",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 350,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-06-23T07:05:38.136Z"
     }
   ],
   "orders": [
@@ -1635,6 +1679,48 @@
       "receiptNumber": "KOH-CAF-20260616-00001",
       "createdAt": "2026-06-15T20:16:20.110Z",
       "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1782122994824",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "amount": 350,
+      "transactionId": "pay_sim_1782122998700",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260622-00001",
+      "createdAt": "2026-06-22T10:09:59.786Z",
+      "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1782198321834",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "amount": 350,
+      "transactionId": "pay_sim_1782198329501",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260623-00001",
+      "createdAt": "2026-06-23T07:05:30.623Z",
+      "orderStatus": "placed"
     }
   ],
   "receiptLogs": [
@@ -1741,6 +1827,20 @@
       "orderId": "order_mock_1781554551453",
       "emailStatus": "sent",
       "emailSentAt": "2026-06-15T20:16:28.314Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260622-00001",
+      "orderId": "order_mock_1782122994824",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-22T10:10:06.058Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260623-00001",
+      "orderId": "order_mock_1782198321834",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-23T07:05:38.136Z",
       "resendCount": 0
     }
   ],
