@@ -246,6 +246,8 @@ export interface Receipt {
   emailSentStatus?: "sent" | "failed" | "pending";
   emailSentTimestamp?: string;
   whatsAppSentStatus?: string;
+  whatsAppSentTimestamp?: string;
+  whatsAppMessageId?: string;
   whatsAppDeliveryLogs?: any[];
 }
 
