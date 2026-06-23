@@ -125,7 +125,7 @@ export default function ServicesPage() {
   const [cafeCart, setCafeCart] = useState<Record<string, number>>({});
   const [cafeActiveTab, setCafeActiveTab] = useState<"Drinks" | "Breakfast" | "Lunch">("Drinks");
   const [cafeStep, setCafeStep] = useState<"menu" | "checkout" | "payment" | "success">("menu");
-  
+
   // Cafeteria Form State
   const [cafeName, setCafeName] = useState("");
   const [cafeEmail, setCafeEmail] = useState("");
@@ -317,38 +317,29 @@ export default function ServicesPage() {
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="lazyOnload"
       />
-      
+
       {/* 1. HEADER SECTION */}
       <section className="relative pt-24 pb-20 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Glow backdrop */}
         <div className="absolute top-0 left-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
         <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
-          >
-            <Compass className="w-3.5 h-3.5 text-sky-400" />
-            <span>Wellness & Support</span>
-          </motion.div>
-          
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
           >
-            Occupant Services
+            Our Services
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-slate-600 text-sm md:text-base leading-relaxed"
           >
-            Explore our on-site wellness facilities, premium robotic therapy sessions, medical checkups, and standby emergency transit systems designed for all occupants.
+            Explore our facilities designed for all occupants.
           </motion.p>
         </div>
       </section>
@@ -399,7 +390,7 @@ export default function ServicesPage() {
                     {/* Icon Wrapper */}
                     <div className={cn(
                       "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 shrink-0",
-                      isMassageChair 
+                      isMassageChair
                         ? "bg-amber-500/10 border border-amber-400/20 text-amber-500 group-hover:bg-amber-500 group-hover:text-white"
                         : isAmbulance
                           ? "bg-rose-500/10 border border-rose-400/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white"
@@ -431,8 +422,8 @@ export default function ServicesPage() {
                           <li key={i} className="flex items-start gap-3">
                             <div className={cn(
                               "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 border",
-                              isMassageChair 
-                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600" 
+                              isMassageChair
+                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600"
                                 : isAmbulance
                                   ? "bg-rose-500/10 border-rose-400/20 text-rose-600"
                                   : "bg-sky-500/10 border-sky-400/20 text-sky-600"
@@ -851,7 +842,7 @@ export default function ServicesPage() {
 
               {/* Content Body */}
               <div className="flex flex-col gap-5 relative z-10 w-full">
-                
+
                 {/* Header row with icon & badge */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-amber-500/[0.02] border border-amber-500/10 rounded-2xl p-3">
                   <div className="flex items-center gap-3">
@@ -863,7 +854,7 @@ export default function ServicesPage() {
                       <span className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
                     </div>
                   </div>
-                  
+
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
                     <Ticket className="w-3 h-3" />
                     Special Offer
@@ -894,7 +885,7 @@ export default function ServicesPage() {
                       <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
                       <CalendarRange className="w-4 h-4" />
@@ -989,7 +980,7 @@ export default function ServicesPage() {
                 <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
                   {nursery.description}
                 </p>
-                
+
                 {/* Nursery Details strip */}
                 <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500">
                   <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/50 shadow-sm">
@@ -1035,12 +1026,12 @@ export default function ServicesPage() {
                               <Leaf className="w-12 h-12 stroke-[1]" />
                             </div>
                           )}
-                          
+
                           {/* Stock status indicator */}
                           <div className={cn(
                             "absolute top-3 right-3 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider border shadow-sm",
-                            plant.quantity > 0 
-                              ? "bg-emerald-500/90 text-white border-emerald-400" 
+                            plant.quantity > 0
+                              ? "bg-emerald-500/90 text-white border-emerald-400"
                               : "bg-rose-500/90 text-white border-rose-400"
                           )}>
                             {plant.quantity > 0 ? `${plant.quantity} In Stock` : "Out of Stock"}
@@ -1077,8 +1068,8 @@ export default function ServicesPage() {
                         }}
                         className={cn(
                           "w-full mt-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm",
-                          plant.quantity > 0 
-                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md" 
+                          plant.quantity > 0
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md"
                             : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
                         )}
                       >
@@ -1550,7 +1541,7 @@ export default function ServicesPage() {
                   <p className="text-slate-500 text-xs max-w-xl leading-relaxed">
                     {cafeteria.description}
                   </p>
-                  
+
                   {/* Cafeteria Details strip */}
                   <div className="flex flex-wrap gap-3 mt-1.5 text-[10px] md:text-xs text-slate-500">
                     <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-200/50 shadow-sm">
@@ -1618,8 +1609,8 @@ export default function ServicesPage() {
                                 )}
                                 <div className={cn(
                                   "absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border shadow-sm",
-                                  item.quantity > 0 
-                                    ? "bg-amber-500/90 text-white border-amber-400" 
+                                  item.quantity > 0
+                                    ? "bg-amber-500/90 text-white border-amber-400"
                                     : "bg-rose-500/90 text-white border-rose-400"
                                 )}>
                                   {item.quantity > 0 ? `${item.quantity} Available` : "Sold Out"}
@@ -1667,8 +1658,8 @@ export default function ServicesPage() {
                                   onClick={() => setCafeCart({ ...cafeCart, [item.id]: 1 })}
                                   className={cn(
                                     "w-full py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm border",
-                                    item.quantity > 0 
-                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500" 
+                                    item.quantity > 0
+                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500"
                                       : "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
                                   )}
                                 >
@@ -1713,7 +1704,7 @@ export default function ServicesPage() {
 
               {cafeStep === "checkout" && (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
                     if (!cafeName.trim() || !cafeEmail.trim() || !cafePhone.trim()) {
                       setCafeOrderError("Please fill in all details.");
@@ -1729,13 +1720,53 @@ export default function ServicesPage() {
                       setCafeOrderError("Please enter a valid 10-digit Indian phone number.");
                       return;
                     }
+
+                    setIsSubmittingCafeOrder(true);
                     setCafeOrderError("");
-                    setCafeStep("payment");
+                    setCafeEmailResendMessage("");
+
+                    try {
+                      const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
+                        const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
+                        return {
+                          itemId,
+                          name: menuItem.name,
+                          price: menuItem.price,
+                          quantity: qty
+                        };
+                      });
+
+                      const totalPrice = Object.entries(cafeCart).reduce((sum, [itemId, qty]) => {
+                        const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
+                        return sum + (menuItem.price * qty);
+                      }, 0);
+
+                      await handleInitiatePayment({
+                        amount: totalPrice,
+                        userName: cafeName.trim(),
+                        userEmail: cafeEmail.trim(),
+                        userPhone: cafePhone.trim(),
+                        serviceType: "Cafeteria",
+                        items: orderItems,
+                        onSuccess: (receiptNumber) => {
+                          setIsSubmittingCafeOrder(false);
+                          setIsCafeteriaModalOpen(false);
+                          window.location.href = `/checkout-success?receiptId=${receiptNumber}`;
+                        },
+                        onFailure: (err) => {
+                          setCafeOrderError(err || "Failed to process payment.");
+                          setIsSubmittingCafeOrder(false);
+                        }
+                      });
+                    } catch (err) {
+                      setCafeOrderError("An unexpected server error occurred.");
+                      setIsSubmittingCafeOrder(false);
+                    }
                   }}
                   className="flex flex-col gap-4 text-left"
                 >
                   <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2">Customer Details</h3>
-                  
+
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Full Name</label>
                     <input
@@ -1773,37 +1804,6 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  {cafeOrderError && (
-                    <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
-                      {cafeOrderError}
-                    </div>
-                  )}
-
-                  <div className="mt-4 flex items-center justify-between gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setCafeStep("menu")}
-                      className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      Back to Menu
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      Proceed to Payment
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {cafeStep === "payment" && (
-                <div className="flex flex-col gap-5 text-left">
-                  <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2 flex items-center gap-1.5">
-                    <CreditCard className="w-5 h-5 text-amber-500" />
-                    <span>Bill Payment (Simulated)</span>
-                  </h3>
-
                   {/* Order summary */}
                   <div className="p-4 bg-slate-100 rounded-xl flex flex-col gap-2.5 text-xs text-slate-600">
                     <span className="font-black text-navy-900 uppercase tracking-wide">Order Summary</span>
@@ -1827,140 +1827,42 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  {/* Payment Form Details */}
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      setIsSubmittingCafeOrder(true);
-                      setCafeOrderError("");
-                      setCafeEmailResendMessage("");
-
-                      try {
-                        const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
-                          const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
-                          return {
-                            itemId,
-                            name: menuItem.name,
-                            price: menuItem.price,
-                            quantity: qty
-                          };
-                        });
-
-                        const totalPrice = Object.entries(cafeCart).reduce((sum, [itemId, qty]) => {
-                          const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
-                          return sum + (menuItem.price * qty);
-                        }, 0);
-
-                        await handleInitiatePayment({
-                          amount: totalPrice,
-                          userName: cafeName.trim(),
-                          userEmail: cafeEmail.trim(),
-                          userPhone: cafePhone.trim(),
-                          serviceType: "Cafeteria",
-                          items: orderItems,
-                          onSuccess: (receiptNumber) => {
-                            setIsSubmittingCafeOrder(false);
-                            setIsCafeteriaModalOpen(false);
-                            window.location.href = `/checkout-success?receiptId=${receiptNumber}`;
-                          },
-                          onFailure: (err) => {
-                            setCafeOrderError(err || "Failed to process payment.");
-                            setIsSubmittingCafeOrder(false);
-                          }
-                        });
-                      } catch (err) {
-                        setCafeOrderError("An unexpected server error occurred.");
-                        setIsSubmittingCafeOrder(false);
-                      }
-                    }}
-                    className="flex flex-col gap-4"
-                  >
-                    <div className="p-4 border border-amber-100 bg-amber-500/[0.02] rounded-xl flex flex-col gap-3">
-                      <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Select Payment Method</span>
-                      
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="p-3 rounded-lg border border-amber-300 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer text-center">
-                          <CreditCard className="w-5 h-5 text-amber-500" />
-                          <span className="text-[9px] font-bold text-navy-800">Card</span>
-                        </div>
-                        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 cursor-pointer text-center grayscale opacity-60">
-                          <Check className="w-5 h-5 text-slate-500" />
-                          <span className="text-[9px] font-bold text-slate-500">UPI</span>
-                        </div>
-                        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 cursor-pointer text-center grayscale opacity-60">
-                          <Compass className="w-5 h-5 text-slate-500" />
-                          <span className="text-[9px] font-bold text-slate-500">NetBanking</span>
-                        </div>
-                      </div>
-
-                      {/* Mock Card Inputs */}
-                      <div className="flex flex-col gap-2 mt-2">
-                        <input
-                          type="text"
-                          required
-                          maxLength={16}
-                          placeholder="Card Number (e.g. 4111 2222 3333 4444)"
-                          defaultValue="4111222233334444"
-                          className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                        />
-                        <div className="grid grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            required
-                            maxLength={5}
-                            placeholder="MM/YY"
-                            defaultValue="12/29"
-                            className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                          />
-                          <input
-                            type="password"
-                            required
-                            maxLength={3}
-                            placeholder="CVV"
-                            defaultValue="123"
-                            className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                          />
-                        </div>
-                      </div>
+                  {cafeOrderError && (
+                    <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
+                      {cafeOrderError}
                     </div>
+                  )}
 
-                    {cafeOrderError && (
-                      <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
-                        {cafeOrderError}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setCafeStep("checkout")}
-                        className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                      >
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSubmittingCafeOrder}
-                        className={cn(
-                          "px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center gap-1.5 cursor-pointer",
-                          isSubmittingCafeOrder && "opacity-80 cursor-wait"
-                        )}
-                      >
-                        {isSubmittingCafeOrder ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin text-white" />
-                            <span>Processing...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-4 h-4" />
-                            <span>Confirm & Pay</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  <div className="mt-4 flex items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setCafeStep("menu")}
+                      className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      Back to Menu
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingCafeOrder}
+                      className={cn(
+                        "px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2",
+                        isSubmittingCafeOrder && "opacity-80 cursor-wait"
+                      )}
+                    >
+                      {isSubmittingCafeOrder ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4" />
+                          <span>Proceed to Pay</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               )}
 
               {cafeStep === "success" && (
@@ -1979,7 +1881,7 @@ export default function ServicesPage() {
                   {/* Order Ready Status Indicator */}
                   <div className="w-full max-w-md p-4 rounded-2xl bg-white border border-slate-200/60 shadow-sm text-left flex flex-col gap-3">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Preparation Live Tracker</span>
-                    
+
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
@@ -2002,7 +1904,7 @@ export default function ServicesPage() {
 
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
-                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold", 
+                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold",
                           orderReadyState === "ready" ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400 border border-slate-200"
                         )}>
                           {orderReadyState === "ready" ? "✓" : "3"}
@@ -2411,7 +2313,7 @@ export default function ServicesPage() {
                       type="button"
                       onClick={async () => {
                         setPaymentSimStep("processing");
-                        
+
                         // Simulate network call
                         setTimeout(async () => {
                           try {
