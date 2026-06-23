@@ -1,7 +1,7 @@
 import { getDb } from "@/app/actions";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { Check } from "lucide-react";
+import ReceiptActions from "@/components/ReceiptActions";
 
 export const revalidate = 0; // Disable caching to fetch fresh DB values
 
@@ -23,19 +23,7 @@ export default async function ReceiptPage({ params }: { params: any }) {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 flex flex-col items-center justify-center font-sans antialiased print:bg-white print:py-0">
-      {/* Auto print on page load */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.onload = function() {
-              // Only trigger print if not already printed
-              if (!window.location.search.includes('printed')) {
-                window.print();
-              }
-            }
-          `,
-        }}
-      />
+      {/* Auto print and printing controls are managed by ReceiptActions Client component */}
 
       <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-xl p-8 print:shadow-none print:border-none print:p-0">
         
@@ -118,21 +106,8 @@ export default async function ReceiptPage({ params }: { params: any }) {
 
       </div>
 
-      {/* Back to Site Button (Hidden during print) */}
-      <div className="mt-8 flex gap-4 print:hidden">
-        <Link
-          href="/services"
-          className="px-6 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-colors shadow-md"
-        >
-          Back to Hub
-        </Link>
-        <button
-          onClick={() => window.print()}
-          className="px-6 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
-        >
-          Print Copy
-        </button>
-      </div>
+      {/* Action Buttons */}
+      <ReceiptActions pdfUrl={receipt.pdfUrl} receiptId={receipt.id} />
 
     </div>
   );

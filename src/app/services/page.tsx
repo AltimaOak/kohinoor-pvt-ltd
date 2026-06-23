@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
@@ -39,8 +40,9 @@ import {
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getDb, ServiceItem, DoctorItem, buyPlantAction, buyCafeteriaAction, NurserySchema, PlantItem, CafeteriaSchema, CafeMenuItem, resendReceiptAction } from "@/app/actions";
+import { getDb, ServiceItem, DoctorItem, buyPlantAction, buyCafeteriaAction, NurserySchema, PlantItem, CafeteriaSchema, CafeMenuItem, resendReceiptAction, resendEmailReceiptAction, HealthCheckupCard } from "@/app/actions";
 import AppointmentModal from "@/components/AppointmentModal";
+import QRCode from "qrcode";
 
 function getWhatsAppUrl(phone: string, text: string): string {
   let digits = phone.replace(/[^0-9]/g, "");
@@ -58,6 +60,38 @@ export default function ServicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCampModalOpen, setIsCampModalOpen] = useState(false);
   const [isMassageModalOpen, setIsMassageModalOpen] = useState(false);
+
+  // Health checkup card configurations
+  const [healthCheckupCard, setHealthCheckupCard] = useState<HealthCheckupCard | null>(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (healthCheckupCard?.bookingLink) {
+      QRCode.toDataURL(healthCheckupCard.bookingLink, {
+        width: 200,
+        margin: 1,
+        color: {
+          dark: "#0f172a", // Navy 900
+          light: "#ffffff",
+        },
+      })
+        .then((url) => setQrCodeUrl(url))
+        .catch((err) => console.error("QR Code generation failed:", err));
+    }
+  }, [healthCheckupCard?.bookingLink]);
+
+  const handleBookCampAppointment = () => {
+    const link = healthCheckupCard?.bookingLink;
+    if (link && link.trim() !== "") {
+      window.open(link, "_blank", "noopener,noreferrer");
+    } else if (doctors && doctors.length > 0) {
+      setSelectedDoctor(doctors[0]);
+      setIsModalOpen(true);
+    } else {
+      setSelectedDoctor(null);
+      setIsModalOpen(true);
+    }
+  };
 
   // Plant Nursery States
   const [nursery, setNursery] = useState<NurserySchema | null>(null);
@@ -77,9 +111,13 @@ export default function ServicesPage() {
   const [purchaseError, setPurchaseError] = useState("");
   const [purchaseOrderId, setPurchaseOrderId] = useState("");
   const [purchaseReceiptId, setPurchaseReceiptId] = useState("");
-  const [nurseryWhatsAppStatus, setNurseryWhatsAppStatus] = useState<"sending" | "sent" | "failed">("sending");
+  const [nurseryWhatsAppStatus, setNurseryWhatsAppStatus] = useState<"sending" | "sent" | "delivered" | "failed">("sending");
   const [isResendingNurseryReceipt, setIsResendingNurseryReceipt] = useState(false);
   const [nurseryResendMessage, setNurseryResendMessage] = useState("");
+  const [purchaseReceiptPdfUrl, setPurchaseReceiptPdfUrl] = useState("");
+  const [nurseryEmailStatus, setNurseryEmailStatus] = useState<"sending" | "sent" | "delivered" | "failed">("sending");
+  const [isResendingNurseryEmail, setIsResendingNurseryEmail] = useState(false);
+  const [nurseryEmailResendMessage, setNurseryEmailResendMessage] = useState("");
 
   // Cafeteria States
   const [cafeteria, setCafeteria] = useState<CafeteriaSchema | null>(null);
@@ -87,7 +125,7 @@ export default function ServicesPage() {
   const [cafeCart, setCafeCart] = useState<Record<string, number>>({});
   const [cafeActiveTab, setCafeActiveTab] = useState<"Drinks" | "Breakfast" | "Lunch">("Drinks");
   const [cafeStep, setCafeStep] = useState<"menu" | "checkout" | "payment" | "success">("menu");
-  
+
   // Cafeteria Form State
   const [cafeName, setCafeName] = useState("");
   const [cafeEmail, setCafeEmail] = useState("");
@@ -96,13 +134,149 @@ export default function ServicesPage() {
   const [cafeOrderError, setCafeOrderError] = useState("");
   const [cafeOrderId, setCafeOrderId] = useState("");
   const [cafeReceiptId, setCafeReceiptId] = useState("");
+<<<<<<< HEAD
   const [cafeWhatsAppStatus, setCafeWhatsAppStatus] = useState<"sending" | "sent" | "failed">("sending");
   const [customerWhatsAppSent, setCustomerWhatsAppSent] = useState<"sending" | "sent" | "failed">("sending");
   const [cafeteriaWhatsAppSent, setCafeteriaWhatsAppSent] = useState<"sending" | "sent" | "failed">("sending");
+=======
+  const [cafeWhatsAppStatus, setCafeWhatsAppStatus] = useState<"sending" | "sent" | "delivered" | "failed">("sending");
+>>>>>>> origin/adi
   const [isResendingCafeReceipt, setIsResendingCafeReceipt] = useState(false);
   const [cafeResendMessage, setCafeResendMessage] = useState("");
+  const [cafeReceiptPdfUrl, setCafeReceiptPdfUrl] = useState("");
+  const [cafeEmailStatus, setCafeEmailStatus] = useState<"sending" | "sent" | "delivered" | "failed">("sending");
+  const [isResendingCafeEmail, setIsResendingCafeEmail] = useState(false);
+  const [cafeEmailResendMessage, setCafeEmailResendMessage] = useState("");
   const [orderReadyState, setOrderReadyState] = useState<"idle" | "preparing" | "ready">("idle");
   const [readyAlertVisible, setReadyAlertVisible] = useState(false);
+
+  // Payment simulation state
+  const [isPaymentSimOpen, setIsPaymentSimOpen] = useState(false);
+  const [paymentSimData, setPaymentSimData] = useState<{
+    orderId: string;
+    amount: number;
+    userName: string;
+    userEmail: string;
+    userPhone: string;
+    checkoutData: any;
+    onSuccess: (receiptNumber: string) => void;
+    onFailure: (error: string) => void;
+  } | null>(null);
+  const [paymentSimStep, setPaymentSimStep] = useState<"method" | "processing" | "success" | "failed">("method");
+  const [paymentSimMethod, setPaymentSimMethod] = useState<"card" | "upi" | "netbanking">("card");
+  const [paymentSimCardNumber, setPaymentSimCardNumber] = useState("4111 2222 3333 4444");
+  const [paymentSimCardExpiry, setPaymentSimCardExpiry] = useState("12/29");
+  const [paymentSimCardCvv, setPaymentSimCardCvv] = useState("123");
+  const [paymentSimUpiId, setPaymentSimUpiId] = useState("");
+
+  const handleInitiatePayment = async ({
+    amount,
+    userName,
+    userEmail,
+    userPhone,
+    serviceType,
+    items,
+    onSuccess,
+    onFailure,
+  }: {
+    amount: number;
+    userName: string;
+    userEmail: string;
+    userPhone: string;
+    serviceType: "Nursery" | "Cafeteria";
+    items: any[];
+    onSuccess: (receiptNumber: string) => void;
+    onFailure: (error: string) => void;
+  }) => {
+    try {
+      // 1. Create order on the server
+      const orderRes = await fetch("/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, receipt: `rcpt_${Date.now()}` }),
+      });
+      const orderData = await orderRes.json();
+      if (orderData.error) {
+        onFailure(orderData.error);
+        return;
+      }
+
+      const checkoutData = {
+        customerName: userName,
+        customerEmail: userEmail,
+        customerPhone: userPhone,
+        serviceType,
+        items,
+        amount,
+      };
+
+      const rzpKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      const isMock = !rzpKey || rzpKey.startsWith("your_") || !(window as any).Razorpay;
+
+      if (isMock) {
+        // Trigger simulated payment modal
+        setPaymentSimData({
+          orderId: orderData.id,
+          amount,
+          userName,
+          userEmail,
+          userPhone,
+          checkoutData,
+          onSuccess,
+          onFailure,
+        });
+        setPaymentSimStep("method");
+        setIsPaymentSimOpen(true);
+      } else {
+        // Open real Razorpay checkout overlay
+        const options = {
+          key: rzpKey,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "Kohinoor Facilities",
+          description: `${serviceType} services`,
+          order_id: orderData.id,
+          handler: async function (response: any) {
+            try {
+              const verifyRes = await fetch("/api/payments/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                  checkoutData,
+                }),
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyRes.ok && verifyData.success) {
+                onSuccess(verifyData.receiptNumber);
+              } else {
+                onFailure(verifyData.error || "Payment verification failed.");
+              }
+            } catch (err) {
+              onFailure("Verification request failed.");
+            }
+          },
+          prefill: {
+            name: userName,
+            email: userEmail,
+            contact: userPhone,
+          },
+          theme: {
+            color: "#0f172a",
+          },
+        };
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on("payment.failed", function (response: any) {
+          onFailure(response.error.description || "Payment failed.");
+        });
+        rzp.open();
+      }
+    } catch (err: any) {
+      onFailure(err.message || "Failed to initiate payment.");
+    }
+  };
 
   async function loadData() {
     try {
@@ -111,6 +285,7 @@ export default function ServicesPage() {
       setDoctors(data.doctors || []);
       setNursery(data.nursery || null);
       setCafeteria(data.cafeteria || null);
+      setHealthCheckupCard(data.healthCheckupCard || null);
     } catch (err) {
       console.error("Failed to load services data:", err);
     }
@@ -144,31 +319,33 @@ export default function ServicesPage() {
 
   return (
     <div className="flex flex-col w-full pb-20 overflow-hidden">
-      
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="lazyOnload"
+      />
+
       {/* 1. HEADER SECTION */}
       <section className="relative pt-24 pb-20 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Glow backdrop */}
         <div className="absolute top-0 left-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
         <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
-        
-          
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
           >
-            Our  Services
+            Our Services
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-slate-600 text-sm md:text-base leading-relaxed"
           >
-            Explore our  facilities designed for all occupants.
+            Explore our facilities designed for all occupants.
           </motion.p>
         </div>
       </section>
@@ -219,7 +396,7 @@ export default function ServicesPage() {
                     {/* Icon Wrapper */}
                     <div className={cn(
                       "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 shrink-0",
-                      isMassageChair 
+                      isMassageChair
                         ? "bg-amber-500/10 border border-amber-400/20 text-amber-500 group-hover:bg-amber-500 group-hover:text-white"
                         : isAmbulance
                           ? "bg-rose-500/10 border border-rose-400/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white"
@@ -251,8 +428,8 @@ export default function ServicesPage() {
                           <li key={i} className="flex items-start gap-3">
                             <div className={cn(
                               "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 border",
-                              isMassageChair 
-                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600" 
+                              isMassageChair
+                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600"
                                 : isAmbulance
                                   ? "bg-rose-500/10 border-rose-400/20 text-rose-600"
                                   : "bg-sky-500/10 border-sky-400/20 text-sky-600"
@@ -497,112 +674,131 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 my-auto"
+              className="relative w-full max-w-[340px] sm:max-w-md bg-white border border-slate-100/80 rounded-[24px] sm:rounded-[32px] shadow-2xl p-4 sm:p-8 flex flex-col gap-1 sm:gap-1.5 my-auto overflow-hidden items-center"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsCampModalOpen(false)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50"
+                className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50 bg-white/80 border border-slate-100 shadow-sm"
               >
-                <LucideIcons.X className="w-6 h-6" />
+                <LucideIcons.X className="w-5 h-5" />
               </button>
 
-              {/* Modal Header */}
-              <div className="flex flex-col gap-3 text-left pr-10 md:pr-0">
-                <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
-                  <LucideIcons.HeartHandshake className="w-4 h-4 text-sky-500" />
-                  On-Site Medical Consultation
-                </span>
-                 <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
-                  Visiting Doctors & Specialists
-                </h2>
-                <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
-                  Schedule direct consultations with our visiting medical professionals. Book appointments online to save time.
-                </p>
+              {/* Card Header visual */}
+              <div className="flex items-center gap-2 w-full justify-between pb-1 select-none">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 relative flex items-center justify-center">
+                  <img src="/images/logo.png" alt="KC Logo" className="object-contain w-full h-full" />
+                </div>
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-200" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-200" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-200" />
+                </div>
               </div>
 
-              {/* Centered Content layout */}
-              <div className="max-w-2xl mx-auto w-full">
-                {/* Doctors List */}
-                <div className="flex flex-col gap-4 w-full">
-                  {doctors.map((doctor, idx) => {
-                    return (
-                      <motion.div
-                        key={doctor.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: idx * 0.05 }}
-                        className="bg-white border border-slate-200/60 rounded-[16px] sm:rounded-2xl p-3.5 sm:p-4.5 shadow-[0_4px_20px_rgb(0,0,0,0.01)] hover:shadow-md hover:border-slate-300 transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 relative overflow-hidden group/doc"
-                      >
-                        <div className="flex items-start gap-3 sm:gap-3.5">
-                          <div className={cn("w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shrink-0 transition-all duration-300", 
-                            doctor.avatarColor
-                          )}>
-                            <LucideIcons.Stethoscope className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </div>
-                          <div className="flex flex-col gap-0.5 sm:gap-1">
-                            <div className="flex flex-wrap items-center gap-1">
-                              <h4 className="text-xs sm:text-sm font-extrabold text-navy-900 tracking-tight leading-tight">
-                                {doctor.name}
-                              </h4>
-                            </div>
-                            <span className="text-[9px] sm:text-xs text-sky-600 font-bold tracking-wide">
-                              {doctor.specialty}
-                            </span>
-                            
-                            <div className="flex flex-col gap-0.5 mt-0.5 text-[9px] sm:text-[10px] text-slate-500">
-                              <div className="flex items-center gap-1">
-                                <LucideIcons.CalendarRange className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
-                                <span>Visiting: <span className="font-semibold text-slate-700">{doctor.schedule}</span></span>
-                              </div>
-                              {doctor.phone && (
-                                <div className="flex items-center gap-1">
-                                  <LucideIcons.Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
-                                  <span className="font-mono text-slate-700">{doctor.phone}</span>
-                                </div>
-                              )}
-                              {doctor.email && (
-                                <div className="flex items-center gap-1">
-                                  <LucideIcons.Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
-                                  <span className="text-slate-700 break-all">{doctor.email}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+              {/* Society / Org Title */}
+              <h3 className="text-[9px] sm:text-[11px] font-black text-[#0B355B] tracking-tight leading-snug text-center px-1 sm:px-2 select-none uppercase">
+                {healthCheckupCard?.societyName || "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd"}
+              </h3>
 
-                        {doctor.bookingLink ? (
-                          <a
-                            href={doctor.bookingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full sm:w-auto sm:self-center px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1 cursor-pointer text-center bg-navy-900 text-white hover:bg-sky-500"
-                          >
-                            <LucideIcons.ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                            Book Appointment
-                          </a>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setSelectedDoctor(doctor);
-                              setIsModalOpen(true);
-                            }}
-                            className="w-full sm:w-auto sm:self-center px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 shrink-0 shadow-sm flex items-center justify-center gap-1 cursor-pointer bg-navy-900 text-white hover:bg-sky-500"
-                          >
-                            <LucideIcons.Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                            Book Appointment
-                          </button>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                  
-                  {doctors.length === 0 && (
-                    <div className="text-center py-10 border border-dashed border-slate-200 rounded-3xl text-slate-400 text-sm">
-                      No visiting doctors currently scheduled.
+              {/* Divider element with medical cross indicator */}
+              <div className="relative w-full flex items-center justify-center my-1.5 sm:my-3 select-none">
+                <div className="h-[2px] bg-gradient-to-r from-transparent via-sky-300 to-transparent w-full" />
+                <span className="absolute bg-white px-2 text-sky-500 flex items-center justify-center">
+                  <LucideIcons.Plus className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[3.5] text-[#1E57A5]" />
+                </span>
+              </div>
+
+              {/* Dotted spin wheel calendar layout */}
+              <div className="flex items-center justify-center w-full mt-1 sm:mt-2 px-1">
+                {/* Dotted spinning visual container */}
+                <div className="relative flex items-center justify-center py-1.5 sm:py-2 shrink-0">
+                  <div className="absolute w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] border-2 border-dashed border-sky-200 rounded-full animate-[spin_50s_linear_infinite]" />
+                  <div className="absolute w-[70px] h-[70px] sm:w-[105px] sm:h-[105px] border border-dashed border-sky-400/30 rounded-full" />
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#1E57A5] to-[#0A2D5C] flex items-center justify-center shadow-lg relative group transition-transform duration-300 hover:scale-105">
+                    <LucideIcons.CalendarRange className="w-7 h-7 sm:w-11 sm:h-11 text-white stroke-[1.5]" />
+                    <div className="absolute bottom-0.5 right-0.5 w-4.5 h-4.5 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-[#0A2D5C] flex items-center justify-center border-2 border-[#0A2D5C] shadow-md">
+                      <LucideIcons.Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 stroke-[3]" />
                     </div>
-                  )}
+                  </div>
                 </div>
+              </div>
+
+              {/* Dynamic redirection book button */}
+              <button
+                onClick={handleBookCampAppointment}
+                className="w-full mt-2 sm:mt-3 py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-full bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] hover:from-[#1d5fb9] hover:to-[#0f3d7c] text-white font-extrabold text-[10px] sm:text-xs uppercase tracking-wider shadow-[0_4px_12px_rgba(24,79,155,0.25)] hover:shadow-[0_6px_18px_rgba(24,79,155,0.35)] transition-all flex items-center justify-center gap-1.5 sm:gap-2 group cursor-pointer"
+              >
+                <div className="w-5 h-5 sm:w-6.5 sm:h-6.5 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
+                  <LucideIcons.Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </div>
+                <span className="font-bold select-none tracking-widest">Book Appointment</span>
+                <LucideIcons.ChevronRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 stroke-[3] group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 w-full mt-3.5 sm:mt-5 select-none">
+                <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
+                </svg>
+                <div className="flex flex-col items-center gap-0.5 sm:gap-1 text-center">
+                  <h2 className="text-base sm:text-2xl font-black text-[#0A2D5C] tracking-normal leading-snug" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+                    {healthCheckupCard?.doctorName || "DOCTOR"}
+                  </h2>
+                  <span className="text-[7px] sm:text-[8px] font-bold text-sky-500 tracking-[0.18em] uppercase leading-none">
+                    Consulting Specialist
+                  </span>
+                </div>
+                <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
+                </svg>
+              </div>
+
+              {/* Schedule and calendar column cards */}
+              <div className="w-full mt-2.5 sm:mt-4 bg-white border border-slate-100 rounded-2xl p-2 sm:p-3 shadow-[0_4px_15px_rgba(0,0,0,0.02)] grid grid-cols-2 divide-x divide-slate-100 gap-1 sm:gap-1.5 items-center select-none">
+                <div className="flex items-center gap-1.5 sm:gap-2.5 px-0.5 sm:px-1 justify-center">
+                  <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
+                    <LucideIcons.CalendarRange className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-[6px] sm:text-[7px] uppercase font-black text-slate-400 tracking-wider">Schedule</span>
+                    <span className="text-[8px] sm:text-[9.5px] font-black text-slate-800 leading-tight">
+                      {healthCheckupCard?.frequencyText || "EVERY MONTH"}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 sm:gap-2.5 px-1.5 sm:px-3 justify-center">
+                  <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
+                    <LucideIcons.Clock className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-[6px] sm:text-[7px] uppercase font-black text-slate-400 tracking-wider">Visiting Days</span>
+                    <span className="text-[8px] sm:text-[9.5px] font-black text-slate-800 leading-tight">
+                      {healthCheckupCard?.daysText || "2ND & 4TH WEDNESDAY"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hours / timings capsule */}
+              <div className="w-full mt-2.5 sm:mt-4 py-1.5 px-3 sm:py-2.5 sm:px-5 bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] rounded-full text-white flex items-center justify-center gap-2 sm:gap-3 shadow-inner select-none">
+                <LucideIcons.Clock className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 text-sky-300" />
+                <span className="w-px h-3 sm:h-3.5 bg-sky-400/30" />
+                <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-widest text-sky-100">Timing</span>
+                <span className="text-[8.5px] sm:text-[10px] font-bold font-mono tracking-tight text-white">
+                  {healthCheckupCard?.timingsText || "12.00 pm - 02.00 pm"}
+                </span>
+              </div>
+
+              {/* Shield health priority badge */}
+              <div className="mt-2.5 sm:mt-4 mb-0.5 sm:mb-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center gap-1.5 sm:gap-2 text-sky-700 font-extrabold text-[7px] sm:text-[8px] uppercase tracking-wider select-none">
+                <LucideIcons.ShieldAlert className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-sky-600 fill-sky-200" />
+                <span>{healthCheckupCard?.footerText || "Your health is our priority"}</span>
+              </div>
+
+              {/* Layered waves background */}
+              <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden pointer-events-none rounded-b-[32px] -z-10 bg-gradient-to-t from-sky-50 to-white/0">
+                <div className="absolute -bottom-8 left-0 right-0 h-16 bg-[#184F9B]/10 rounded-[50%_50%_0_0_/_100%_100%_0_0] scale-x-125 transform" />
+                <div className="absolute -bottom-12 left-0 right-0 h-16 bg-[#0A2D5C]/15 rounded-[50%_50%_0_0_/_100%_100%_0_0] scale-x-110 transform" />
               </div>
             </motion.div>
           </motion.div>
@@ -652,7 +848,7 @@ export default function ServicesPage() {
 
               {/* Content Body */}
               <div className="flex flex-col gap-5 relative z-10 w-full">
-                
+
                 {/* Header row with icon & badge */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-amber-500/[0.02] border border-amber-500/10 rounded-2xl p-3">
                   <div className="flex items-center gap-3">
@@ -664,7 +860,7 @@ export default function ServicesPage() {
                       <span className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
                     </div>
                   </div>
-                  
+
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
                     <Ticket className="w-3 h-3" />
                     Special Offer
@@ -695,7 +891,7 @@ export default function ServicesPage() {
                       <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
                       <CalendarRange className="w-4 h-4" />
@@ -790,7 +986,7 @@ export default function ServicesPage() {
                 <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
                   {nursery.description}
                 </p>
-                
+
                 {/* Nursery Details strip */}
                 <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500">
                   <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/50 shadow-sm">
@@ -836,12 +1032,12 @@ export default function ServicesPage() {
                               <Leaf className="w-12 h-12 stroke-[1]" />
                             </div>
                           )}
-                          
+
                           {/* Stock status indicator */}
                           <div className={cn(
                             "absolute top-3 right-3 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider border shadow-sm",
-                            plant.quantity > 0 
-                              ? "bg-emerald-500/90 text-white border-emerald-400" 
+                            plant.quantity > 0
+                              ? "bg-emerald-500/90 text-white border-emerald-400"
                               : "bg-rose-500/90 text-white border-rose-400"
                           )}>
                             {plant.quantity > 0 ? `${plant.quantity} In Stock` : "Out of Stock"}
@@ -878,8 +1074,8 @@ export default function ServicesPage() {
                         }}
                         className={cn(
                           "w-full mt-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm",
-                          plant.quantity > 0 
-                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md" 
+                          plant.quantity > 0
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md"
                             : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
                         )}
                       >
@@ -949,6 +1145,16 @@ export default function ServicesPage() {
                         setPurchaseError("Please fill out all contact fields.");
                         return;
                       }
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (!emailRegex.test(buyerEmail.trim())) {
+                        setPurchaseError("Please enter a valid email address.");
+                        return;
+                      }
+                      const phoneRegex = /^(?:\+91|91)?[6789]\d{9}$/;
+                      if (!phoneRegex.test(buyerPhone.trim())) {
+                        setPurchaseError("Please enter a valid 10-digit Indian phone number.");
+                        return;
+                      }
                       if (buyQuantity < 1 || buyQuantity > selectedPlant.quantity) {
                         setPurchaseError(`Please enter a quantity between 1 and ${selectedPlant.quantity}.`);
                         return;
@@ -956,46 +1162,34 @@ export default function ServicesPage() {
 
                       setIsSubmittingPurchase(true);
                       setPurchaseError("");
+                      setNurseryEmailResendMessage("");
 
                       try {
-                        const orderData = {
-                          plantId: selectedPlant.id,
-                          plantName: selectedPlant.name,
+                        await handleInitiatePayment({
+                          amount: selectedPlant.price * buyQuantity,
                           userName: buyerName.trim(),
                           userEmail: buyerEmail.trim(),
                           userPhone: buyerPhone.trim(),
-                          quantity: buyQuantity,
-                          totalPrice: selectedPlant.price * buyQuantity,
-                          deliveryMethod: "pickup" as const,
-                          officeUnit: undefined
-                        };
-
-                        const res = await buyPlantAction(orderData);
-                        if (res.success) {
-                          const orderId = res.orderId || "";
-                          const receiptId = res.receiptId || "";
-                          setPurchaseOrderId(orderId);
-                          setPurchaseReceiptId(receiptId);
-                          setNurseryWhatsAppStatus((res as any).whatsAppSentStatus === "sent" ? "sent" : "failed");
-                          setPurchaseSuccess(true);
-                          await loadData();
-
-                          // Auto-generate WhatsApp receipt message and send to user's phone number
-                          const msg = `Thank you for your order with Kohinoor Facilities.\n\n` +
-                            `Your order has been confirmed.\n\n` +
-                            `Receipt No: ${receiptId}\n` +
-                            `Service: Nursery\n` +
-                            `Total Paid: ₹${selectedPlant.price * buyQuantity}\n\n` +
-                            `A detailed receipt is attached below:\n` +
-                            `http://localhost:8000/receipts/${receiptId}\n\n` +
-                            `Thank you for choosing Kohinoor Facilities.`;
-                          window.open(getWhatsAppUrl(buyerPhone.trim(), msg), '_blank');
-                        } else {
-                          setPurchaseError(res.error || "Failed to process purchase.");
-                        }
+                          serviceType: "Nursery",
+                          items: [{
+                            itemId: selectedPlant.id,
+                            name: selectedPlant.name,
+                            price: selectedPlant.price,
+                            quantity: buyQuantity
+                          }],
+                          onSuccess: (receiptNumber) => {
+                            setIsSubmittingPurchase(false);
+                            setIsBuyModalOpen(false);
+                            // Redirect to checkout success page
+                            window.location.href = `/checkout-success?receiptId=${receiptNumber}`;
+                          },
+                          onFailure: (err) => {
+                            setPurchaseError(err || "Failed to process payment.");
+                            setIsSubmittingPurchase(false);
+                          }
+                        });
                       } catch (err) {
                         setPurchaseError("An unexpected server error occurred.");
-                      } finally {
                         setIsSubmittingPurchase(false);
                       }
                     }}
@@ -1124,7 +1318,39 @@ export default function ServicesPage() {
 
                     <div className="flex items-center gap-2.5 p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-800 text-xs font-semibold w-full max-w-md text-left">
                       <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Receipt auto-generated & sent to **+91 {buyerPhone}** via Kohinoor WhatsApp Gateway.</span>
+                      <span>Receipt Generated Successfully</span>
+                    </div>
+
+                    <div className={cn(
+                      "flex items-center gap-2.5 p-3.5 rounded-xl border w-full max-w-md text-left text-xs font-semibold",
+                      nurseryWhatsAppStatus === "sending" && "bg-sky-50 border-sky-200 text-sky-800",
+                      (nurseryWhatsAppStatus === "sent" || nurseryWhatsAppStatus === "delivered") && "bg-emerald-50 border-emerald-200 text-emerald-800",
+                      nurseryWhatsAppStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
+                    )}>
+                      {nurseryWhatsAppStatus === "sending" && <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0" />}
+                      {(nurseryWhatsAppStatus === "sent" || nurseryWhatsAppStatus === "delivered") && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                      {nurseryWhatsAppStatus === "failed" && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                      <span>
+                        {nurseryWhatsAppStatus === "sending" && "Sending receipt to WhatsApp..."}
+                        {(nurseryWhatsAppStatus === "sent" || nurseryWhatsAppStatus === "delivered") && `Receipt Sent to WhatsApp (+91 ${buyerPhone})`}
+                        {nurseryWhatsAppStatus === "failed" && "WhatsApp delivery failed."}
+                      </span>
+                    </div>
+
+                    <div className={cn(
+                      "flex items-center gap-2.5 p-3.5 rounded-xl border w-full max-w-md text-left text-xs font-semibold",
+                      nurseryEmailStatus === "sending" && "bg-sky-50 border-sky-200 text-sky-800",
+                      (nurseryEmailStatus === "sent" || nurseryEmailStatus === "delivered") && "bg-emerald-50 border-emerald-200 text-emerald-800",
+                      nurseryEmailStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
+                    )}>
+                      {nurseryEmailStatus === "sending" && <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0" />}
+                      {(nurseryEmailStatus === "sent" || nurseryEmailStatus === "delivered") && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                      {nurseryEmailStatus === "failed" && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                      <span>
+                        {nurseryEmailStatus === "sending" && "Sending receipt to email..."}
+                        {(nurseryEmailStatus === "sent" || nurseryEmailStatus === "delivered") && `Receipt sent successfully to your email.`}
+                        {nurseryEmailStatus === "failed" && "Email receipt delivery failed."}
+                      </span>
                     </div>
 
                     {/* Simulated WhatsApp Receipt on mobile */}
@@ -1167,86 +1393,84 @@ export default function ServicesPage() {
 
                       {/* WhatsApp Action */}
                       <div className="bg-white p-3 border-t border-slate-100 flex flex-col gap-2 justify-center items-center">
-                        <a
-                          href={getWhatsAppUrl(
-                            buyerPhone.trim(),
-                            `*KOHINOOR NURSERY RECEIPT*\n` +
-                            `------------------------------\n` +
-                            `Order ID: #${purchaseOrderId}\n` +
-                            `Customer: ${buyerName.trim()}\n` +
-                            `Phone: ${buyerPhone.trim()}\n\n` +
-                            `Item:\n` +
-                            `• ${selectedPlant.name} x ${buyQuantity} - ₹${selectedPlant.price * buyQuantity}\n\n` +
-                            `*Total Paid: ₹${selectedPlant.price * buyQuantity} (via Bill Payment)*\n\n` +
-                            `Your plant purchase order has been placed successfully. Please collect your order from the Ground Floor, Tower B Plaza Area Nursery.\n` +
-                            `Thank you!`
-                          )}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                        {purchaseReceiptPdfUrl && (
+                          <a
+                            href={purchaseReceiptPdfUrl}
+                            download={`Kohinoor_Receipt_${purchaseReceiptId}.pdf`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                          >
+                            <LucideIcons.Download className="w-3.5 h-3.5" />
+                            <span>Download Receipt</span>
+                          </a>
+                        )}
+
+                         <button
+                          type="button"
+                          disabled={isResendingNurseryReceipt}
+                          onClick={async () => {
+                            setIsResendingNurseryReceipt(true);
+                            setNurseryResendMessage("Resending...");
+                            try {
+                              const ret = await resendReceiptAction(purchaseReceiptId);
+                              if (ret.success) {
+                                setNurseryWhatsAppStatus("sent");
+                                setNurseryResendMessage("Sent successfully!");
+                              } else {
+                                setNurseryResendMessage(ret.error || "Failed");
+                              }
+                            } catch (e) {
+                              setNurseryResendMessage("Failed");
+                            } finally {
+                              setIsResendingNurseryReceipt(false);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#075E54] hover:bg-[#064e46] text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
                         >
-                          <MessageSquare className="w-3.5 h-3.5" />
-                          <span>Send Receipt to My WhatsApp</span>
-                        </a>
+                          {isResendingNurseryReceipt ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <MessageSquare className="w-3.5 h-3.5" />
+                          )}
+                          <span>Resend Receipt to WhatsApp</span>
+                        </button>
+                        {nurseryResendMessage && (
+                          <span className="text-[9px] font-bold text-slate-500">{nurseryResendMessage}</span>
+                        )}
 
                         <button
                           type="button"
-                          onClick={() => {
-                            const printWindow = window.open('', '_blank');
-                            if (printWindow) {
-                              printWindow.document.write(`
-                                <html>
-                                  <head>
-                                    <title>Nursery Receipt - #${purchaseOrderId}</title>
-                                    <style>
-                                      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #333; background: #f1f5f9; }
-                                      .receipt { max-width: 400px; margin: 20px auto; border: 1px solid #e2e8f0; padding: 24px; border-radius: 16px; bg: #ffffff; background: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-                                      .header { text-align: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px; }
-                                      .header h2 { margin: 0; font-size: 20px; color: #059669; font-weight: 800; }
-                                      .header p { margin: 4px 0 0 0; font-size: 12px; color: #64748b; }
-                                      .row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 13px; line-height: 1.5; }
-                                      .total { font-weight: bold; border-top: 1px dashed #e2e8f0; padding-top: 12px; margin-top: 16px; font-size: 16px; color: #059669; }
-                                      .footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 24px; line-height: 1.6; border-t: 1px solid #f1f5f9; pt: 16px; }
-                                    </style>
-                                  </head>
-                                  <body>
-                                    <div class="receipt">
-                                      <div class="header">
-                                        <h2>GREEN CANOPY NURSERY</h2>
-                                        <p>Kohinoor Commercial II</p>
-                                      </div>
-                                      <div class="row"><strong>Order ID:</strong> <span>#${purchaseOrderId}</span></div>
-                                      <div class="row"><strong>Date:</strong> <span>${new Date().toLocaleDateString()}</span></div>
-                                      <div class="row"><strong>Customer:</strong> <span>${buyerName}</span></div>
-                                      <div class="row"><strong>Phone:</strong> <span>${buyerPhone}</span></div>
-                                      <div style="border-top: 1px solid #f1f5f9; margin: 12px 0;"></div>
-                                      <div class="row">
-                                        <span>${selectedPlant.name} x ${buyQuantity}</span>
-                                        <span>₹${selectedPlant.price * buyQuantity}</span>
-                                      </div>
-                                      <div class="row total">
-                                        <span>TOTAL PAID:</span>
-                                        <span>₹${selectedPlant.price * buyQuantity}</span>
-                                      </div>
-                                      <div class="footer">
-                                        <p><strong>Thank you for your purchase!</strong></p>
-                                        <p>Please collect your plant from the Ground Floor, Tower B Plaza Area Nursery.</p>
-                                      </div>
-                                    </div>
-                                    <script>
-                                      window.onload = function() { window.print(); window.close(); }
-                                    </script>
-                                  </body>
-                                </html>
-                              `);
-                              printWindow.document.close();
+                          disabled={isResendingNurseryEmail}
+                          onClick={async () => {
+                            setIsResendingNurseryEmail(true);
+                            setNurseryEmailResendMessage("Resending...");
+                            try {
+                              const ret = await resendEmailReceiptAction(purchaseReceiptId);
+                              if (ret.success) {
+                                setNurseryEmailStatus("sent");
+                                setNurseryEmailResendMessage("Sent successfully!");
+                              } else {
+                                setNurseryEmailResendMessage(ret.error || "Failed");
+                              }
+                            } catch (e) {
+                              setNurseryEmailResendMessage("Failed");
+                            } finally {
+                              setIsResendingNurseryEmail(false);
                             }
                           }}
-                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
                         >
-                          <LucideIcons.Printer className="w-3.5 h-3.5" />
-                          <span>Print / Download Receipt</span>
+                          {isResendingNurseryEmail ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <LucideIcons.Mail className="w-3.5 h-3.5" />
+                          )}
+                          <span>Resend Receipt to Email</span>
                         </button>
+                        {nurseryEmailResendMessage && (
+                          <span className="text-[9px] font-bold text-slate-500">{nurseryEmailResendMessage}</span>
+                        )}
 
                         <a
                           href={getWhatsAppUrl(
@@ -1323,7 +1547,7 @@ export default function ServicesPage() {
                   <p className="text-slate-500 text-xs max-w-xl leading-relaxed">
                     {cafeteria.description}
                   </p>
-                  
+
                   {/* Cafeteria Details strip */}
                   <div className="flex flex-wrap gap-3 mt-1.5 text-[10px] md:text-xs text-slate-500">
                     <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-200/50 shadow-sm">
@@ -1391,8 +1615,8 @@ export default function ServicesPage() {
                                 )}
                                 <div className={cn(
                                   "absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border shadow-sm",
-                                  item.quantity > 0 
-                                    ? "bg-amber-500/90 text-white border-amber-400" 
+                                  item.quantity > 0
+                                    ? "bg-amber-500/90 text-white border-amber-400"
                                     : "bg-rose-500/90 text-white border-rose-400"
                                 )}>
                                   {item.quantity > 0 ? `${item.quantity} Available` : "Sold Out"}
@@ -1440,8 +1664,8 @@ export default function ServicesPage() {
                                   onClick={() => setCafeCart({ ...cafeCart, [item.id]: 1 })}
                                   className={cn(
                                     "w-full py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm border",
-                                    item.quantity > 0 
-                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500" 
+                                    item.quantity > 0
+                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500"
                                       : "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
                                   )}
                                 >
@@ -1486,19 +1710,69 @@ export default function ServicesPage() {
 
               {cafeStep === "checkout" && (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
                     if (!cafeName.trim() || !cafeEmail.trim() || !cafePhone.trim()) {
                       setCafeOrderError("Please fill in all details.");
                       return;
                     }
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(cafeEmail.trim())) {
+                      setCafeOrderError("Please enter a valid email address.");
+                      return;
+                    }
+                    const phoneRegex = /^(?:\+91|91)?[6789]\d{9}$/;
+                    if (!phoneRegex.test(cafePhone.trim())) {
+                      setCafeOrderError("Please enter a valid 10-digit Indian phone number.");
+                      return;
+                    }
+
+                    setIsSubmittingCafeOrder(true);
                     setCafeOrderError("");
-                    setCafeStep("payment");
+                    setCafeEmailResendMessage("");
+
+                    try {
+                      const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
+                        const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
+                        return {
+                          itemId,
+                          name: menuItem.name,
+                          price: menuItem.price,
+                          quantity: qty
+                        };
+                      });
+
+                      const totalPrice = Object.entries(cafeCart).reduce((sum, [itemId, qty]) => {
+                        const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
+                        return sum + (menuItem.price * qty);
+                      }, 0);
+
+                      await handleInitiatePayment({
+                        amount: totalPrice,
+                        userName: cafeName.trim(),
+                        userEmail: cafeEmail.trim(),
+                        userPhone: cafePhone.trim(),
+                        serviceType: "Cafeteria",
+                        items: orderItems,
+                        onSuccess: (receiptNumber) => {
+                          setIsSubmittingCafeOrder(false);
+                          setIsCafeteriaModalOpen(false);
+                          window.location.href = `/checkout-success?receiptId=${receiptNumber}`;
+                        },
+                        onFailure: (err) => {
+                          setCafeOrderError(err || "Failed to process payment.");
+                          setIsSubmittingCafeOrder(false);
+                        }
+                      });
+                    } catch (err) {
+                      setCafeOrderError("An unexpected server error occurred.");
+                      setIsSubmittingCafeOrder(false);
+                    }
                   }}
                   className="flex flex-col gap-4 text-left"
                 >
                   <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2">Customer Details</h3>
-                  
+
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Full Name</label>
                     <input
@@ -1536,37 +1810,6 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  {cafeOrderError && (
-                    <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
-                      {cafeOrderError}
-                    </div>
-                  )}
-
-                  <div className="mt-4 flex items-center justify-between gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setCafeStep("menu")}
-                      className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      Back to Menu
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                    >
-                      Proceed to Payment
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {cafeStep === "payment" && (
-                <div className="flex flex-col gap-5 text-left">
-                  <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2 flex items-center gap-1.5">
-                    <CreditCard className="w-5 h-5 text-amber-500" />
-                    <span>Bill Payment (Simulated)</span>
-                  </h3>
-
                   {/* Order summary */}
                   <div className="p-4 bg-slate-100 rounded-xl flex flex-col gap-2.5 text-xs text-slate-600">
                     <span className="font-black text-navy-900 uppercase tracking-wide">Order Summary</span>
@@ -1590,6 +1833,7 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
+<<<<<<< HEAD
                   {/* Payment Form Details */}
                   <form
                     onSubmit={async (e) => {
@@ -1716,45 +1960,44 @@ export default function ServicesPage() {
                           />
                         </div>
                       </div>
+=======
+                  {cafeOrderError && (
+                    <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
+                      {cafeOrderError}
+>>>>>>> origin/adi
                     </div>
+                  )}
 
-                    {cafeOrderError && (
-                      <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
-                        {cafeOrderError}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setCafeStep("checkout")}
-                        className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                      >
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSubmittingCafeOrder}
-                        className={cn(
-                          "px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center gap-1.5 cursor-pointer",
-                          isSubmittingCafeOrder && "opacity-80 cursor-wait"
-                        )}
-                      >
-                        {isSubmittingCafeOrder ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin text-white" />
-                            <span>Processing...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-4 h-4" />
-                            <span>Confirm & Pay</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  <div className="mt-4 flex items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setCafeStep("menu")}
+                      className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      Back to Menu
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingCafeOrder}
+                      className={cn(
+                        "px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2",
+                        isSubmittingCafeOrder && "opacity-80 cursor-wait"
+                      )}
+                    >
+                      {isSubmittingCafeOrder ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4" />
+                          <span>Proceed to Pay</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               )}
 
               {cafeStep === "success" && (
@@ -1773,7 +2016,7 @@ export default function ServicesPage() {
                   {/* Order Ready Status Indicator */}
                   <div className="w-full max-w-md p-4 rounded-2xl bg-white border border-slate-200/60 shadow-sm text-left flex flex-col gap-3">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Preparation Live Tracker</span>
-                    
+
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
@@ -1796,7 +2039,7 @@ export default function ServicesPage() {
 
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
-                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold", 
+                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold",
                           orderReadyState === "ready" ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400 border border-slate-200"
                         )}>
                           {orderReadyState === "ready" ? "✓" : "3"}
@@ -1809,12 +2052,18 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
+                  <div className="flex items-center gap-2.5 p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-800 text-xs font-semibold w-full max-w-md text-left">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Receipt Generated Successfully</span>
+                  </div>
+
                   <div className={cn(
-                    "flex flex-col gap-2.5 p-4 rounded-xl border w-full max-w-md text-left",
+                    "flex items-center gap-2.5 p-3.5 rounded-xl border w-full max-w-md text-left text-xs font-semibold",
                     cafeWhatsAppStatus === "sending" && "bg-sky-50 border-sky-200 text-sky-800",
-                    cafeWhatsAppStatus === "sent" && "bg-emerald-50 border-emerald-200 text-emerald-800",
+                    (cafeWhatsAppStatus === "sent" || cafeWhatsAppStatus === "delivered") && "bg-emerald-50 border-emerald-200 text-emerald-800",
                     cafeWhatsAppStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
                   )}>
+<<<<<<< HEAD
                     <div className="flex flex-col gap-3 w-full">
                       <div className="text-xs font-black font-sans pb-1.5 border-b border-current/10 flex justify-between items-center">
                         <span>WhatsApp Delivery Status</span>
@@ -1882,6 +2131,32 @@ export default function ServicesPage() {
                         )}
                       </div>
                     )}
+=======
+                    {cafeWhatsAppStatus === "sending" && <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0" />}
+                    {(cafeWhatsAppStatus === "sent" || cafeWhatsAppStatus === "delivered") && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                    {cafeWhatsAppStatus === "failed" && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                    <span>
+                      {cafeWhatsAppStatus === "sending" && "Sending receipt to WhatsApp..."}
+                      {(cafeWhatsAppStatus === "sent" || cafeWhatsAppStatus === "delivered") && `Receipt Sent to WhatsApp (+91 ${cafePhone})`}
+                      {cafeWhatsAppStatus === "failed" && "WhatsApp delivery failed."}
+                    </span>
+                  </div>
+
+                  <div className={cn(
+                    "flex items-center gap-2.5 p-3.5 rounded-xl border w-full max-w-md text-left text-xs font-semibold",
+                    cafeEmailStatus === "sending" && "bg-sky-50 border-sky-200 text-sky-800",
+                    (cafeEmailStatus === "sent" || cafeEmailStatus === "delivered") && "bg-emerald-50 border-emerald-200 text-emerald-800",
+                    cafeEmailStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
+                  )}>
+                    {cafeEmailStatus === "sending" && <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0" />}
+                    {(cafeEmailStatus === "sent" || cafeEmailStatus === "delivered") && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+                    {cafeEmailStatus === "failed" && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                    <span>
+                      {cafeEmailStatus === "sending" && "Sending receipt to email..."}
+                      {(cafeEmailStatus === "sent" || cafeEmailStatus === "delivered") && `Receipt sent successfully to your email.`}
+                      {cafeEmailStatus === "failed" && "Email receipt delivery failed."}
+                    </span>
+>>>>>>> origin/adi
                   </div>
 
                   {/* Simulated WhatsApp Receipt on mobile */}
@@ -1932,33 +2207,18 @@ export default function ServicesPage() {
 
                     {/* WhatsApp Action */}
                     <div className="bg-white p-3 border-t border-slate-100 flex flex-col gap-2 justify-center items-center">
-                      <a
-                        href={getWhatsAppUrl(
-                          cafePhone.trim(),
-                          `*KOHINOOR CAFETERIA RECEIPT*\n` +
-                          `------------------------------\n` +
-                          `Order ID: #${cafeOrderId}\n` +
-                          `Customer: ${cafeName.trim()}\n` +
-                          `Phone: ${cafePhone.trim()}\n\n` +
-                          `Items:\n` +
-                          Object.entries(cafeCart).map(([id, qty]) => {
-                            const it = cafeteria.menu.find(m => m.id === id)!;
-                            return `• ${it.name} x ${qty} - ₹${it.price * qty}`;
-                          }).join('\n') + `\n\n` +
-                          `*Total Paid: ₹${Object.entries(cafeCart).reduce((sum, [id, qty]) => {
-                            const it = cafeteria.menu.find(m => m.id === id);
-                            return sum + (it ? it.price * qty : 0);
-                          }, 0)} (via Bill Payment)*\n\n` +
-                          `Your order has been placed successfully. Please collect from the Ground Floor, Tower A Cafeteria once ready.\n` +
-                          `Thank you!`
-                        )}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>Send Receipt to My WhatsApp</span>
-                      </a>
+                      {cafeReceiptPdfUrl && (
+                        <a
+                          href={cafeReceiptPdfUrl}
+                          download={`Kohinoor_Receipt_${cafeReceiptId}.pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                        >
+                          <LucideIcons.Download className="w-3.5 h-3.5" />
+                          <span>Download Receipt</span>
+                        </a>
+                      )}
 
                       <a
                         href={getWhatsAppUrl(
@@ -1992,68 +2252,69 @@ export default function ServicesPage() {
 
                       <button
                         type="button"
-                        onClick={() => {
-                          const totalPaid = Object.entries(cafeCart).reduce((sum, [id, qty]) => {
-                            const it = cafeteria.menu.find(m => m.id === id);
-                            return sum + (it ? it.price * qty : 0);
-                          }, 0);
-                          const itemsRows = Object.entries(cafeCart).map(([id, qty]) => {
-                            const it = cafeteria.menu.find(m => m.id === id)!;
-                            return `<div class="row"><span>${it.name} x ${qty}</span><span>₹${it.price * qty}</span></div>`;
-                          }).join('');
-
-                          const printWindow = window.open('', '_blank');
-                          if (printWindow) {
-                            printWindow.document.write(`
-                              <html>
-                                <head>
-                                  <title>Cafeteria Receipt - #${cafeOrderId}</title>
-                                  <style>
-                                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #333; background: #f1f5f9; }
-                                    .receipt { max-width: 400px; margin: 20px auto; border: 1px solid #e2e8f0; padding: 24px; border-radius: 16px; bg: #ffffff; background: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-                                    .header { text-align: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px; }
-                                    .header h2 { margin: 0; font-size: 20px; color: #d97706; font-weight: 800; }
-                                    .header p { margin: 4px 0 0 0; font-size: 12px; color: #64748b; }
-                                    .row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 13px; line-height: 1.5; }
-                                    .total { font-weight: bold; border-top: 1px dashed #e2e8f0; padding-top: 12px; margin-top: 16px; font-size: 16px; color: #d97706; }
-                                    .footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 24px; line-height: 1.6; border-t: 1px solid #f1f5f9; pt: 16px; }
-                                  </style>
-                                </head>
-                                <body>
-                                  <div class="receipt">
-                                    <div class="header">
-                                      <h2>KOHINOOR CAFETERIA</h2>
-                                      <p>Kohinoor Commercial II</p>
-                                    </div>
-                                    <div class="row"><strong>Order ID:</strong> <span>#${cafeOrderId}</span></div>
-                                    <div class="row"><strong>Date:</strong> <span>${new Date().toLocaleDateString()}</span></div>
-                                    <div class="row"><strong>Customer:</strong> <span>${cafeName}</span></div>
-                                    <div class="row"><strong>Phone:</strong> <span>${cafePhone}</span></div>
-                                    <div style="border-top: 1px solid #f1f5f9; margin: 12px 0;"></div>
-                                    ${itemsRows}
-                                    <div class="row total">
-                                      <span>TOTAL PAID:</span>
-                                      <span>₹${totalPaid}</span>
-                                    </div>
-                                    <div class="footer">
-                                      <p><strong>Thank you for your order!</strong></p>
-                                      <p>Please collect your order from the Ground Floor, Tower A Cafeteria counter once ready.</p>
-                                    </div>
-                                  </div>
-                                  <script>
-                                    window.onload = function() { window.print(); window.close(); }
-                                  </script>
-                                </body>
-                              </html>
-                            `);
-                            printWindow.document.close();
+                        disabled={isResendingCafeReceipt}
+                        onClick={async () => {
+                          setIsResendingCafeReceipt(true);
+                          setCafeResendMessage("Resending...");
+                          try {
+                            const ret = await resendReceiptAction(cafeReceiptId);
+                            if (ret.success) {
+                              setCafeWhatsAppStatus("sent");
+                              setCafeResendMessage("Sent successfully!");
+                            } else {
+                              setCafeResendMessage(ret.error || "Failed");
+                            }
+                          } catch (e) {
+                            setCafeResendMessage("Failed");
+                          } finally {
+                            setIsResendingCafeReceipt(false);
                           }
                         }}
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#075E54] hover:bg-[#064e46] text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
                       >
-                        <LucideIcons.Printer className="w-3.5 h-3.5" />
-                        <span>Print / Download Receipt</span>
+                        {isResendingCafeReceipt ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <MessageSquare className="w-3 h-3" />
+                        )}
+                        <span>Resend Receipt to WhatsApp</span>
                       </button>
+                      {cafeResendMessage && (
+                        <span className="text-[9px] font-bold text-slate-500">{cafeResendMessage}</span>
+                      )}
+
+                      <button
+                        type="button"
+                        disabled={isResendingCafeEmail}
+                        onClick={async () => {
+                          setIsResendingCafeEmail(true);
+                          setCafeEmailResendMessage("Resending...");
+                          try {
+                            const ret = await resendEmailReceiptAction(cafeReceiptId);
+                            if (ret.success) {
+                              setCafeEmailStatus("sent");
+                              setCafeEmailResendMessage("Sent successfully!");
+                            } else {
+                              setCafeEmailResendMessage(ret.error || "Failed");
+                            }
+                          } catch (e) {
+                            setCafeEmailResendMessage("Failed");
+                          } finally {
+                            setIsResendingCafeEmail(false);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                      >
+                        {isResendingCafeEmail ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <LucideIcons.Mail className="w-3.5 h-3.5" />
+                        )}
+                        <span>Resend Receipt to Email</span>
+                      </button>
+                      {cafeEmailResendMessage && (
+                        <span className="text-[9px] font-bold text-slate-500">{cafeEmailResendMessage}</span>
+                      )}
 
                       <a
                         href={getWhatsAppUrl(
@@ -2077,6 +2338,312 @@ export default function ServicesPage() {
                     className="w-full max-w-md py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-navy-900 font-bold text-xs uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
                   >
                     Close Cafeteria Portal
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Interactive Simulated Payment Modal */}
+      <AnimatePresence>
+        {isPaymentSimOpen && paymentSimData && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/75 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ type: "spring", damping: 30 }}
+              className="relative w-full max-w-md bg-white border border-slate-200/50 rounded-[32px] shadow-2xl p-6 sm:p-8 overflow-y-auto max-h-[90vh] text-left animate-none"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-5">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-indigo-600 font-extrabold uppercase tracking-widest bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md w-max">
+                    Razorpay Sandbox
+                  </span>
+                  <h3 className="text-base font-black text-navy-900 mt-1">
+                    Secure Payment Gateway
+                  </h3>
+                </div>
+                <button
+                  onClick={() => {
+                    setIsPaymentSimOpen(false);
+                    paymentSimData.onFailure("Payment cancelled by user.");
+                  }}
+                  className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Step: Choose / Enter payment info */}
+              {paymentSimStep === "method" && (
+                <div className="flex flex-col gap-4">
+                  <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex flex-col gap-1.5 font-mono text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400 font-sans font-semibold">Order ID:</span>
+                      <span className="text-navy-900 font-bold">{paymentSimData.orderId}</span>
+                    </div>
+                    <div className="flex justify-between border-t border-slate-100/80 pt-2 text-sm font-sans font-black">
+                      <span className="text-slate-500">Total Amount:</span>
+                      <span className="text-indigo-600">₹{paymentSimData.amount}</span>
+                    </div>
+                  </div>
+
+                  {/* Payment Methods */}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
+                      Select Method
+                    </span>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentSimMethod("card")}
+                        className={cn(
+                          "p-3 rounded-xl border flex flex-col items-center gap-1.5 font-bold transition-all text-center",
+                          paymentSimMethod === "card"
+                            ? "border-indigo-500 bg-indigo-50/30 text-indigo-600 shadow-sm"
+                            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+                        )}
+                      >
+                        <CreditCard className="w-5 h-5" />
+                        <span className="text-[9px] uppercase tracking-wide">Card</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentSimMethod("upi")}
+                        className={cn(
+                          "p-3 rounded-xl border flex flex-col items-center gap-1.5 font-bold transition-all text-center",
+                          paymentSimMethod === "upi"
+                            ? "border-indigo-500 bg-indigo-50/30 text-indigo-600 shadow-sm"
+                            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+                        )}
+                      >
+                        <QrCode className="w-5 h-5" />
+                        <span className="text-[9px] uppercase tracking-wide">UPI</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentSimMethod("netbanking")}
+                        className={cn(
+                          "p-3 rounded-xl border flex flex-col items-center gap-1.5 font-bold transition-all text-center",
+                          paymentSimMethod === "netbanking"
+                            ? "border-indigo-500 bg-indigo-50/30 text-indigo-600 shadow-sm"
+                            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+                        )}
+                      >
+                        <Compass className="w-5 h-5" />
+                        <span className="text-[9px] uppercase tracking-wide">NetBanking</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Form inputs based on method */}
+                  <div className="mt-2">
+                    {paymentSimMethod === "card" && (
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                            Card Number
+                          </label>
+                          <input
+                            type="text"
+                            value={paymentSimCardNumber}
+                            onChange={(e) => setPaymentSimCardNumber(e.target.value)}
+                            placeholder="4111 2222 3333 4444"
+                            className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-indigo-500 font-mono text-slate-700 font-bold"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                              Expiry Date
+                            </label>
+                            <input
+                              type="text"
+                              value={paymentSimCardExpiry}
+                              onChange={(e) => setPaymentSimCardExpiry(e.target.value)}
+                              placeholder="MM/YY"
+                              className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-indigo-500 font-mono text-slate-700 font-bold text-center"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                              CVV
+                            </label>
+                            <input
+                              type="password"
+                              value={paymentSimCardCvv}
+                              onChange={(e) => setPaymentSimCardCvv(e.target.value)}
+                              placeholder="123"
+                              className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-indigo-500 font-mono text-slate-700 font-bold text-center"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {paymentSimMethod === "upi" && (
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                          UPI ID / Virtual Address
+                        </label>
+                        <input
+                          type="text"
+                          value={paymentSimUpiId}
+                          onChange={(e) => setPaymentSimUpiId(e.target.value)}
+                          placeholder="e.g. adrian@okaxis"
+                          className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-indigo-500 font-mono text-slate-700 font-bold"
+                        />
+                        <span className="text-[9px] text-slate-400 font-semibold leading-relaxed">
+                          Pay instantly from any UPI App (PhonePe, Google Pay, BHIM).
+                        </span>
+                      </div>
+                    )}
+
+                    {paymentSimMethod === "netbanking" && (
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                          Select Bank
+                        </label>
+                        <select className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs w-full bg-white text-slate-700 font-bold">
+                          <option>State Bank of India (SBI)</option>
+                          <option>HDFC Bank</option>
+                          <option>ICICI Bank</option>
+                          <option>Axis Bank</option>
+                          <option>Kotak Mahindra Bank</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sandbox Info */}
+                  <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl text-[10px] text-amber-700 font-semibold leading-relaxed">
+                    <Info className="w-3.5 h-3.5 shrink-0 text-amber-600 mt-0.5" />
+                    <span>
+                      This is a secure simulated payment sandbox. Do not enter actual credit card details. Click **Pay Securely** to proceed.
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPaymentSimOpen(false);
+                        paymentSimData.onFailure("Payment cancelled by user.");
+                      }}
+                      className="w-1/3 py-3 rounded-xl border border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider text-center hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setPaymentSimStep("processing");
+
+                        // Simulate network call
+                        setTimeout(async () => {
+                          try {
+                            const transactionId = `pay_sim_${Date.now()}`;
+                            const verifyRes = await fetch("/api/payments/verify", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                razorpay_payment_id: transactionId,
+                                razorpay_order_id: paymentSimData.orderId,
+                                razorpay_signature: "simulated_signature",
+                                checkoutData: paymentSimData.checkoutData,
+                              }),
+                            });
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok && verifyData.success) {
+                              setPaymentSimStep("success");
+                              setTimeout(() => {
+                                setIsPaymentSimOpen(false);
+                                paymentSimData.onSuccess(verifyData.receiptNumber);
+                              }, 1000);
+                            } else {
+                              setPaymentSimStep("failed");
+                              setTimeout(() => {
+                                paymentSimData.onFailure(verifyData.error || "Simulated payment verification failed.");
+                              }, 1500);
+                            }
+                          } catch (err) {
+                            setPaymentSimStep("failed");
+                            setTimeout(() => {
+                              paymentSimData.onFailure("Verification network error occurred.");
+                            }, 1500);
+                          }
+                        }, 2000);
+                      }}
+                      className="w-2/3 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider text-center font-bold"
+                    >
+                      Pay Securely
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step: Processing */}
+              {paymentSimStep === "processing" && (
+                <div className="flex flex-col items-center text-center gap-4 py-8">
+                  <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+                  <div className="flex flex-col gap-1">
+                    <h4 className="font-extrabold text-sm text-navy-900 uppercase tracking-wide">
+                      Processing Transaction
+                    </h4>
+                    <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                      Please do not close this window or press back...
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Step: Success */}
+              {paymentSimStep === "success" && (
+                <div className="flex flex-col items-center text-center gap-4 py-8">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center border border-emerald-200">
+                    <Check className="w-8 h-8 stroke-[3]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <h4 className="font-extrabold text-sm text-navy-900 uppercase tracking-wide">
+                      Payment Successful
+                    </h4>
+                    <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                      E-receipt generation triggered...
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Step: Failed */}
+              {paymentSimStep === "failed" && (
+                <div className="flex flex-col items-center text-center gap-4 py-8">
+                  <div className="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center border border-rose-200">
+                    <X className="w-8 h-8 stroke-[3]" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <h4 className="font-extrabold text-sm text-rose-600 uppercase tracking-wide">
+                      Payment Failed
+                    </h4>
+                    <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                      Verification returned an error. Please try again.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentSimStep("method")}
+                    className="mt-2 px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 uppercase tracking-wider"
+                  >
+                    Try Again
                   </button>
                 </div>
               )}

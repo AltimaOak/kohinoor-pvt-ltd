@@ -1,8 +1,11 @@
-"use server";
+ "use server";
 
 import fs from "fs/promises";
 import path from "path";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
+import { sendReceiptEmail } from "./utils/emailSender";
+import { sendWhatsAppReceipt } from "./utils/whatsAppSender";
 
 const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
@@ -197,31 +200,64 @@ export interface CafeteriaSchema {
   orders: CafeOrder[];
 }
 
+export interface OrderItem {
+  itemId: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  serviceType: "Nursery" | "Cafeteria";
+  items: OrderItem[];
+  amount: number;
+  transactionId: string;
+  paymentStatus: "pending" | "completed" | "failed";
+  receiptNumber: string;
+  createdAt: string;
+  orderStatus?: "placed" | "preparing" | "ready" | "completed";
+}
+
 export interface ReceiptLog {
-  timestamp: string;
-  status: "success" | "failure";
-  error?: string;
+  receiptId: string;
+  orderId: string;
+  emailStatus: "pending" | "sent" | "failed";
+  emailSentAt: string | null;
+  resendCount: number;
 }
 
 export interface Receipt {
-  id: string; // REC-XXXXXX
+  id: string; // receiptNumber
   orderId: string;
   serviceType: "Nursery" | "Cafeteria";
-  date: string;
+  date: string; // createdAt
   customerName: string;
   customerPhone: string;
-  items: {
-    itemId: string;
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-  totalAmountPaid: number;
+  customerEmail?: string;
+  items: OrderItem[];
+  totalAmountPaid: number; // amount
   paymentStatus: "completed" | "pending";
   paymentMethod: string;
-  whatsAppSentStatus: "sent" | "failed" | "pending";
-  whatsAppSentTimestamp?: string;
-  whatsAppDeliveryLogs: ReceiptLog[];
+  pdfUrl?: string;
+  emailSentStatus?: "sent" | "failed" | "pending";
+  emailSentTimestamp?: string;
+  whatsAppSentStatus?: string;
+  whatsAppDeliveryLogs?: any[];
+}
+
+export interface HealthCheckupCard {
+  societyName: string;
+  availabilityText: string;
+  frequencyText: string;
+  daysText: string;
+  timingsText: string;
+  bookingLink: string;
+  footerText: string;
+  doctorName?: string;
 }
 
 export interface DatabaseSchema {
@@ -234,6 +270,9 @@ export interface DatabaseSchema {
   nursery?: NurserySchema;
   cafeteria?: CafeteriaSchema;
   receipts?: Receipt[];
+  orders?: Order[];
+  receiptLogs?: ReceiptLog[];
+  healthCheckupCard?: HealthCheckupCard;
 }
 
 // Ensure database file exists
@@ -349,7 +388,17 @@ async function ensureDbExists() {
         ],
         orders: []
       },
-      receipts: []
+      receipts: [],
+      healthCheckupCard: {
+        societyName: "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
+        availabilityText: "DOCTOR",
+        frequencyText: "EVERY MONTH",
+        daysText: "2ND & 4TH WEDNESDAY",
+        timingsText: "12.00 pm - 02.00 pm",
+        bookingLink: "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
+        footerText: "Your health is our priority",
+        doctorName: "Dr. Reshma Nikam"
+      }
     };
     await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
     await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
@@ -475,6 +524,66 @@ export async function getDb(): Promise<DatabaseSchema> {
       await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
     }
 
+    // Auto-migrate if orders or receiptLogs are missing
+    let hasUpdates = false;
+    if (!db.orders) {
+      db.orders = [];
+      hasUpdates = true;
+    }
+    if (!db.receiptLogs) {
+      db.receiptLogs = [];
+      hasUpdates = true;
+    }
+
+    // If there are existing receipts but no orders, migrate them
+    if (db.receipts.length > 0 && db.orders.length === 0) {
+      for (const receipt of db.receipts) {
+        db.orders.push({
+          orderId: receipt.orderId,
+          customerName: receipt.customerName,
+          customerEmail: receipt.customerEmail || "",
+          customerPhone: receipt.customerPhone,
+          serviceType: receipt.serviceType,
+          items: receipt.items,
+          amount: receipt.totalAmountPaid,
+          transactionId: receipt.orderId, // fallback
+          paymentStatus: receipt.paymentStatus === "completed" ? "completed" : "pending",
+          receiptNumber: receipt.id,
+          createdAt: receipt.date,
+        });
+
+        db.receiptLogs.push({
+          receiptId: receipt.id,
+          orderId: receipt.orderId,
+          emailStatus: receipt.emailSentStatus === "sent" ? "sent" : (receipt.emailSentStatus === "failed" ? "failed" : "pending"),
+          emailSentAt: receipt.emailSentTimestamp || null,
+          resendCount: 1,
+        });
+      }
+      hasUpdates = true;
+    }
+
+    if (!db.healthCheckupCard) {
+      db.healthCheckupCard = {
+        societyName: "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
+        availabilityText: "DOCTOR",
+        frequencyText: "EVERY MONTH",
+        daysText: "2ND & 4TH WEDNESDAY",
+        timingsText: "12.00 pm - 02.00 pm",
+        bookingLink: "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
+        footerText: "Your health is our priority",
+        doctorName: "Dr. Reshma Nikam"
+      };
+      hasUpdates = true;
+    } else if (db.healthCheckupCard && !db.healthCheckupCard.hasOwnProperty("doctorName")) {
+      db.healthCheckupCard.doctorName = "Dr. Reshma Nikam";
+      hasUpdates = true;
+    }
+
+    if (hasUpdates) {
+      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    }
+
     return db;
   } catch (error) {
     console.error("Error reading database:", error);
@@ -592,13 +701,15 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
     const doctor = db.doctors?.find(d => d.id === booking.doctorId);
     const doctorEmail = doctor ? doctor.email : "clinic@kohinoorcommercial2.in";
     
-    // Simulate sending email to doctor
+    // Simulate sending email to doctor, both building managers & occupant
     console.log(`\n========================================`);
     console.log(`[EMAIL DISPATCH] Outgoing Mail`);
     console.log(`To Doctor: ${booking.doctorName} <${doctorEmail}>`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
     console.log(`Cc Occupant: ${booking.userName} <${booking.userEmail}>`);
     console.log(`Subject: Confirmed Appointment Request - ${booking.userName}`);
-    console.log(`Body:\nDear ${booking.doctorName},\n\nYou have a new medical appointment scheduled.\n\nDetails:\n- Occupant: ${booking.userName}\n- Phone: ${booking.userPhone}\n- Email: ${booking.userEmail}\n- Date: ${booking.date}\n- Time: ${booking.time}\n- Reason/Notes: ${booking.message}\n\nThis is a system-generated request dispatched via the Kohinoor Services Hub.`);
+    console.log(`Body:\nDear Doctor and Managers,\n\nYou have a new medical appointment scheduled.\n\nDetails:\n- Occupant: ${booking.userName}\n- Phone: ${booking.userPhone}\n- Email: ${booking.userEmail}\n- Date: ${booking.date}\n- Time: ${booking.time}\n- Reason/Notes: ${booking.message}\n\nThis is a system-generated request dispatched via the Kohinoor Services Hub.`);
     console.log(`========================================\n`);
 
     return { success: true };
@@ -609,7 +720,7 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
 }
 
 // Plant purchase server action
-export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; error?: string }> {
+export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; emailSentStatus?: string; pdfUrl?: string; error?: string }> {
   try {
     const db = await getDb();
     if (!db.nursery) {
@@ -649,13 +760,14 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     db.nursery.orders.push(newOrder);
 
     // Generate E-Receipt
-    const newReceipt: Receipt = {
+    const newReceipt: any = {
       id: receiptId,
       orderId: orderId,
       serviceType: "Nursery",
       date: newOrder.createdAt,
       customerName: order.userName,
       customerPhone: order.userPhone,
+      customerEmail: order.userEmail,
       items: [
         {
           itemId: order.plantId,
@@ -671,30 +783,72 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
       whatsAppDeliveryLogs: []
     };
 
-    // Format WhatsApp message as requested
-    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
-      `Your order has been confirmed.\n\n` +
-      `Receipt No: ${receiptId}\n` +
-      `Service: Nursery\n` +
-      `Total Paid: ₹${order.totalPrice}\n\n` +
-      `A detailed receipt is attached below:\n` +
-      `http://localhost:8000/receipts/${receiptId}\n\n` +
-      `Thank you for choosing Kohinoor Facilities.`;
+    // Generate PDF Receipt
+    let pdfBuffer: Buffer | null = null;
+    let pdfUrl = "";
+    try {
+      pdfBuffer = await generateReceiptPdfBuffer(newReceipt as any);
+      
+      // Save it to disk for static public receipt access
+      const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
+      await fs.mkdir(receiptsDir, { recursive: true });
+      const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
+      const filePath = path.join(receiptsDir, filename);
+      await fs.writeFile(filePath, pdfBuffer);
+      pdfUrl = `/uploads/receipts/${filename}`;
+      newReceipt.pdfUrl = pdfUrl;
+    } catch (pdfErr) {
+      console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF:", pdfErr);
+    }
 
-    // Trigger Twilio dispatch
-    const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
+    // Determine host and absolute URL
+    let absolutePdfUrl = "";
+    if (pdfUrl) {
+      let host = "localhost:3000";
+      try {
+        host = (await headers()).get("host") || "localhost:3000";
+      } catch (e) {
+        // Fallback
+      }
+      const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+      absolutePdfUrl = `${protocol}://${host}${pdfUrl}`;
+    }
+
+    // Dispatch Receipt Email with the generated PDF Buffer
+    if (pdfBuffer && order.userEmail) {
+      const emailRes = await sendReceiptEmail(newReceipt as any, pdfBuffer, order.userEmail);
+      newReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+      const emailLog = {
+        timestamp: new Date().toISOString(),
+        status: emailRes.success ? ("success" as const) : ("failure" as const),
+        error: emailRes.error
+      };
+      newReceipt.emailDeliveryLogs = [emailLog];
+      if (emailRes.success) {
+        newReceipt.emailSentTimestamp = emailLog.timestamp;
+      }
+    } else {
+      newReceipt.emailSentStatus = "failed";
+      newReceipt.emailDeliveryLogs = [{
+        timestamp: new Date().toISOString(),
+        status: "failure" as const,
+        error: !pdfBuffer ? "PDF buffer was not generated" : "No customer email provided"
+      }];
+    }
+
+    // Trigger official WhatsApp Document delivery
+    const waRes = await sendWhatsAppReceipt(newReceipt as any, order.userPhone);
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.error
+      status: waRes.success ? ("success" as const) : ("failure" as const),
+      error: waRes.error
     };
-    newReceipt.whatsAppDeliveryLogs.push(logEntry);
-    newReceipt.whatsAppSentStatus = twilioRes.success ? "sent" : "failed";
-    if (twilioRes.success) {
-      newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
-    }
+    newReceipt.whatsAppDeliveryLogs = [logEntry];
+    newReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
+    newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppMessageId = waRes.messageId;
 
     if (!db.receipts) {
       db.receipts = [];
@@ -704,22 +858,27 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 
-    // Simulate sending email to nursery manager & purchaser
+    // Asynchronously trigger background retry worker for any failed receipts
+    Promise.resolve().then(() => retryFailedWhatsAppSends());
+
+    // Simulate sending email to nursery manager, both building managers & purchaser
     console.log(`\n========================================`);
     console.log(`[EMAIL DISPATCH] Nursery Order Received`);
     console.log(`To Nursery Manager: nursery@kohinoorcommercial2.in`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
     console.log(`Cc Purchaser: ${order.userName} <${order.userEmail}>`);
     console.log(`Subject: New Plant Purchase Confirmation - Order #${newOrder.id}`);
-    console.log(`Body:\nDear Nursery Team,\n\nA new plant purchase order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Plant Name: ${newOrder.plantName}\n- Quantity: ${newOrder.quantity}\n- Total Price: ₹${newOrder.totalPrice}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Delivery Method: Self-Pickup\n\nPlease prepare the order for handoff.\n\nBest Regards,\nKohinoor Facility Hub`);
+    console.log(`Body:\nDear Nursery Team and Managers,\n\nA new plant purchase order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Plant Name: ${newOrder.plantName}\n- Quantity: ${newOrder.quantity}\n- Total Price: ₹${newOrder.totalPrice}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Delivery Method: Self-Pickup\n\nPlease prepare the order for handoff.\n\nBest Regards,\nKohinoor Facility Hub`);
     console.log(`========================================\n`);
 
     // Keep console log simulation for visibility
     console.log(`\n========================================`);
-    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to ${order.userPhone}`);
-    console.log(`Message:\n${whatsAppMessage}`);
+    console.log(`[WHATSAPP DISPATCH] Outgoing PDF receipt WhatsApp message triggered to ${order.userPhone}`);
+    console.log(`PDF URL: ${newReceipt.pdfUrl}`);
     console.log(`========================================\n`);
 
-    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus };
+    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus, emailSentStatus: newReceipt.emailSentStatus, pdfUrl: newReceipt.pdfUrl };
   } catch (error) {
     console.error("Error creating nursery purchase order:", error);
     return { success: false, error: "Failed to process plant purchase" };
@@ -727,7 +886,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
 }
 
 // Cafeteria purchase server action
-export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; customerWhatsAppStatus?: string; cafeteriaWhatsAppStatus?: string; error?: string }> {
+export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdAt" | "status">): Promise<{ success: boolean; orderId?: string; receiptId?: string; whatsAppSentStatus?: string; emailSentStatus?: string; pdfUrl?: string; error?: string }> {
   try {
     const db = await getDb();
     if (!db.cafeteria) {
@@ -764,13 +923,14 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     db.cafeteria.orders.push(newOrder);
 
     // Generate E-Receipt
-    const newReceipt: Receipt = {
+    const newReceipt: any = {
       id: receiptId,
       orderId: orderId,
       serviceType: "Cafeteria",
       date: newOrder.createdAt,
       customerName: order.userName,
       customerPhone: order.userPhone,
+      customerEmail: order.userEmail,
       items: order.items.map(item => ({
         itemId: item.itemId,
         name: item.name,
@@ -784,62 +944,72 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       whatsAppDeliveryLogs: []
     };
 
-    // Format WhatsApp message as requested
-    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
-      `Your order has been confirmed.\n\n` +
-      `Receipt No: ${receiptId}\n` +
-      `Service: Cafeteria\n` +
-      `Total Paid: ₹${order.totalPrice}\n\n` +
-      `A detailed receipt is attached below:\n` +
-      `http://localhost:8000/receipts/${receiptId}\n\n` +
-      `Thank you for choosing Kohinoor Facilities.`;
+    // Generate PDF Receipt
+    let pdfBuffer: Buffer | null = null;
+    let pdfUrl = "";
+    try {
+      pdfBuffer = await generateReceiptPdfBuffer(newReceipt as any);
+      
+      // Save it to disk for static public receipt access
+      const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
+      await fs.mkdir(receiptsDir, { recursive: true });
+      const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
+      const filePath = path.join(receiptsDir, filename);
+      await fs.writeFile(filePath, pdfBuffer);
+      pdfUrl = `/uploads/receipts/${filename}`;
+      newReceipt.pdfUrl = pdfUrl;
+    } catch (pdfErr) {
+      console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF:", pdfErr);
+    }
 
-    // Trigger Twilio dispatch to customer
-    const twilioRes = await sendTwilioWhatsApp(order.userPhone, whatsAppMessage);
+    // Determine host and absolute URL
+    let absolutePdfUrl = "";
+    if (pdfUrl) {
+      let host = "localhost:3000";
+      try {
+        host = (await headers()).get("host") || "localhost:3000";
+      } catch (e) {
+        // Fallback
+      }
+      const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+      absolutePdfUrl = `${protocol}://${host}${pdfUrl}`;
+    }
+
+    // Dispatch Receipt Email with the generated PDF Buffer
+    if (pdfBuffer && order.userEmail) {
+      const emailRes = await sendReceiptEmail(newReceipt as any, pdfBuffer, order.userEmail);
+      newReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+      const emailLog = {
+        timestamp: new Date().toISOString(),
+        status: emailRes.success ? ("success" as const) : ("failure" as const),
+        error: emailRes.error
+      };
+      newReceipt.emailDeliveryLogs = [emailLog];
+      if (emailRes.success) {
+        newReceipt.emailSentTimestamp = emailLog.timestamp;
+      }
+    } else {
+      newReceipt.emailSentStatus = "failed";
+      newReceipt.emailDeliveryLogs = [{
+        timestamp: new Date().toISOString(),
+        status: "failure" as const,
+        error: !pdfBuffer ? "PDF buffer was not generated" : "No customer email provided"
+      }];
+    }
+
+    // Trigger official WhatsApp Document delivery
+    const waRes = await sendWhatsAppReceipt(newReceipt as any, order.userPhone);
     
     // Log Customer Delivery
     const customerLogEntry = {
       timestamp: new Date().toISOString(),
-      status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.success ? undefined : `Customer dispatch: ${twilioRes.error || "Unknown error"}`
+      status: waRes.success ? ("success" as const) : ("failure" as const),
+      error: waRes.error
     };
-    newReceipt.whatsAppDeliveryLogs.push(customerLogEntry);
-
-    // Format WhatsApp message for Cafeteria staff
-    const itemsList = order.items.map(item => `• ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n');
-    const cafeteriaWhatsAppMessage = `*NEW CAFETERIA ORDER RECEIVED*\n` +
-      `-----------------------------------\n` +
-      `Order ID: #${orderId}\n` +
-      `Receipt No: ${receiptId}\n\n` +
-      `*Customer Details:*\n` +
-      `- Name: ${order.userName}\n` +
-      `- Phone: ${order.userPhone}\n` +
-      `- Email: ${order.userEmail}\n\n` +
-      `*Items Ordered:*\n` +
-      `${itemsList}\n\n` +
-      `*Total Price:* ₹${order.totalPrice}\n\n` +
-      `A detailed receipt is available at:\n` +
-      `http://localhost:8000/receipts/${receiptId}\n\n` +
-      `Please prepare this order for self-pickup.`;
-
-    // Trigger Twilio dispatch to Cafeteria manager/staff
-    const cafeteriaContact = db.cafeteria.contact || "+91 8108839330";
-    const cafeteriaRes = await sendTwilioWhatsApp(cafeteriaContact, cafeteriaWhatsAppMessage);
-
-    // Log Cafeteria Delivery
-    const cafeteriaLogEntry = {
-      timestamp: new Date().toISOString(),
-      status: cafeteriaRes.success ? ("success" as const) : ("failure" as const),
-      error: cafeteriaRes.success ? undefined : `Cafeteria dispatch: ${cafeteriaRes.error || "Unknown error"}`
-    };
-    newReceipt.whatsAppDeliveryLogs.push(cafeteriaLogEntry);
-
-    // Determine final status
-    const allSucceeded = twilioRes.success && cafeteriaRes.success;
-    newReceipt.whatsAppSentStatus = allSucceeded ? "sent" : "failed";
-    if (allSucceeded) {
-      newReceipt.whatsAppSentTimestamp = new Date().toISOString();
-    }
+    newReceipt.whatsAppDeliveryLogs = [logEntry];
+    newReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
+    newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppMessageId = waRes.messageId;
 
     if (!db.receipts) {
       db.receipts = [];
@@ -849,122 +1019,576 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 
-    // Simulate sending email to Cafeteria Manager & Purchaser
+    // Asynchronously trigger background retry worker for any failed receipts
+    Promise.resolve().then(() => retryFailedWhatsAppSends());
+
+    // Simulate sending email to Cafeteria Manager, both building managers & Purchaser
     console.log(`\n========================================`);
     console.log(`[EMAIL DISPATCH] Cafeteria Order Received`);
     console.log(`To Cafeteria Manager: cafeteria@kohinoorcommercial2.in`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
     console.log(`Cc Purchaser: ${order.userName} <${order.userEmail}>`);
     console.log(`Subject: New Cafeteria Order Confirmation - Order #${newOrder.id}`);
-    console.log(`Body:\nDear Cafeteria Team,\n\nA new food & beverage order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Total Price: ₹${newOrder.totalPrice}\n\nItems Ordered:\n${order.items.map(item => `- ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n')}\n\nPlease prepare the order for self-pickup.\n\nBest Regards,\nKohinoor Facility Hub`);
+    console.log(`Body:\nDear Cafeteria Team and Managers,\n\nA new food & beverage order has been submitted.\n\nOrder Details:\n- Order ID: ${newOrder.id}\n- Purchaser: ${order.userName}\n- Contact: ${order.userPhone}\n- Email: ${order.userEmail}\n- Total Price: ₹${newOrder.totalPrice}\n\nItems Ordered:\n${order.items.map(item => `- ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n')}\n\nPlease prepare the order for self-pickup.\n\nBest Regards,\nKohinoor Facility Hub`);
     console.log(`========================================\n`);
 
     // Console log for server-side visibility
     console.log(`\n========================================`);
-    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to Customer ${order.userPhone}`);
-    console.log(`Message:\n${whatsAppMessage}`);
-    console.log(`[WHATSAPP DISPATCH] Outgoing WhatsApp message to Cafeteria Kitchen ${cafeteriaContact}`);
-    console.log(`Message:\n${cafeteriaWhatsAppMessage}`);
+    console.log(`[WHATSAPP DISPATCH] Outgoing PDF receipt WhatsApp message triggered to ${order.userPhone}`);
+    console.log(`PDF URL: ${newReceipt.pdfUrl}`);
     console.log(`========================================\n`);
 
-    return {
-      success: true,
-      orderId,
-      receiptId,
-      whatsAppSentStatus: newReceipt.whatsAppSentStatus,
-      customerWhatsAppStatus: twilioRes.success ? "sent" : "failed",
-      cafeteriaWhatsAppStatus: cafeteriaRes.success ? "sent" : "failed"
-    };
+    return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus, emailSentStatus: newReceipt.emailSentStatus, pdfUrl: newReceipt.pdfUrl };
   } catch (error) {
     console.error("Error creating cafeteria order:", error);
     return { success: false, error: "Failed to process cafeteria order" };
   }
 }
 
-// Resend WhatsApp receipt action (can be called by user or admin)
+// Resend receipt action (redirects to resendEmailReceiptAction since WhatsApp is disabled)
 export async function resendReceiptAction(receiptId: string): Promise<{ success: boolean; error?: string }> {
+  return resendEmailReceiptAction(receiptId);
+}
+
+/**
+ * Background worker to automatically retry failed or pending Email receipt sends.
+ */
+export async function retryFailedWhatsAppSends(): Promise<void> {
   try {
     const db = await getDb();
-    if (!db.receipts) {
-      db.receipts = [];
+    if (!db.orders || !db.receiptLogs) return;
+
+    let updatedAny = false;
+
+    // Filter receipt logs that are failed or pending
+    const failedLogs = db.receiptLogs.filter(
+      l => l.emailStatus === "failed" || l.emailStatus === "pending"
+    );
+
+    if (failedLogs.length > 0) {
+      console.log(`[AUTO-RETRY WORKER] Found ${failedLogs.length} failed/pending Email receipt deliveries. Attempting automatic retries...`);
+      for (const log of failedLogs) {
+        const order = db.orders.find(o => o.receiptNumber === log.receiptId);
+        if (!order || !order.customerEmail) continue;
+
+        try {
+          const pdfBuffer = await generateReceiptPdfBuffer(order);
+          const emailRes = await sendReceiptEmail(order, pdfBuffer, order.customerEmail);
+
+          log.emailStatus = emailRes.success ? "sent" : "failed";
+          log.resendCount += 1;
+          if (emailRes.success) {
+            log.emailSentAt = new Date().toISOString();
+            console.log(`[AUTO-RETRY WORKER SUCCESS] Auto-sent Email receipt ${order.receiptNumber} successfully.`);
+          } else {
+            console.warn(`[AUTO-RETRY WORKER FAILURE] Failed to auto-send Email receipt ${order.receiptNumber}: ${emailRes.error}`);
+          }
+
+          // Also update legacy receipt status if present
+          const legacyReceipt = db.receipts?.find(r => r.id === log.receiptId);
+          if (legacyReceipt) {
+            legacyReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+            legacyReceipt.emailSentTimestamp = log.emailSentAt || undefined;
+          }
+
+          updatedAny = true;
+        } catch (emailErr: any) {
+          console.error(`[AUTO-RETRY WORKER] Failed to generate PDF or send email for receipt ${log.receiptId}:`, emailErr);
+          log.emailStatus = "failed";
+          log.resendCount += 1;
+          updatedAny = true;
+        }
+      }
     }
 
-    const receiptIndex = db.receipts.findIndex(r => r.id === receiptId);
-    if (receiptIndex === -1) {
+    if (updatedAny) {
+      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    }
+  } catch (err) {
+    console.error(`[AUTO-RETRY WORKER ERROR] Unexpected error in retry background job:`, err);
+  }
+}
+
+/**
+ * Resends the PDF receipt to the customer's email.
+ */
+export async function resendEmailReceiptAction(receiptNumber: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.orders) db.orders = [];
+    if (!db.receiptLogs) db.receiptLogs = [];
+
+    const order = db.orders.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
       return { success: false, error: "Receipt not found." };
     }
 
-    const receipt = db.receipts[receiptIndex];
-
-    // Reconstruct WhatsApp Message for Customer
-    const whatsAppMessage = `Thank you for your order with Kohinoor Facilities.\n\n` +
-      `Your order has been confirmed.\n\n` +
-      `Receipt No: ${receipt.id}\n` +
-      `Service: ${receipt.serviceType}\n` +
-      `Total Paid: ₹${receipt.totalAmountPaid}\n\n` +
-      `A detailed receipt is attached below:\n` +
-      `http://localhost:8000/receipts/${receipt.id}\n\n` +
-      `Thank you for choosing Kohinoor Facilities.`;
-
-    // Trigger Twilio dispatch to customer
-    const twilioRes = await sendTwilioWhatsApp(receipt.customerPhone, whatsAppMessage);
-
-    // Log Customer Delivery
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      status: twilioRes.success ? ("success" as const) : ("failure" as const),
-      error: twilioRes.success ? undefined : `Customer dispatch: ${twilioRes.error || "Unknown error"}`
-    };
-    
-    if (!receipt.whatsAppDeliveryLogs) {
-      receipt.whatsAppDeliveryLogs = [];
+    if (!order.customerEmail) {
+      return { success: false, error: "No email address found for this receipt. Cannot send email." };
     }
-    receipt.whatsAppDeliveryLogs.push(logEntry);
 
-    let allSucceeded = twilioRes.success;
+    // Generate in-memory PDF buffer dynamically on request
+    let pdfBuffer: Buffer;
+    try {
+      pdfBuffer = await generateReceiptPdfBuffer(order);
+    } catch (pdfErr: any) {
+      console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF during email resend:", pdfErr);
+      return { success: false, error: `Failed to generate PDF receipt: ${pdfErr.message || pdfErr}` };
+    }
 
-    // If it's a Cafeteria order, also resend to cafeteria kitchen
-    if (receipt.serviceType === "Cafeteria") {
-      const cafeteriaContact = db.cafeteria?.contact || "+91 8108839330";
-      const itemsList = receipt.items.map(item => `• ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`).join('\n');
-      const cafeteriaWhatsAppMessage = `*NEW CAFETERIA ORDER RECEIVED (RESENT)*\n` +
-        `-----------------------------------\n` +
-        `Order ID: #${receipt.orderId}\n` +
-        `Receipt No: ${receipt.id}\n\n` +
-        `*Customer Details:*\n` +
-        `- Name: ${receipt.customerName}\n` +
-        `- Phone: ${receipt.customerPhone}\n\n` +
-        `*Items Ordered:*\n` +
-        `${itemsList}\n\n` +
-        `*Total Price:* ₹${receipt.totalAmountPaid}\n\n` +
-        `A detailed receipt is available at:\n` +
-        `http://localhost:8000/receipts/${receipt.id}\n\n` +
-        `Please prepare this order for self-pickup.`;
-      
-      const cafeteriaRes = await sendTwilioWhatsApp(cafeteriaContact, cafeteriaWhatsAppMessage);
-      const cafeteriaLogEntry = {
-        timestamp: new Date().toISOString(),
-        status: cafeteriaRes.success ? ("success" as const) : ("failure" as const),
-        error: cafeteriaRes.success ? undefined : `Cafeteria dispatch: ${cafeteriaRes.error || "Unknown error"}`
+    // Call sendReceiptEmail
+    const emailRes = await sendReceiptEmail(order, pdfBuffer, order.customerEmail);
+
+    // Update log
+    let log = db.receiptLogs.find(l => l.receiptId === receiptNumber);
+    if (!log) {
+      log = {
+        receiptId: receiptNumber,
+        orderId: order.orderId,
+        emailStatus: "pending",
+        emailSentAt: null,
+        resendCount: 0,
       };
-      receipt.whatsAppDeliveryLogs.push(cafeteriaLogEntry);
-      allSucceeded = allSucceeded && cafeteriaRes.success;
+      db.receiptLogs.push(log);
     }
 
-    receipt.whatsAppSentStatus = allSucceeded ? "sent" : "failed";
-    if (allSucceeded) {
-      receipt.whatsAppSentTimestamp = new Date().toISOString();
+    log.emailStatus = emailRes.success ? "sent" : "failed";
+    log.resendCount += 1;
+    if (emailRes.success) {
+      log.emailSentAt = new Date().toISOString();
+    }
+
+    // Also update legacy receipt status if present
+    const legacyReceipt = db.receipts?.find(r => r.id === receiptNumber);
+    if (legacyReceipt) {
+      legacyReceipt.emailSentStatus = emailRes.success ? "sent" : "failed";
+      legacyReceipt.emailSentTimestamp = log.emailSentAt || undefined;
     }
 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 
-    if (!allSucceeded) {
-      return { success: false, error: "Failed to deliver WhatsApp message(s)." };
+    if (!emailRes.success) {
+      return { success: false, error: emailRes.error || "Failed to deliver email." };
     }
 
     return { success: true };
-  } catch (err) {
-    console.error("Error resending receipt:", err);
-    return { success: false, error: "Server error occurred while resending." };
+  } catch (err: any) {
+    console.error("Error resending email receipt:", err);
+    return { success: false, error: err.message || "Server error occurred while resending email." };
   }
 }
+
+/**
+ * Resends the receipt to the customer's WhatsApp.
+ */
+export async function resendWhatsAppReceiptAction(receiptNumber: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.orders) db.orders = [];
+
+    const order = db.orders.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Receipt not found." };
+    }
+
+    if (!order.customerPhone) {
+      return { success: false, error: "No phone number found for this receipt. Cannot send WhatsApp." };
+    }
+
+    // Call sendWhatsAppReceipt utility
+    const waRes = await sendWhatsAppReceipt(order, order.customerPhone);
+
+    // Update log in legacy receipts
+    const legacyReceipt = db.receipts?.find(r => r.id === receiptNumber);
+    if (legacyReceipt) {
+      legacyReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
+      legacyReceipt.whatsAppSentTimestamp = new Date().toISOString();
+      if (!legacyReceipt.whatsAppDeliveryLogs) {
+        legacyReceipt.whatsAppDeliveryLogs = [];
+      }
+      legacyReceipt.whatsAppDeliveryLogs.push({
+        timestamp: new Date().toISOString(),
+        status: waRes.success ? "success" : "failure",
+        error: waRes.error,
+        messageId: waRes.messageId
+      });
+      legacyReceipt.whatsAppMessageId = waRes.messageId;
+    }
+
+    // Save database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    if (!waRes.success) {
+      return { success: false, error: waRes.error || "Failed to deliver WhatsApp message." };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error("Error resending WhatsApp receipt:", err);
+    return { success: false, error: err.message || "Server error occurred while resending WhatsApp receipt." };
+  }
+}
+
+export async function generateUniqueReceiptNumber(serviceType: "Nursery" | "Cafeteria"): Promise<string> {
+  const db = await getDb();
+  const today = new Date();
+  
+  // Format current date as YYYYMMDD in Indian timezone
+  const formatter = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(today);
+  const year = parts.find(p => p.type === "year")?.value || "2026";
+  const month = parts.find(p => p.type === "month")?.value || "06";
+  const day = parts.find(p => p.type === "day")?.value || "15";
+  const dateStr = `${year}${month}${day}`;
+
+  const prefix = serviceType === "Nursery" ? "KOH-NUR" : "KOH-CAF";
+  const searchPattern = `${prefix}-${dateStr}-`;
+
+  // Find the highest sequence number for this date
+  const matches = (db.orders || [])
+    .filter(o => o.receiptNumber.startsWith(searchPattern))
+    .map(o => {
+      const parts = o.receiptNumber.split("-");
+      const seqStr = parts[parts.length - 1];
+      return parseInt(seqStr) || 0;
+    });
+
+  const nextSeq = matches.length > 0 ? Math.max(...matches) + 1 : 1;
+  const seqStr = String(nextSeq).padStart(5, "0");
+
+  return `${searchPattern}${seqStr}`;
+}
+
+export async function verifyRazorpayPaymentAction({
+  razorpay_payment_id,
+  razorpay_order_id,
+  razorpay_signature,
+  checkoutData,
+}: {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+  checkoutData: {
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    serviceType: "Nursery" | "Cafeteria";
+    items: { itemId: string; name: string; price: number; quantity: number }[];
+    amount: number;
+    paymentMethod?: string;
+  };
+}): Promise<{ success: boolean; receiptNumber?: string; error?: string }> {
+  try {
+    // 1. Signature Verification
+    const isMock = !process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET.startsWith("your_");
+    let verified = false;
+
+    if (isMock) {
+      console.log("[PAYMENT GATEWAY] Mock signature verification active.");
+      verified = razorpay_payment_id.startsWith("pay_") && razorpay_order_id.startsWith("order_");
+    } else {
+      // Real signature verification
+      const crypto = await import("crypto");
+      const secret = process.env.RAZORPAY_KEY_SECRET!;
+      const generated_signature = crypto
+        .createHmac("sha256", secret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest("hex");
+      
+      verified = generated_signature === razorpay_signature;
+    }
+
+    if (!verified) {
+      return { success: false, error: "Payment verification failed. Invalid signature." };
+    }
+
+    // 2. Load Database
+    const db = await getDb();
+
+    // 3. Inventory Stock Validation & Decrement
+    if (checkoutData.serviceType === "Nursery") {
+      if (!db.nursery) return { success: false, error: "Nursery service unavailable." };
+      for (const item of checkoutData.items) {
+        const plant = db.nursery.plants.find(p => p.id === item.itemId);
+        if (!plant) return { success: false, error: `Plant ${item.name} not found.` };
+        if (plant.quantity < item.quantity) {
+          return { success: false, error: `Insufficient stock for ${item.name}.` };
+        }
+      }
+      // Decrement stock
+      for (const item of checkoutData.items) {
+        const plant = db.nursery.plants.find(p => p.id === item.itemId)!;
+        plant.quantity -= item.quantity;
+      }
+    } else {
+      if (!db.cafeteria) return { success: false, error: "Cafeteria service unavailable." };
+      for (const item of checkoutData.items) {
+        const menuItem = db.cafeteria.menu.find(m => m.id === item.itemId);
+        if (!menuItem) return { success: false, error: `Menu item ${item.name} not found.` };
+        if (menuItem.quantity < item.quantity) {
+          return { success: false, error: `Insufficient stock for ${item.name}.` };
+        }
+      }
+      // Decrement stock
+      for (const item of checkoutData.items) {
+        const menuItem = db.cafeteria.menu.find(m => m.id === item.itemId)!;
+        menuItem.quantity -= item.quantity;
+      }
+    }
+
+    // 4. Prevent duplicate transactions
+    if (!db.orders) db.orders = [];
+    const duplicate = db.orders.find(o => o.transactionId === razorpay_payment_id);
+    if (duplicate) {
+      return { success: true, receiptNumber: duplicate.receiptNumber };
+    }
+
+    // 5. Generate unique receipt number
+    const receiptNumber = await generateUniqueReceiptNumber(checkoutData.serviceType);
+
+    // 6. Save order details
+    const newOrder: Order = {
+      orderId: razorpay_order_id,
+      customerName: checkoutData.customerName,
+      customerEmail: checkoutData.customerEmail,
+      customerPhone: checkoutData.customerPhone,
+      serviceType: checkoutData.serviceType,
+      items: checkoutData.items,
+      amount: checkoutData.amount,
+      transactionId: razorpay_payment_id,
+      paymentStatus: "completed",
+      receiptNumber: receiptNumber,
+      createdAt: new Date().toISOString(),
+      orderStatus: "placed",
+    };
+    db.orders.push(newOrder);
+
+    // Create initial receipt log
+    if (!db.receiptLogs) db.receiptLogs = [];
+    const newLog: ReceiptLog = {
+      receiptId: receiptNumber,
+      orderId: razorpay_order_id,
+      emailStatus: "pending",
+      emailSentAt: null,
+      resendCount: 0,
+    };
+    db.receiptLogs.push(newLog);
+
+    // Also populate legacy receipts array to keep the original /receipts/[id] page working if accessed
+    if (!db.receipts) db.receipts = [];
+    const legacyReceipt: Receipt = {
+      id: receiptNumber,
+      orderId: razorpay_order_id,
+      serviceType: checkoutData.serviceType,
+      date: newOrder.createdAt,
+      customerName: checkoutData.customerName,
+      customerPhone: checkoutData.customerPhone,
+      customerEmail: checkoutData.customerEmail,
+      items: checkoutData.items,
+      totalAmountPaid: checkoutData.amount,
+      paymentStatus: "completed",
+      paymentMethod: checkoutData.paymentMethod || "Card / Online",
+      whatsAppSentStatus: "pending",
+      whatsAppDeliveryLogs: []
+    };
+    db.receipts.push(legacyReceipt);
+
+    // Write database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    // 7. Dynamic PDF & Email Delivery
+    try {
+      const pdfBuffer = await generateReceiptPdfBuffer(newOrder);
+      const emailRes = await sendReceiptEmail(newOrder, pdfBuffer, checkoutData.customerEmail);
+
+      // Re-read db to update email log safely
+      const latestDb = await getDb();
+      const logToUpdate = latestDb.receiptLogs?.find(l => l.receiptId === receiptNumber);
+      if (logToUpdate) {
+        logToUpdate.emailStatus = emailRes.success ? "sent" : "failed";
+        if (emailRes.success) {
+          logToUpdate.emailSentAt = new Date().toISOString();
+        }
+        
+        // Also update legacy receipt status
+        const legacyToUpdate = latestDb.receipts?.find(r => r.id === receiptNumber);
+        if (legacyToUpdate) {
+          legacyToUpdate.emailSentStatus = emailRes.success ? "sent" : "failed";
+          legacyToUpdate.emailSentTimestamp = logToUpdate.emailSentAt || undefined;
+        }
+
+        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+      }
+    } catch (deliveryErr) {
+      console.error("[DELIVERY ERROR] Failed to send receipt email after payment success:", deliveryErr);
+    }
+
+    // 7.5. Dynamic WhatsApp Delivery
+    try {
+      const waRes = await sendWhatsAppReceipt(newOrder, checkoutData.customerPhone);
+      const latestDb = await getDb();
+      const legacyToUpdate = latestDb.receipts?.find(r => r.id === receiptNumber);
+      if (legacyToUpdate) {
+        legacyToUpdate.whatsAppSentStatus = waRes.success ? "sent" : "failed";
+        legacyToUpdate.whatsAppSentTimestamp = new Date().toISOString();
+        if (!legacyToUpdate.whatsAppDeliveryLogs) {
+          legacyToUpdate.whatsAppDeliveryLogs = [];
+        }
+        legacyToUpdate.whatsAppDeliveryLogs.push({
+          timestamp: new Date().toISOString(),
+          status: waRes.success ? "success" : "failure",
+          error: waRes.error,
+          messageId: waRes.messageId
+        });
+        legacyToUpdate.whatsAppMessageId = waRes.messageId;
+        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+      }
+    } catch (waErr) {
+      console.error("[DELIVERY ERROR] Failed to send receipt WhatsApp after payment success:", waErr);
+    }
+
+    // 8. Place ownership cookie inside the browser
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: `receipt_token_${receiptNumber}`,
+      value: `authorized_access_${razorpay_payment_id}`,
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+      sameSite: "strict",
+    });
+
+    return { success: true, receiptNumber };
+  } catch (err: any) {
+    console.error("[PAYMENT VERIFICATION ERROR] Failed:", err);
+    return { success: false, error: err.message || "An unexpected error occurred during verification." };
+  }
+}
+
+export async function getCustomerReceiptsAction(emailOrPhone: string): Promise<{ success: boolean; orders?: Order[]; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.orders) db.orders = [];
+
+    const normalized = emailOrPhone.trim().toLowerCase();
+    const cleanPhone = normalized.replace(/[^0-9]/g, "");
+
+    const customerOrders = db.orders.filter(o => {
+      const emailMatches = o.customerEmail.toLowerCase() === normalized;
+      const phoneMatches = o.customerPhone.replace(/[^0-9]/g, "").includes(cleanPhone) || cleanPhone.includes(o.customerPhone.replace(/[^0-9]/g, ""));
+      return emailMatches || (cleanPhone.length >= 10 && phoneMatches);
+    });
+
+    return { success: true, orders: customerOrders };
+  } catch (err: any) {
+    console.error("Error retrieving customer receipts:", err);
+    return { success: false, error: "Failed to query receipts history." };
+  }
+}
+
+export async function verifyReceiptOwnershipAction(receiptNumber: string, emailOrPhone: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    const order = db.orders?.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Receipt not found." };
+    }
+
+    const input = emailOrPhone.trim().toLowerCase();
+    const cleanInputPhone = input.replace(/[^0-9]/g, "");
+    const orderPhone = order.customerPhone.replace(/[^0-9]/g, "");
+
+    const emailMatches = order.customerEmail.toLowerCase() === input;
+    const phoneMatches = orderPhone.includes(cleanInputPhone) || cleanInputPhone.includes(orderPhone);
+
+    if (emailMatches || (cleanInputPhone.length >= 6 && phoneMatches)) {
+      // Grant access cookie directly
+      const cookieStore = await cookies();
+      cookieStore.set({
+        name: `receipt_token_${receiptNumber}`,
+        value: `authorized_access_${order.transactionId}`,
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
+      });
+      return { success: true };
+    }
+
+    return { success: false, error: "Verification details do not match this receipt." };
+  } catch (err: any) {
+    console.error("Verification error:", err);
+    return { success: false, error: "Verification server error." };
+  }
+}
+
+// Fetch current order status (Swiggy/Zomato style)
+export async function getOrderStatusAction(receiptNumber: string): Promise<{ success: boolean; status?: "placed" | "preparing" | "ready" | "completed"; error?: string }> {
+  try {
+    const db = await getDb();
+    const order = db.orders?.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
+    return { success: true, status: order.orderStatus || "placed" };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to fetch order status" };
+  }
+}
+
+// Update order status (Swiggy/Zomato style) and log notifications to managers and customer
+export async function updateOrderStatusAction(
+  receiptNumber: string,
+  status: "placed" | "preparing" | "ready" | "completed"
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    
+    // 1. Update in db.orders
+    const order = db.orders?.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
+    order.orderStatus = status;
+
+    // 2. Sync with legacy arrays
+    if (order.serviceType === "Nursery" && db.nursery?.orders) {
+      const nurseryOrder = db.nursery.orders.find(o => o.receiptId === receiptNumber || o.id === order.orderId);
+      if (nurseryOrder) {
+        nurseryOrder.status = status === "completed" ? "completed" : "pending";
+      }
+    } else if (order.serviceType === "Cafeteria" && db.cafeteria?.orders) {
+      const cafeOrder = db.cafeteria.orders.find(o => o.receiptId === receiptNumber || o.id === order.orderId);
+      if (cafeOrder) {
+        cafeOrder.status = status === "completed" ? "completed" : "pending";
+      }
+    }
+
+    // 3. Save database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    // Simulate sending status update message to managers and customer
+    console.log(`\n========================================`);
+    console.log(`[STATUS UPDATE NOTIFICATION] Order #${order.orderId} status changed to: ${status.toUpperCase()}`);
+    console.log(`To Customer: ${order.customerName} <${order.customerEmail}>`);
+    console.log(`To Property Manager: Devendra Sali <devendra.sali@kohinoorcommercial2.in>`);
+    console.log(`To Security Manager: Roshan Patil <roshan.patil@kohinoorcommercial2.in>`);
+    console.log(`Subject: Kohinoor Facility Hub - Order status: ${status.toUpperCase()}`);
+    console.log(`Body:\nDear Customer and Managers,\n\nYour order #${order.orderId} for ${order.serviceType} is now ${status.toUpperCase()}.\n\nThank you for using Kohinoor Services Hub.`);
+    console.log(`========================================\n`);
+
+    return { success: true };
+  } catch (err: any) {
+    console.error("Error updating order status:", err);
+    return { success: false, error: err.message || "Failed to update order status" };
+  }
+}
+
