@@ -23,20 +23,20 @@
       "title": "Ganesh Festival Celebration",
       "desc": "Ganesh Chaturthi is a vibrant Hindu festival honoring Lord Ganesha,The celebration features installing clay idols in homes and massive public pandals (temporary shrines), daily aartis (prayers), and feasts of sweets like modak",
       "iconName": "Activity",
-      "images": [],
-      "imageSrc": ""
+      "images": [
+        "/uploads/1782296683793_ganesh-2.jpg",
+        "/uploads/1782296683961_images__1_.jpg",
+        "/uploads/1782296684136_images__2_.jpg",
+        "/uploads/1782296684313_images__3_.jpg",
+        "/uploads/1782296684632_images.jpg"
+      ],
+      "imageSrc": "/uploads/1782296683793_ganesh-2.jpg"
     },
     {
       "id": "evt-health",
       "title": "Occupant Eye & General Health Checkup",
       "desc": "A free diagnostic screening camp in partnership with local multi-specialty hospitals.",
       "iconName": "Heart"
-    },
-    {
-      "id": "evt-plantation",
-      "title": "Green Canopy Monsoon Plantation",
-      "desc": "A collaborative tenant green drive planting native saplings around the business park.",
-      "iconName": "Compass"
     },
     {
       "id": "evt-1782285890729",
@@ -250,7 +250,7 @@
         "description": "Lush green test plant",
         "price": 140,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 1001
+        "quantity": 1000
       }
     ],
     "orders": [
@@ -1404,6 +1404,38 @@
       "paymentMethod": "Card / Online",
       "emailSentStatus": "sent",
       "emailSentTimestamp": "2026-06-23T07:05:38.136Z"
+    },
+    {
+      "id": "KOH-NUR-20260624-00001",
+      "orderId": "order_mock_1782289336656",
+      "serviceType": "Nursery",
+      "date": "2026-06-24T08:22:22.942Z",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerPhone": "9372025677",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 140,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "sent",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-06-24T08:22:28.500Z",
+          "status": "success",
+          "messageId": "sim_meta_1782289348478"
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-06-24T08:22:28.412Z",
+      "whatsAppSentTimestamp": "2026-06-24T08:22:28.499Z",
+      "whatsAppMessageId": "sim_meta_1782289348478"
     }
   ],
   "orders": [
@@ -1749,6 +1781,27 @@
       "receiptNumber": "KOH-NUR-20260623-00001",
       "createdAt": "2026-06-23T07:05:30.623Z",
       "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1782289336656",
+      "customerName": "tanmay nivrutti mhatre",
+      "customerEmail": "tanmaymhatre167@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 1
+        }
+      ],
+      "amount": 140,
+      "transactionId": "pay_sim_1782289340283",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260624-00001",
+      "createdAt": "2026-06-24T08:22:22.942Z",
+      "orderStatus": "placed"
     }
   ],
   "receiptLogs": [
@@ -1869,6 +1922,13 @@
       "orderId": "order_mock_1782198321834",
       "emailStatus": "sent",
       "emailSentAt": "2026-06-23T07:05:38.136Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260624-00001",
+      "orderId": "order_mock_1782289336656",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-06-24T08:22:28.412Z",
       "resendCount": 0
     }
   ],
