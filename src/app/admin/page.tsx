@@ -245,58 +245,101 @@ export default function AdminPage() {
 
   // Image Upload handler
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event" | "plant" | "cafe") => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploadingImage(true);
-    showToast("info", "Uploading image...");
 
-    try {
-      const res = await uploadPhotoAction(formData);
-      if (res.success && res.url) {
-        showToast("success", "Image uploaded successfully");
-        if (forEdit === "new") {
-          setEditingPhoto((prev) => prev ? { ...prev, src: res.url! } : {
-            id: "",
-            title: "",
-            category: "exterior",
-            categoryLabel: "Exterior",
-            src: res.url!,
-            description: ""
-          });
-        } else if (forEdit === "edit") {
-          setEditingPhoto((prev) => prev ? { ...prev, src: res.url! } : null);
-        } else if (forEdit === "event") {
+    if (forEdit === "event") {
+      const filesArray = Array.from(files);
+      const remainingSlots = 5 - (editingEvent?.images?.length || 0);
+      
+      if (remainingSlots <= 0) {
+        showToast("error", "Maximum limit of 5 photos reached.");
+        setUploadingImage(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      const filesToUpload = filesArray.slice(0, remainingSlots);
+      showToast("info", `Uploading ${filesToUpload.length} image(s)...`);
+
+      try {
+        const uploadPromises = filesToUpload.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          const res = await uploadPhotoAction(formData);
+          return res;
+        });
+
+        const results = await Promise.all(uploadPromises);
+        const successfulUrls = results
+          .filter((res) => res.success && res.url)
+          .map((res) => res.url!);
+
+        const failedCount = results.filter((res) => !res.success).length;
+
+        if (successfulUrls.length > 0) {
+          showToast("success", `Uploaded ${successfulUrls.length} image(s) successfully!`);
           setEditingEvent((prev) => {
             if (!prev) return null;
             const currentImages = prev.images || [];
-            if (currentImages.length >= 5) {
-              return prev;
-            }
-            const newImages = [...currentImages, res.url!];
+            const combinedImages = [...currentImages, ...successfulUrls].slice(0, 5);
             return {
               ...prev,
-              images: newImages,
-              imageSrc: newImages[0]
+              images: combinedImages,
+              imageSrc: combinedImages[0] || ""
             };
           });
-        } else if (forEdit === "plant") {
-          setEditingPlant((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
-        } else if (forEdit === "cafe") {
-          setEditingCafeItem((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
         }
-      } else {
-        showToast("error", res.error || "Image upload failed");
+
+        if (failedCount > 0) {
+          showToast("error", `Failed to upload ${failedCount} image(s).`);
+        }
+      } catch (err) {
+        showToast("error", "Server error during multiple image upload");
+      } finally {
+        setUploadingImage(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
-    } catch (err) {
-      showToast("error", "Server error during image upload");
-    } finally {
-      setUploadingImage(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+    } else {
+      const file = files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      showToast("info", "Uploading image...");
+
+      try {
+        const res = await uploadPhotoAction(formData);
+        if (res.success && res.url) {
+          showToast("success", "Image uploaded successfully");
+          if (forEdit === "new") {
+            setEditingPhoto((prev) => prev ? { ...prev, src: res.url! } : {
+              id: "",
+              title: "",
+              category: "exterior",
+              categoryLabel: "Exterior",
+              src: res.url!,
+              description: ""
+            });
+          } else if (forEdit === "edit") {
+            setEditingPhoto((prev) => prev ? { ...prev, src: res.url! } : null);
+          } else if (forEdit === "plant") {
+            setEditingPlant((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
+          } else if (forEdit === "cafe") {
+            setEditingCafeItem((prev) => prev ? { ...prev, imageSrc: res.url! } : null);
+          }
+        } else {
+          showToast("error", res.error || "Image upload failed");
+        }
+      } catch (err) {
+        showToast("error", "Server error during image upload");
+      } finally {
+        setUploadingImage(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
     }
   };
@@ -1043,6 +1086,7 @@ export default function AdminPage() {
                       <input
                         type="file"
                         accept="image/*"
+                        multiple
                         onChange={(e) => handleImageUpload(e, "event")}
                         className="hidden"
                         id="event-file-upload"
