@@ -121,11 +121,12 @@ Kohinoor Facilities Team`,
       success: true,
       previewUrl
     };
-  } catch (err: any) {
-    console.error(`[EMAIL DISPATCH FAILURE] Failed to send receipt email to ${customerEmail}:`, err);
+  } catch (err) {
+    const error = err as Error;
+    console.error(`[EMAIL DISPATCH FAILURE] Failed to send receipt email to ${customerEmail}:`, error);
     return {
       success: false,
-      error: err.message || "Failed to send receipt email via SMTP"
+      error: error.message || "Failed to send receipt email via SMTP"
     };
   }
 }

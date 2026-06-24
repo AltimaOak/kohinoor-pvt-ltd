@@ -5,7 +5,7 @@ import ReceiptActions from "@/components/ReceiptActions";
 
 export const revalidate = 0; // Disable caching to fetch fresh DB values
 
-export default async function ReceiptPage({ params }: { params: any }) {
+export default async function ReceiptPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
 

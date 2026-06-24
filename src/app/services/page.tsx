@@ -134,13 +134,7 @@ export default function ServicesPage() {
   const [cafeOrderError, setCafeOrderError] = useState("");
   const [cafeOrderId, setCafeOrderId] = useState("");
   const [cafeReceiptId, setCafeReceiptId] = useState("");
-<<<<<<< HEAD
-  const [cafeWhatsAppStatus, setCafeWhatsAppStatus] = useState<"sending" | "sent" | "failed">("sending");
-  const [customerWhatsAppSent, setCustomerWhatsAppSent] = useState<"sending" | "sent" | "failed">("sending");
-  const [cafeteriaWhatsAppSent, setCafeteriaWhatsAppSent] = useState<"sending" | "sent" | "failed">("sending");
-=======
   const [cafeWhatsAppStatus, setCafeWhatsAppStatus] = useState<"sending" | "sent" | "delivered" | "failed">("sending");
->>>>>>> origin/adi
   const [isResendingCafeReceipt, setIsResendingCafeReceipt] = useState(false);
   const [cafeResendMessage, setCafeResendMessage] = useState("");
   const [cafeReceiptPdfUrl, setCafeReceiptPdfUrl] = useState("");
@@ -1833,138 +1827,9 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-<<<<<<< HEAD
-                  {/* Payment Form Details */}
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      setIsSubmittingCafeOrder(true);
-                      setCafeOrderError("");
-                      setCustomerWhatsAppSent("sending");
-                      setCafeteriaWhatsAppSent("sending");
-                      setCafeWhatsAppStatus("sending");
-
-                      try {
-                        const orderItems = Object.entries(cafeCart).map(([itemId, qty]) => {
-                          const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
-                          return {
-                            itemId,
-                            name: menuItem.name,
-                            price: menuItem.price,
-                            quantity: qty
-                          };
-                        });
-
-                        const totalPrice = Object.entries(cafeCart).reduce((sum, [itemId, qty]) => {
-                          const menuItem = cafeteria.menu.find(m => m.id === itemId)!;
-                          return sum + (menuItem.price * qty);
-                        }, 0);
-
-                        const orderData = {
-                          items: orderItems,
-                          totalPrice,
-                          userName: cafeName.trim(),
-                          userEmail: cafeEmail.trim(),
-                          userPhone: cafePhone.trim()
-                        };
-
-                        const res = await buyCafeteriaAction(orderData);
-                         if (res.success && res.orderId) {
-                          const orderId = res.orderId;
-                          const receiptId = res.receiptId || "";
-                          setCafeOrderId(orderId);
-                          setCafeReceiptId(receiptId);
-                          setCustomerWhatsAppSent((res as any).customerWhatsAppStatus === "sent" ? "sent" : "failed");
-                          setCafeteriaWhatsAppSent((res as any).cafeteriaWhatsAppStatus === "sent" ? "sent" : "failed");
-                          setCafeWhatsAppStatus((res as any).whatsAppSentStatus === "sent" ? "sent" : "failed");
-                          setCafeStep("success");
-                          await loadData();
-
-                          // Auto-generate WhatsApp receipt message and send to user's phone number
-                          const itemsFormatted = orderItems.map(item => `• ${item.name} x ${item.quantity} - ₹${item.price * item.quantity}`).join('\n');
-                          const msg = `Thank you for your order with Kohinoor Facilities.\n\n` +
-                            `Your order has been confirmed.\n\n` +
-                            `Receipt No: ${receiptId}\n` +
-                            `Service: Cafeteria\n` +
-                            `Total Paid: ₹${totalPrice}\n\n` +
-                            `A detailed receipt is attached below:\n` +
-                            `http://localhost:8000/receipts/${receiptId}\n\n` +
-                            `Thank you for choosing Kohinoor Facilities.`;
-                          window.open(getWhatsAppUrl(cafePhone.trim(), msg), '_blank');
-                          
-                          // Trigger ready simulation
-                          setOrderReadyState("preparing");
-                          setTimeout(() => {
-                            setOrderReadyState("ready");
-                            setReadyAlertVisible(true);
-                            // Synthesize sound
-                            playChime();
-                            // Alert
-                            alert("Your Cafeteria Order is Ready! You can pickup your order from that cafeteria counter.");
-                          }, 6000);
-                        } else {
-                          setCafeOrderError(res.error || "Failed to process cafeteria order.");
-                        }
-                      } catch (err) {
-                        setCafeOrderError("An unexpected server error occurred.");
-                      } finally {
-                        setIsSubmittingCafeOrder(false);
-                      }
-                    }}
-                    className="flex flex-col gap-4"
-                  >
-                    <div className="p-4 border border-amber-100 bg-amber-500/[0.02] rounded-xl flex flex-col gap-3">
-                      <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Select Payment Method</span>
-                      
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="p-3 rounded-lg border border-amber-300 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer text-center">
-                          <CreditCard className="w-5 h-5 text-amber-500" />
-                          <span className="text-[9px] font-bold text-navy-800">Card</span>
-                        </div>
-                        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 cursor-pointer text-center grayscale opacity-60">
-                          <Check className="w-5 h-5 text-slate-500" />
-                          <span className="text-[9px] font-bold text-slate-500">UPI</span>
-                        </div>
-                        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 cursor-pointer text-center grayscale opacity-60">
-                          <Compass className="w-5 h-5 text-slate-500" />
-                          <span className="text-[9px] font-bold text-slate-500">NetBanking</span>
-                        </div>
-                      </div>
-
-                      {/* Mock Card Inputs */}
-                      <div className="flex flex-col gap-2 mt-2">
-                        <input
-                          type="text"
-                          required
-                          maxLength={16}
-                          placeholder="Card Number (e.g. 4111 2222 3333 4444)"
-                          defaultValue="4111222233334444"
-                          className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                        />
-                        <div className="grid grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            required
-                            maxLength={5}
-                            placeholder="MM/YY"
-                            defaultValue="12/29"
-                            className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                          />
-                          <input
-                            type="password"
-                            required
-                            maxLength={3}
-                            placeholder="CVV"
-                            defaultValue="123"
-                            className="px-3 py-2 border border-slate-200 rounded-lg text-xs w-full focus:outline-none focus:border-amber-500 text-slate-700 font-semibold font-mono"
-                          />
-                        </div>
-                      </div>
-=======
                   {cafeOrderError && (
                     <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-xs font-semibold">
                       {cafeOrderError}
->>>>>>> origin/adi
                     </div>
                   )}
 
@@ -2063,75 +1928,6 @@ export default function ServicesPage() {
                     (cafeWhatsAppStatus === "sent" || cafeWhatsAppStatus === "delivered") && "bg-emerald-50 border-emerald-200 text-emerald-800",
                     cafeWhatsAppStatus === "failed" && "bg-rose-50 border-rose-200 text-rose-800"
                   )}>
-<<<<<<< HEAD
-                    <div className="flex flex-col gap-3 w-full">
-                      <div className="text-xs font-black font-sans pb-1.5 border-b border-current/10 flex justify-between items-center">
-                        <span>WhatsApp Delivery Status</span>
-                        <span className="text-[10px] font-mono opacity-80">ID: {cafeReceiptId}</span>
-                      </div>
-                      
-                      {/* Customer Status Row */}
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2 font-medium">
-                          {customerWhatsAppSent === "sending" && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                          {customerWhatsAppSent === "sent" && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                          {customerWhatsAppSent === "failed" && <AlertCircle className="w-3.5 h-3.5" />}
-                          <span>Customer Receipt (+91 {cafePhone})</span>
-                        </div>
-                        <span className="font-extrabold uppercase tracking-wider text-[9px]">{customerWhatsAppSent}</span>
-                      </div>
-
-                      {/* Cafeteria Status Row */}
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2 font-medium">
-                          {cafeteriaWhatsAppSent === "sending" && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                          {cafeteriaWhatsAppSent === "sent" && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                          {cafeteriaWhatsAppSent === "failed" && <AlertCircle className="w-3.5 h-3.5" />}
-                          <span>Cafeteria Kitchen Notification</span>
-                        </div>
-                        <span className="font-extrabold uppercase tracking-wider text-[9px]">{cafeteriaWhatsAppSent}</span>
-                      </div>
-                    </div>
-                    
-                    {cafeWhatsAppStatus === "failed" && (
-                      <div className="flex items-center gap-2 mt-1 border-t border-current/10 pt-2">
-                        <button
-                          type="button"
-                          disabled={isResendingCafeReceipt}
-                          onClick={async () => {
-                            setIsResendingCafeReceipt(true);
-                            setCafeResendMessage("Retrying...");
-                            try {
-                              const ret = await resendReceiptAction(cafeReceiptId);
-                              if (ret.success) {
-                                setCafeWhatsAppStatus("sent");
-                                setCustomerWhatsAppSent("sent");
-                                setCafeteriaWhatsAppSent("sent");
-                                setCafeResendMessage("Sent!");
-                              } else {
-                                setCafeResendMessage(ret.error || "Retry failed");
-                              }
-                            } catch (e) {
-                              setCafeResendMessage("Failed");
-                            } finally {
-                              setIsResendingCafeReceipt(false);
-                            }
-                          }}
-                          className="px-2.5 py-1 rounded bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider hover:bg-rose-700 transition-colors flex items-center gap-1.5 cursor-pointer font-bold"
-                        >
-                          {isResendingCafeReceipt ? (
-                            <Loader2 className="w-3 h-3 animate-spin" />
-                          ) : (
-                            <MessageSquare className="w-3 h-3" />
-                          )}
-                          <span>Send Again</span>
-                        </button>
-                        {cafeResendMessage && (
-                          <span className="text-[9px] font-bold text-rose-600">{cafeResendMessage}</span>
-                        )}
-                      </div>
-                    )}
-=======
                     {cafeWhatsAppStatus === "sending" && <Loader2 className="w-4 h-4 text-sky-600 animate-spin shrink-0" />}
                     {(cafeWhatsAppStatus === "sent" || cafeWhatsAppStatus === "delivered") && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
                     {cafeWhatsAppStatus === "failed" && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
@@ -2156,7 +1952,6 @@ export default function ServicesPage() {
                       {(cafeEmailStatus === "sent" || cafeEmailStatus === "delivered") && `Receipt sent successfully to your email.`}
                       {cafeEmailStatus === "failed" && "Email receipt delivery failed."}
                     </span>
->>>>>>> origin/adi
                   </div>
 
                   {/* Simulated WhatsApp Receipt on mobile */}

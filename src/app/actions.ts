@@ -246,6 +246,8 @@ export interface Receipt {
   emailSentStatus?: "sent" | "failed" | "pending";
   emailSentTimestamp?: string;
   whatsAppSentStatus?: string;
+  whatsAppSentTimestamp?: string;
+  whatsAppMessageId?: string;
   whatsAppDeliveryLogs?: any[];
 }
 
@@ -1006,9 +1008,9 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       status: waRes.success ? ("success" as const) : ("failure" as const),
       error: waRes.error
     };
-    newReceipt.whatsAppDeliveryLogs = [logEntry];
+    newReceipt.whatsAppDeliveryLogs = [customerLogEntry];
     newReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
-    newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppSentTimestamp = customerLogEntry.timestamp;
     newReceipt.whatsAppMessageId = waRes.messageId;
 
     if (!db.receipts) {

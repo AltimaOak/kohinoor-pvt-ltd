@@ -37,8 +37,13 @@ export default function Navbar() {
 
   // Close mobile menu on navigate
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+    if (mobileMenuOpen) {
+      const handle = setTimeout(() => {
+        setMobileMenuOpen(false);
+      }, 0);
+      return () => clearTimeout(handle);
+    }
+  }, [pathname, mobileMenuOpen]);
 
   const isNavbarLightText = scrolled || pathname === "/";
 
