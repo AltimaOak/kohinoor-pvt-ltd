@@ -14,21 +14,17 @@
     },
     {
       "id": "evt-independence",
-      "title": "Independence Day Cultural Gathering",
+      "title": "Independence & Republic Day  Cultural Gathering",
       "desc": "Commemorating the national flag hoisting with cultural performances and community high-tea.",
       "iconName": "Gift"
     },
     {
-      "id": "evt-yoga",
-      "title": "International Yoga Day Workshop",
-      "desc": "A revitalizing morning mindfulness and wellness session designed for working professionals.",
-      "iconName": "Heart"
-    },
-    {
       "id": "evt-holi",
-      "title": "Eco-Friendly Holi Milan Celebration",
-      "desc": "Welcoming the festival of colors with dry organic colors, traditional music, and sweets.",
-      "iconName": "Activity"
+      "title": "Ganesh Festival Celebration",
+      "desc": "Ganesh Chaturthi is a vibrant Hindu festival honoring Lord Ganesha,The celebration features installing clay idols in homes and massive public pandals (temporary shrines), daily aartis (prayers), and feasts of sweets like modak",
+      "iconName": "Activity",
+      "images": [],
+      "imageSrc": ""
     },
     {
       "id": "evt-health",
@@ -41,6 +37,38 @@
       "title": "Green Canopy Monsoon Plantation",
       "desc": "A collaborative tenant green drive planting native saplings around the business park.",
       "iconName": "Compass"
+    },
+    {
+      "id": "evt-1782285890729",
+      "title": "Dj Navrtri Nights",
+      "desc": "Dj Navratri nights bring the high-energy, pulsing beats of traditional Garba and Dandiya combined with modern EDM, Bollywood remixes",
+      "iconName": "Calendar",
+      "imageSrc": "",
+      "images": []
+    },
+    {
+      "id": "evt-1782286309669",
+      "title": "National safety week/ Fire Safety Week",
+      "desc": "National Safety Week and National Fire Service Week are major annual campaigns  designed to prevent accidents, educate the public, and honor those who protect us. Both feature mock drills, safety pledges, and awareness in workplaces.",
+      "iconName": "Calendar",
+      "imageSrc": "",
+      "images": []
+    },
+    {
+      "id": "evt-1782286518872",
+      "title": "Christmas Celebration ",
+      "desc": "Christmas is celebrated with a unique blend of traditional midnight masses, dazzling street illuminations, and festive feasts",
+      "iconName": "Calendar",
+      "imageSrc": "",
+      "images": []
+    },
+    {
+      "id": "evt-1782286625909",
+      "title": "Women's day celebration",
+      "desc": "Women's Day is celebrated on March 8th to honor women's social, economic, cultural, and political achievements while advocating for gender equality. Celebrations include panel discussions, career mentorship programs, charity fundraisers, and community events centered around global themes like \"Give to Gain\" and \"Rights. Justice. Action.",
+      "iconName": "Calendar",
+      "imageSrc": "",
+      "images": []
     }
   ],
   "services": [
@@ -111,7 +139,7 @@
     }
   ],
   "contacts": {
-    "siteAddress": "KOHINOOR CITY OFFICE TOWERS, Landmark Ave, Business District, Tower B, Level 18",
+    "siteAddress": "Tower-2, Basement-2, Kirol road, near Don Bosco school, Kurla west -400070",
     "siteAddressMapLink": "https://maps.app.goo.gl/9LrPP3YqcKRDdi2t5",
     "managers": [
       {
@@ -196,9 +224,9 @@
   ],
   "nursery": {
     "description": "Lush green oasis within the Kohinoor complex offering a wide selection of indoor and outdoor plants to brighten your workspace and improve air quality.",
-    "location": "Ground Floor, Tower B Plaza Area",
-    "timing": "9:00 AM - 6:00 PM (Monday - Saturday)",
-    "contact": "+91 9372025677",
+    "location": "Tower-1 back side near Entry Ramp ground floor",
+    "timing": "9:00 AM - 6:00 PM (Monday - Sunday)",
+    "contact": "+91 8657935459 ",
     "plants": [
       {
         "id": "plant-snake",

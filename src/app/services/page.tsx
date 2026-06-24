@@ -36,7 +36,9 @@ import {
   Coffee,
   Utensils,
   CreditCard,
-  Volume2
+  Volume2,
+  HeartPulse,
+  Flower2
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -619,10 +621,10 @@ export default function ServicesPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and biometric checks" },
-              { label: "BMS", icon: Cpu, desc: "Building Management System smart telemetry" },
+              { label: "Tranquil Massage Room", icon: Flower2, desc: "Relaxation and massage room for building occupants" },
               { label: "CCTV", icon: Video, desc: "High-definition security surveillance networks" },
               { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
-              { label: "Boom Barriers", icon: Lock, desc: "Automated RFID vehicular gate control systems" },
+              { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency services" },
               { label: "Visitors Parking", icon: Car, desc: "Dedicated subterranean guest parking decks" },
               { label: "Power", icon: Zap, desc: "Dual grid feeds for consistent electricity" },
               { label: "Power Backup", icon: BatteryCharging, desc: "Heavy generator backup activation in 0.4s" },

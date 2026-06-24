@@ -24,7 +24,9 @@ import {
   Lock,
   Car,
   BatteryCharging,
-  Flame
+  Flame,
+  HeartPulse,
+  Flower2
 } from "lucide-react";
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
@@ -205,10 +207,10 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and biometric checks" },
-              { label: "BMS", icon: Cpu, desc: "Building Management System smart telemetry" },
+              { label: "Tranquil Massage Room", icon: Flower2, desc: "Relaxation and massage room for building occupants" },
               { label: "CCTV", icon: Video, desc: "High-definition security surveillance networks" },
               { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
-              { label: "Boom Barriers", icon: Lock, desc: "Automated RFID vehicular gate control systems" },
+              { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency services" },
               { label: "Visitors Parking", icon: Car, desc: "Dedicated subterranean guest parking decks" },
               { label: "Power", icon: Zap, desc: "Dual grid feeds for consistent electricity" },
               { label: "Power Backup", icon: BatteryCharging, desc: "Heavy generator backup activation in 0.4s" },
@@ -254,7 +256,7 @@ export default function LandingPage() {
       </section>
 
       {/* 7. LEASING ENQUIRY & CONTACT SECTION */}
-      <section id="contact" className="py-28 md:py-32 max-w-5xl mx-auto px-6 md:px-12 w-full">
+      <section id="contact" className="py-28 md:py-32 max-w-7xl mx-auto px-6 md:px-12 w-full">
         <div className="flex flex-col gap-12 text-center items-center">
           <div className="flex flex-col gap-3 items-center">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
@@ -269,38 +271,54 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full mt-4 text-left">
-            {/* Column 1: Site Address */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-8 text-left">
+            {/* Site Address Card */}
             {contacts && (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between gap-6 hover:shadow-xl hover:border-sky-300 transition-all duration-300 relative overflow-hidden group"
+                className="p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between gap-6 hover:shadow-xl hover:border-sky-300 transition-all duration-300 relative overflow-hidden group min-h-[300px]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
-                <div className="flex flex-col gap-4">
+                
+                <div className="flex flex-col gap-4 z-10">
                   <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold">Physical Site Address</span>
-                    <h4 className="text-lg font-black text-navy-900 mt-2">Kohinoor Office Towers</h4>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold block">Physical Site Address</span>
+                    <h4 className="text-lg font-black text-navy-900 leading-tight mt-1">Kohinoor Office Towers</h4>
+                  </div>
+                  <div className="w-full pt-4 border-t border-slate-100">
                     <a
                       href={contacts.siteAddressMapLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-slate-600 mt-2 hover:text-sky-500 transition-colors block leading-relaxed whitespace-pre-line"
+                      className="text-xs font-bold text-slate-600 hover:text-sky-500 transition-colors block leading-relaxed py-1 whitespace-pre-line"
+                      title={contacts.siteAddress}
                     >
                       {contacts.siteAddress}
                     </a>
                   </div>
                 </div>
+
+                <div className="z-10 mt-auto">
+                  <a
+                    href={contacts.siteAddressMapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-all duration-300 font-bold text-xs"
+                  >
+                    View on Maps
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                </div>
               </motion.div>
             )}
 
-            {/* Column 2+: Managers dynamically loaded */}
+            {/* Manager Cards */}
             {contacts?.managers.slice(0, 2).map((mgr, idx) => (
               <motion.div
                 key={mgr.id}
@@ -308,7 +326,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.1 * (idx + 1) }}
-                className={`p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col gap-6 hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 relative group ${
+                className={`p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between gap-6 hover:shadow-xl transition-all duration-300 relative group min-h-[300px] w-full ${
                   mgr.colorTheme === "emerald"
                     ? "hover:border-emerald-400/30"
                     : mgr.colorTheme === "amber"
@@ -318,37 +336,44 @@ export default function LandingPage() {
                     : "hover:border-sky-400/30"
                 }`}
               >
-                <div>
-                  <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${
-                    mgr.colorTheme === "emerald"
-                      ? "text-emerald-600 bg-emerald-500/5 border-emerald-400/10"
-                      : mgr.colorTheme === "amber"
-                      ? "text-amber-600 bg-amber-500/5 border-amber-400/10"
-                      : mgr.colorTheme === "rose"
-                      ? "text-rose-600 bg-rose-500/5 border-rose-400/10"
-                      : "text-sky-500 bg-sky-500/5 border-sky-400/10"
-                  }`}>{mgr.category}</span>
-                  <h4 className="text-xl font-black text-navy-900 mt-4 leading-none">{mgr.name}</h4>
-                  <p className="text-xs text-slate-500 font-semibold mt-1.5">{mgr.role}</p>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${
+                      mgr.colorTheme === "emerald"
+                        ? "text-emerald-600 bg-emerald-500/5 border-emerald-400/10"
+                        : mgr.colorTheme === "amber"
+                        ? "text-amber-600 bg-amber-500/5 border-amber-400/10"
+                        : mgr.colorTheme === "rose"
+                        ? "text-rose-600 bg-rose-500/5 border-rose-400/10"
+                        : "text-sky-500 bg-sky-500/5 border-sky-400/10"
+                    }`}>{mgr.category}</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-black text-navy-900 leading-tight">{mgr.name}</h4>
+                    <p className="text-xs text-slate-500 font-semibold mt-1">{mgr.role}</p>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-3.5 pt-4 border-t border-slate-200/50">
+
+                <div className="flex flex-col gap-3 pt-4 border-t border-slate-100 w-full mt-auto">
                   <a
                     href={`tel:${mgr.phone}`}
-                    className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                    className="group/btn flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300 w-full"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
-                      <Phone className="w-4.5 h-4.5" />
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
+                      <Phone className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors">{mgr.phone}</span>
+                    <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors whitespace-nowrap overflow-x-auto no-scrollbar py-0.5">
+                      {mgr.phone}
+                    </span>
                   </a>
                   <a
                     href={`mailto:${mgr.email}`}
-                    className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                    className="group/btn flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300 w-full"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
-                      <Mail className="w-4.5 h-4.5" />
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
+                      <Mail className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all">
+                    <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors whitespace-nowrap overflow-x-auto no-scrollbar py-0.5">
                       {mgr.email}
                     </span>
                   </a>
