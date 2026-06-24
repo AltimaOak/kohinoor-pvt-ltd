@@ -63,15 +63,15 @@ export default async function Footer() {
           {/* Sitemap Navigation (3 Columns) */}
           <div className="lg:col-span-3 flex flex-col gap-5">
             <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Navigation
+             Quick Navigation
             </h4>
             <ul className="flex flex-col gap-3">
               {[
-                { name: "Home Landmark", href: "/" },
-                { name: "About Complex", href: "/about" },
-                { name: "Services & Amenities", href: "/services" },
-                { name: "Community Events", href: "/events" },
-                { name: "Relations Contact", href: "/contact" },
+                { name: "Home ", href: "/" },
+                { name: "About Us", href: "/about" },
+                { name: "Services", href: "/services" },
+                { name: "Events", href: "/events" },
+                { name: "Contacts", href: "/contact" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -89,7 +89,7 @@ export default async function Footer() {
           {/* Contact Details Column (4 Columns) */}
           <div className="lg:col-span-4 flex flex-col gap-5">
             <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Commercial Office
+              Visit Our Office
             </h4>
             <ul className="flex flex-col gap-4 text-sm text-slate-400">
               <li className="flex items-start gap-3">
@@ -103,6 +103,9 @@ export default async function Footer() {
                   {contacts.siteAddress}
                 </a>
               </li>
+              <h4 className="text-xs font-bold text-white uppercase tracking-widest">
+               EMAIL US
+            </h4>
               {managerEmails.length > 0 && (
                 <li className="flex items-start gap-3">
                   <Mail className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-1" />

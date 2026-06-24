@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { name: "Home", href: "/" },
-  { name: "About Complex", href: "/about" },
+  { name: "About Us", href: "/about" },
   { name: "Services", href: "/services" },
   { name: "Events", href: "/events" },
-  { name: "Contact", href: "/contact" },
+  { name: "Contacts", href: "/contact" },
 ];
 
 export default function Navbar() {
