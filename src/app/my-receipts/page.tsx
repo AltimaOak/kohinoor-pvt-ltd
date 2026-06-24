@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getCustomerReceiptsAction } from "@/app/actions";
+import { getCustomerReceiptsAction, Order } from "@/app/actions";
 import {
   Search,
   Download,
@@ -23,7 +23,7 @@ export default function MyReceiptsPage() {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   // Search & Filters State
   const [searchQuery, setSearchQuery] = useState("");
@@ -63,7 +63,7 @@ export default function MyReceiptsPage() {
   const filteredOrders = orders.filter((o) => {
     const matchesSearch =
       o.receiptNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.items.some((item: any) => item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      o.items.some((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       o.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.transactionId.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -286,7 +286,7 @@ export default function MyReceiptsPage() {
                         Ordered Items
                       </span>
                       <span className="text-xs font-bold text-slate-700 truncate block max-w-[180px] md:mx-auto">
-                        {order.items.map((it: any) => `${it.name} x${it.quantity}`).join(", ")}
+                        {order.items.map((it) => `${it.name} x${it.quantity}`).join(", ")}
                       </span>
                     </div>
 

@@ -51,8 +51,9 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(data);
-  } catch (err: any) {
-    console.error("[CREATE ORDER API ERROR] Failed:", err);
-    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    console.error("[CREATE ORDER API ERROR] Failed:", error);
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

@@ -1,90 +1,118 @@
+import { Order } from "../actions";
+
 export interface WhatsAppSendResult {
   success: boolean;
   messageId?: string;
   error?: string;
-}
-
-export function formatPhoneNumber(phone: string): string {
-  const clean = phone.replace(/[^0-9]/g, "");
-  // Prepend country code 91 if phone is 10 digits
-  return clean.length === 10 ? `91${clean}` : clean;
+  simulated?: boolean;
 }
 
 /**
- * Sends a PDF receipt document using the official WhatsApp Business Cloud API.
- * If credentials are not configured or placeholder, falls back to simulated console logging.
+ * Sends a receipt notification directly to the customer's WhatsApp via Meta Cloud API.
+ * Falls back to simulated console logs if API credentials are not provided in .env.local.
  */
-export async function sendWhatsAppDocumentMessage(
-  customerName: string,
-  orderId: string,
-  receiptId: string,
-  serviceType: "Nursery" | "Cafeteria",
-  totalAmountPaid: number,
-  customerPhone: string,
-  pdfReceiptUrl: string
+export async function sendWhatsAppReceipt(
+  order: Order,
+  customerPhone: string
 ): Promise<WhatsAppSendResult> {
-  const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const formattedTo = formatPhoneNumber(customerPhone);
-  const filename = `Kohinoor_Receipt_${receiptId}.pdf`;
-  
-  const captionText = `Dear ${customerName},\n\n` +
-    `Thank you for your order with Kohinoor Facilities.\n\n` +
-    `Your order has been confirmed successfully.\n\n` +
-    `• Service: ${serviceType}\n` +
-    `• Order ID: ${orderId}\n` +
-    `• Receipt Number: ${receiptId}\n` +
-    `• Total Amount Paid: ₹${totalAmountPaid}\n\n` +
-    `Your official PDF receipt is attached below.`;
+  const token = process.env.META_WHATSAPP_ACCESS_TOKEN;
+  const phoneId = process.env.META_WHATSAPP_PHONE_NUMBER_ID;
 
-  const payload = {
-    messaging_product: "whatsapp",
-    to: formattedTo,
-    type: "document",
-    document: {
-      link: pdfReceiptUrl,
-      filename: filename,
-      caption: captionText
-    }
-  };
+  // Clean customer phone number: remove non-digits
+  const cleanPhone = customerPhone.replace(/[^0-9]/g, "");
+  // Prepend country code 91 if it's a standard 10-digit Indian number
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
 
-  // If credentials are empty, missing, or standard placeholder
-  if (!accessToken || !phoneNumberId || accessToken === "your_access_token_here" || phoneNumberId === "your_phone_number_id_here") {
+  // Generate Receipt URL
+  // We'll generate a public link to the online receipt verification/view portal
+  const host = process.env.NEXT_PUBLIC_APP_URL || "localhost:3000";
+  const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+  const receiptUrl = `${protocol}://${host}/receipt/${order.receiptNumber}`;
+
+  // Build the message text
+  const itemsText = order.items
+    .map((item) => `• ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`)
+    .join("\n");
+
+  const messageText = `*Kohinoor Facilities - Order Receipt* 🧾
+
+Dear *${order.customerName}*,
+
+Thank you for your order! Your payment has been successfully received.
+
+*Order Details:*
+• *Receipt Number:* ${order.receiptNumber}
+• *Order ID:* ${order.orderId}
+• *Service Category:* ${order.serviceType}
+• *Total Paid:* ₹${order.amount}
+
+*Items:*
+${itemsText}
+
+*Secure Online Receipt:*
+🔗 View receipt details and download your PDF: ${receiptUrl}
+
+---
+_Thank you for choosing Kohinoor Facilities._`;
+
+  // Check if API credentials are missing or placeholder
+  if (!token || !phoneId || token.startsWith("your_")) {
     console.log(`\n======================================================================`);
-    console.log(`[WHATSAPP BUSINESS API SIMULATION] (Missing/Placeholder Credentials)`);
-    console.log(`To: +${formattedTo}`);
-    console.log(`Payload:`, JSON.stringify(payload, null, 2));
+    console.log(`[META WHATSAPP SIMULATOR] Dispatching direct WhatsApp receipt to +${formattedPhone}`);
+    console.log(`Message Content:\n${messageText}`);
     console.log(`======================================================================\n`);
-    
-    // Return mock success with simulated WhatsApp message ID
+
     return {
       success: true,
-      messageId: `wamid.HBgMOTE4NjU3OTAyODA5FQIAERgSRDMxMjNBNzc1OEYwQjQxNjQyNQA=`
+      messageId: `sim_meta_${Date.now()}`,
+      simulated: true,
     };
   }
 
   try {
-    const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
+    const url = `https://graph.facebook.com/v18.0/${phoneId}/messages`;
+    
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: formattedPhone,
+        type: "text",
+        text: {
+          preview_url: true,
+          body: messageText,
+        },
+      }),
     });
 
     const data = await response.json();
+
     if (response.ok && data.messages && data.messages.length > 0) {
-      console.log(`[WHATSAPP SUCCESS] Official document message sent to +${formattedTo}. Message ID: ${data.messages[0].id}`);
-      return { success: true, messageId: data.messages[0].id };
+      console.log(`[META WHATSAPP SUCCESS] Direct WhatsApp receipt sent to +${formattedPhone}. Message ID: ${data.messages[0].id}`);
+      return {
+        success: true,
+        messageId: data.messages[0].id,
+        simulated: false,
+      };
     } else {
-      const errorMsg = data.error?.message || "Unknown WhatsApp API error";
-      console.error(`[WHATSAPP FAILURE] Official document message failed: ${errorMsg}`);
-      return { success: false, error: errorMsg };
+      const errorMsg = data.error?.message || "Unknown Meta WhatsApp API Error";
+      console.error(`[META WHATSAPP API ERROR] Failed to send:`, data.error);
+      return {
+        success: false,
+        error: errorMsg,
+      };
     }
-  } catch (err: any) {
-    console.error(`[WHATSAPP CONNECTION ERROR] Failed to connect to WhatsApp API:`, err);
-    return { success: false, error: err.message || "Network connection error" };
+  } catch (err) {
+    const error = err as Error;
+    console.error(`[META WHATSAPP CONNECTION FAILURE] Error connecting to Meta API:`, error);
+    return {
+      success: false,
+      error: error.message || "Failed to connect to Meta WhatsApp API service",
+    };
   }
 }

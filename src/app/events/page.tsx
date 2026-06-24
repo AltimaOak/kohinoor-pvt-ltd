@@ -132,7 +132,7 @@ export default function EventsPage() {
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((evt, idx) => {
-            const Icon = (LucideIcons as any)[evt.iconName] || LucideIcons.HelpCircle;
+            const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[evt.iconName] || LucideIcons.HelpCircle;
             return (
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
