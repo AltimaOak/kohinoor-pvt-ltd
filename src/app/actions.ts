@@ -5,6 +5,7 @@ import path from "path";
 import { cookies, headers } from "next/headers";
 import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
 import { sendReceiptEmail } from "./utils/emailSender";
+import { sendWhatsAppReceipt } from "./utils/whatsAppSender";
 
 const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
@@ -245,6 +246,8 @@ export interface Receipt {
   emailSentStatus?: "sent" | "failed" | "pending";
   emailSentTimestamp?: string;
   whatsAppSentStatus?: string;
+  whatsAppSentTimestamp?: string;
+  whatsAppMessageId?: string;
   whatsAppDeliveryLogs?: any[];
 }
 
@@ -835,19 +838,19 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
       }];
     }
 
-    // Trigger official WhatsApp Document delivery (Simulated skip since WhatsApp is disabled)
-    const whatsAppRes = { success: true, messageId: "sim_whatsApp_disabled" };
+    // Trigger official WhatsApp Document delivery
+    const waRes = await sendWhatsAppReceipt(newReceipt as any, order.userPhone);
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: "success" as const,
-      error: undefined
+      status: waRes.success ? ("success" as const) : ("failure" as const),
+      error: waRes.error
     };
     newReceipt.whatsAppDeliveryLogs = [logEntry];
-    newReceipt.whatsAppSentStatus = "sent";
+    newReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
     newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
-    newReceipt.whatsAppMessageId = whatsAppRes.messageId;
+    newReceipt.whatsAppMessageId = waRes.messageId;
 
     if (!db.receipts) {
       db.receipts = [];
@@ -996,19 +999,19 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
       }];
     }
 
-    // Trigger official WhatsApp Document delivery (Simulated skip since WhatsApp is disabled)
-    const whatsAppRes = { success: true, messageId: "sim_whatsApp_disabled" };
+    // Trigger official WhatsApp Document delivery
+    const waRes = await sendWhatsAppReceipt(newReceipt as any, order.userPhone);
     
     // Log Delivery
     const logEntry = {
       timestamp: new Date().toISOString(),
-      status: "success" as const,
-      error: undefined
+      status: waRes.success ? ("success" as const) : ("failure" as const),
+      error: waRes.error
     };
     newReceipt.whatsAppDeliveryLogs = [logEntry];
-    newReceipt.whatsAppSentStatus = "sent";
+    newReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
     newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
-    newReceipt.whatsAppMessageId = whatsAppRes.messageId;
+    newReceipt.whatsAppMessageId = waRes.messageId;
 
     if (!db.receipts) {
       db.receipts = [];
@@ -1179,6 +1182,57 @@ export async function resendEmailReceiptAction(receiptNumber: string): Promise<{
   }
 }
 
+/**
+ * Resends the receipt to the customer's WhatsApp.
+ */
+export async function resendWhatsAppReceiptAction(receiptNumber: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    if (!db.orders) db.orders = [];
+
+    const order = db.orders.find(o => o.receiptNumber === receiptNumber);
+    if (!order) {
+      return { success: false, error: "Receipt not found." };
+    }
+
+    if (!order.customerPhone) {
+      return { success: false, error: "No phone number found for this receipt. Cannot send WhatsApp." };
+    }
+
+    // Call sendWhatsAppReceipt utility
+    const waRes = await sendWhatsAppReceipt(order, order.customerPhone);
+
+    // Update log in legacy receipts
+    const legacyReceipt = db.receipts?.find(r => r.id === receiptNumber);
+    if (legacyReceipt) {
+      legacyReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
+      legacyReceipt.whatsAppSentTimestamp = new Date().toISOString();
+      if (!legacyReceipt.whatsAppDeliveryLogs) {
+        legacyReceipt.whatsAppDeliveryLogs = [];
+      }
+      legacyReceipt.whatsAppDeliveryLogs.push({
+        timestamp: new Date().toISOString(),
+        status: waRes.success ? "success" : "failure",
+        error: waRes.error,
+        messageId: waRes.messageId
+      });
+      legacyReceipt.whatsAppMessageId = waRes.messageId;
+    }
+
+    // Save database
+    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+
+    if (!waRes.success) {
+      return { success: false, error: waRes.error || "Failed to deliver WhatsApp message." };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error("Error resending WhatsApp receipt:", err);
+    return { success: false, error: err.message || "Server error occurred while resending WhatsApp receipt." };
+  }
+}
+
 export async function generateUniqueReceiptNumber(serviceType: "Nursery" | "Cafeteria"): Promise<string> {
   const db = await getDb();
   const today = new Date();
@@ -1343,6 +1397,8 @@ export async function verifyRazorpayPaymentAction({
       totalAmountPaid: checkoutData.amount,
       paymentStatus: "completed",
       paymentMethod: checkoutData.paymentMethod || "Card / Online",
+      whatsAppSentStatus: "pending",
+      whatsAppDeliveryLogs: []
     };
     db.receipts.push(legacyReceipt);
 
@@ -1374,6 +1430,30 @@ export async function verifyRazorpayPaymentAction({
       }
     } catch (deliveryErr) {
       console.error("[DELIVERY ERROR] Failed to send receipt email after payment success:", deliveryErr);
+    }
+
+    // 7.5. Dynamic WhatsApp Delivery
+    try {
+      const waRes = await sendWhatsAppReceipt(newOrder, checkoutData.customerPhone);
+      const latestDb = await getDb();
+      const legacyToUpdate = latestDb.receipts?.find(r => r.id === receiptNumber);
+      if (legacyToUpdate) {
+        legacyToUpdate.whatsAppSentStatus = waRes.success ? "sent" : "failed";
+        legacyToUpdate.whatsAppSentTimestamp = new Date().toISOString();
+        if (!legacyToUpdate.whatsAppDeliveryLogs) {
+          legacyToUpdate.whatsAppDeliveryLogs = [];
+        }
+        legacyToUpdate.whatsAppDeliveryLogs.push({
+          timestamp: new Date().toISOString(),
+          status: waRes.success ? "success" : "failure",
+          error: waRes.error,
+          messageId: waRes.messageId
+        });
+        legacyToUpdate.whatsAppMessageId = waRes.messageId;
+        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+      }
+    } catch (waErr) {
+      console.error("[DELIVERY ERROR] Failed to send receipt WhatsApp after payment success:", waErr);
     }
 
     // 8. Place ownership cookie inside the browser
