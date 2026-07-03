@@ -207,7 +207,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
-              { label: "Tranquil Massage Room", icon: Flower2, desc: "Premium robotic massage therapy for relaxation and rejuvenation" },
+              { label: "Conference Room", icon: Building2, desc: "Modern spaces for business meetings and discussions" },
               { label: "CCTV", icon: Video, desc: "High-definition security surveillance throughout the premises" },
               { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
               { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency healthcare support" },
