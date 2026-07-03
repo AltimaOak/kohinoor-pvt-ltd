@@ -26,11 +26,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     requestAnimationFrame(raf);
 
     // Store in window for global access if needed
-    (window as any).lenis = lenis;
+    (window as unknown as { lenis: Lenis | null }).lenis = lenis;
 
     return () => {
       lenis.destroy();
-      (window as any).lenis = null;
+      (window as unknown as { lenis: Lenis | null }).lenis = null;
     };
   }, []);
 

@@ -318,7 +318,7 @@ export default function EventsPage() {
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((evt, idx) => {
-            const Icon = (LucideIcons as any)[evt.iconName] || LucideIcons.HelpCircle;
+            const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[evt.iconName] || LucideIcons.HelpCircle;
             return (
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
@@ -327,12 +327,33 @@ export default function EventsPage() {
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 key={evt.id}
                 onClick={() => setSelectedEvent(evt)}
-                className="rounded-[20px] sm:rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.02)] h-full cursor-pointer"
+                className="rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden group h-full cursor-pointer shadow-sm"
               >
+                {/* Event Image Banner on Card */}
+                {evt.imageSrc ? (
+                  <div className="aspect-[16/10] w-full overflow-hidden relative border-b border-slate-100 bg-slate-50 shrink-0">
+                    <img
+                      src={evt.imageSrc}
+                      alt={evt.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-[16/10] w-full overflow-hidden relative border-b border-slate-100 bg-gradient-to-br from-sky-50 to-indigo-50/30 flex items-center justify-center shrink-0">
+                    <Icon className="w-10 h-10 text-sky-300 opacity-60" />
+                  </div>
+                )}
 
                 <div className="p-5 sm:p-6 flex flex-col gap-4 flex-grow">
-                  <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 text-sky-500 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0">
-                    <Icon className="w-5 h-5 stroke-[2]" />
+                  <div className="flex justify-between items-center">
+                    <div className="w-9 h-9 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center shrink-0">
+                      <Icon className="w-4.5 h-4.5 stroke-[2]" />
+                    </div>
+                    {evt.images && evt.images.length > 1 && (
+                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider bg-slate-100 px-2 py-0.5 rounded">
+                        +{evt.images.length - 1} Photos
+                      </span>
+                    )}
                   </div>
                   
                   <div className="flex flex-col gap-2">

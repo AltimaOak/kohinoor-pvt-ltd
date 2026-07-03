@@ -59,15 +59,14 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ type: "spring", damping: 25 }}
-          className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 relative overflow-hidden group"
+          className="p-6 border border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-2xl"
         >
-          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-sky-500/5 blur-[40px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
-          <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0 text-sky-500">
+          <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-500 shrink-0">
             <TrendingUp className="w-6 h-6" />
           </div>
           <h3 className="text-xl font-bold text-navy-900 mt-4">Our Vision</h3>
           <p className="text-slate-600 text-sm leading-relaxed mt-2">
-            To construct commercial landmarks that seamlessly fuse structural aesthetics with sustainable responsibility, establishing a blueprint for futuristic urban corporate operations.
+            To create premium commercial environments that combine modern design, functionality, and sustainability, establishing a benchmark for corporate workspaces.
           </p>
         </motion.div>
 
@@ -76,15 +75,14 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ type: "spring", damping: 25 }}
-          className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 relative overflow-hidden group"
+          className="p-6 border border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-2xl"
         >
-          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-sky-500/5 blur-[40px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
-          <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0 text-sky-500">
+          <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-500 shrink-0">
             <Heart className="w-6 h-6" />
           </div>
           <h3 className="text-xl font-bold text-navy-900 mt-4">Our Mission</h3>
           <p className="text-slate-600 text-sm leading-relaxed mt-2">
-            To empower international corporate enterprises with highly robust, energy-efficient workspace environments equipped with biometric layers, redundant connectivity grids, and VVIP hospitality.
+            To provide businesses and corporate offices with high-quality, secure, and energy-efficient workspaces equipped with modern utilities, reliable connectivity, and top-tier facility management.
           </p>
         </motion.div>
       </section>
@@ -109,14 +107,13 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
+              className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col gap-5"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
-              <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0">
                 <MapPin className="w-6 h-6" />
               </div>
               <div className="flex flex-col gap-2">
-                <h4 className="text-lg font-bold text-navy-900 group-hover:text-sky-500 transition-colors">Prime Location & Legacy</h4>
+                <h4 className="text-base font-extrabold text-navy-900">Prime Location & Legacy</h4>
                 <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
                   Kohinoor Business Park in Kurla West, Mumbai is known to satisfactorily cater to the demands of its customer base. It stands located at Kurla West, having earned 100+ positive reviews and establishing a highly loyal customer base. The business strives to make for a positive experience through its premium offerings.
                 </p>
@@ -129,14 +126,13 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
+              className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col gap-5"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
-              <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0">
                 <Users className="w-6 h-6" />
               </div>
               <div className="flex flex-col gap-2">
-                <h4 className="text-lg font-bold text-navy-900 group-hover:text-sky-500 transition-colors">Customer Centricity</h4>
+                <h4 className="text-base font-extrabold text-navy-900">Customer Centricity</h4>
                 <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
                   Customer centricity is at the core of Kohinoor Business Park in Kurla West, Mumbai, and it is this belief that has led the business to build long-term relationships. Ensuring a positive customer experience and making available goods and/or services that are of top-notch quality is given prime importance.
                 </p>
@@ -149,16 +145,15 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col gap-5 relative overflow-hidden group"
+              className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col gap-5"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sky-500/5 blur-[30px] pointer-events-none group-hover:bg-sky-500/10 transition-colors" />
-              <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0">
                 <Briefcase className="w-6 h-6" />
               </div>
               <div className="flex flex-col gap-2">
-                <h4 className="text-lg font-bold text-navy-900 group-hover:text-sky-500 transition-colors">Premium B2B Catalog</h4>
+                <h4 className="text-base font-extrabold text-navy-900">B2B Portal & Services</h4>
                 <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
-                  Integrated with India's leading B2B marketplace, Jd Mart, to ensure seamless business engagement. The portal showcases elite offerings through a digital catalogue including Business Center Services, Business Centre Services, Commercial Hubs, and premium Business Centres.
+                  The complex operates an administrative B2B billing and service portal, providing occupant companies with transparent billing, plant nursery ordering, medical camp scheduling, and digital receipts history.
                 </p>
               </div>
             </motion.div>

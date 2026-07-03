@@ -36,7 +36,7 @@ export default function ReceiptPortalClient({ receiptId }: { receiptId: string }
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6 w-full">
       <div className="flex flex-col gap-1.5 text-left w-full">
-        <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
+        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
           Email or Phone Number
         </label>
         <input
@@ -45,12 +45,12 @@ export default function ReceiptPortalClient({ receiptId }: { receiptId: string }
           value={emailOrPhone}
           onChange={(e) => setEmailOrPhone(e.target.value)}
           placeholder="e.g. customer@email.com or 9876543210"
-          className="w-full px-4 py-3 bg-slate-900 border border-slate-800 text-white rounded-xl text-xs font-semibold focus:outline-none focus:border-sky-500 placeholder-slate-600 transition-colors"
+          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-xs font-semibold focus:outline-none focus:border-sky-500 focus:bg-white placeholder-slate-400 transition-all font-sans"
         />
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 text-xs font-semibold leading-relaxed">
+        <div className="flex items-center gap-2 p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-800 text-xs font-semibold leading-relaxed">
           <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
           <span>{error}</span>
         </div>
@@ -59,7 +59,7 @@ export default function ReceiptPortalClient({ receiptId }: { receiptId: string }
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
+        className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
       >
         {loading ? (
           <>

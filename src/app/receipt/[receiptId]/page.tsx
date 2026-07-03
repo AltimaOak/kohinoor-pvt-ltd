@@ -30,22 +30,22 @@ export default async function ReceiptPortalPage({
 
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center font-sans antialiased px-4 relative overflow-hidden">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-sans antialiased px-4 relative overflow-hidden">
         {/* Glow Effects */}
-        <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-sky-500/10 blur-[100px] pointer-events-none animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-indigo-500/10 blur-[100px] pointer-events-none animate-pulse" />
+        <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
 
-        <div className="w-full max-w-md bg-slate-900/50 border border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10 backdrop-blur-md flex flex-col items-center">
+        <div className="w-full max-w-md bg-white border border-slate-200/80 rounded-3xl p-8 shadow-xl relative z-10 flex flex-col items-center">
           <div className="flex flex-col items-center text-center gap-4 w-full">
-            <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+            <div className="w-14 h-14 rounded-2xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600">
               <Lock className="w-6 h-6" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-white font-display">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 font-display">
               Secure Receipt Verification
             </h1>
-            <p className="text-xs text-slate-400 max-w-[280px]">
+            <p className="text-xs text-slate-500 max-w-[280px]">
               To protect privacy, please verify your customer details to access receipt{" "}
-              <span className="font-mono text-white font-bold">{receiptId}</span>.
+              <span className="font-mono text-slate-900 font-bold">{receiptId}</span>.
             </p>
           </div>
 
@@ -55,7 +55,7 @@ export default async function ReceiptPortalPage({
           <div className="text-center mt-6">
             <Link
               href="/services"
-              className="inline-flex items-center gap-1.5 text-[10px] font-bold text-sky-400 hover:text-sky-300 transition-colors uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 text-[10px] font-bold text-sky-600 hover:text-sky-700 transition-colors uppercase tracking-wider"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Services</span>

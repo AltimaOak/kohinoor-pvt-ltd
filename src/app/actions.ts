@@ -1002,15 +1002,15 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     // Trigger official WhatsApp Document delivery
     const waRes = await sendWhatsAppReceipt(newReceipt as any, order.userPhone);
     
-    // Log Delivery
-    const logEntry = {
+    // Log Customer Delivery
+    const customerLogEntry = {
       timestamp: new Date().toISOString(),
       status: waRes.success ? ("success" as const) : ("failure" as const),
       error: waRes.error
     };
-    newReceipt.whatsAppDeliveryLogs = [logEntry];
+    newReceipt.whatsAppDeliveryLogs = [customerLogEntry];
     newReceipt.whatsAppSentStatus = waRes.success ? "sent" : "failed";
-    newReceipt.whatsAppSentTimestamp = logEntry.timestamp;
+    newReceipt.whatsAppSentTimestamp = customerLogEntry.timestamp;
     newReceipt.whatsAppMessageId = waRes.messageId;
 
     if (!db.receipts) {

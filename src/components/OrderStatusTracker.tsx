@@ -123,18 +123,18 @@ export default function OrderStatusTracker({
   const currentIdx = getStepIndex(status);
 
   return (
-    <div className="w-full bg-slate-950/40 border border-slate-800/80 rounded-3xl p-5 sm:p-7 shadow-xl backdrop-blur-md flex flex-col gap-6 select-none relative overflow-hidden">
+    <div className="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-5 sm:p-7 shadow-sm flex flex-col gap-6 select-none relative overflow-hidden">
       {/* Decorative gradient overlay */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/5 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/[0.02] rounded-full blur-2xl pointer-events-none" />
 
       {/* Header section with live indicator */}
-      <div className="flex justify-between items-center pb-2 border-b border-slate-800/50">
+      <div className="flex justify-between items-center pb-2 border-b border-slate-200">
         <div className="flex flex-col text-left">
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Swiggy & Zomato Style</span>
-          <h3 className="text-sm sm:text-base font-black text-white leading-none mt-1">Live Order Status Tracker</h3>
+          <span className="text-[9px] font-black uppercase tracking-wider text-slate-400">Order Progress</span>
+          <h3 className="text-sm sm:text-base font-black text-slate-900 leading-none mt-1">Live Order Tracking</h3>
         </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold tracking-wider uppercase animate-pulse">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/50 text-emerald-600 text-[10px] font-bold tracking-wider uppercase animate-pulse">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           Live Tracking
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function OrderStatusTracker({
               {index < steps.length - 1 && (
                 <div 
                   className={`absolute left-4.5 top-9 bottom-0 w-[2px] -ml-[1px] transition-all duration-700 ${
-                    isCompleted ? "bg-emerald-500" : isActive ? "bg-slate-700" : "bg-slate-800"
+                    isCompleted ? "bg-emerald-500" : "bg-slate-200"
                   }`} 
                 />
               )}
@@ -162,10 +162,10 @@ export default function OrderStatusTracker({
               <div 
                 className={`w-9 h-9 rounded-full flex items-center justify-center border shrink-0 transition-all duration-500 relative z-10 ${
                   isCompleted 
-                    ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-md shadow-emerald-500/10" 
+                    ? "bg-emerald-50 border-emerald-500 text-emerald-600 shadow-sm shadow-emerald-500/5" 
                     : isActive 
-                    ? "bg-sky-500/10 border-sky-400 text-sky-400 shadow-md shadow-sky-500/20 scale-110" 
-                    : "bg-slate-900 border-slate-800 text-slate-500"
+                    ? "bg-sky-50 border-sky-400 text-sky-600 shadow-md shadow-sky-500/10 scale-110" 
+                    : "bg-white border-slate-200 text-slate-400"
                 }`}
               >
                 {isActive && (
@@ -183,20 +183,20 @@ export default function OrderStatusTracker({
                 <div className="flex items-center gap-2">
                   <h4 
                     className={`text-sm font-extrabold tracking-tight transition-colors duration-300 ${
-                      isActive ? "text-white text-base" : isCompleted ? "text-slate-200" : "text-slate-500"
+                      isActive ? "text-slate-900 text-base" : isCompleted ? "text-slate-700" : "text-slate-400"
                     }`}
                   >
                     {step.title}
                   </h4>
                   {isActive && (
-                    <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20 text-sky-400 leading-none">
+                    <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-sky-600 leading-none">
                       Active
                     </span>
                   )}
                 </div>
                 <p 
                   className={`text-xs leading-normal transition-colors duration-300 ${
-                    isActive ? "text-slate-300 font-medium" : isCompleted ? "text-slate-400" : "text-slate-600"
+                    isActive ? "text-slate-600 font-medium" : isCompleted ? "text-slate-500" : "text-slate-400"
                   }`}
                 >
                   {step.desc}
@@ -209,17 +209,17 @@ export default function OrderStatusTracker({
 
       {/* Simulator Tools (For testing transitions) */}
       {status !== "completed" && (
-        <div className="mt-4 pt-4 border-t border-slate-850 flex flex-col items-center gap-2">
-          <span className="text-[8px] font-black text-slate-500 tracking-wider uppercase">Simulator Control Panel</span>
+        <div className="mt-4 pt-4 border-t border-slate-200 flex flex-col items-center gap-2">
+          <span className="text-[8px] font-black text-slate-400 tracking-wider uppercase">Demo System Control</span>
           <button
             onClick={handleSimulateNextStage}
             disabled={loading}
-            className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider transition-colors shadow-md border border-slate-700 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full py-2.5 px-4 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-bold text-xs uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {loading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />
             ) : (
-              <RefreshCw className="w-3.5 h-3.5 text-white" />
+              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
             )}
             <span>Advance Status (Next Stage)</span>
           </button>

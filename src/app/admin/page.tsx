@@ -791,9 +791,9 @@ export default function AdminPage() {
   // Render Spinner during load
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-navy-950 text-white flex-col gap-4">
-        <Loader2 className="w-12 h-12 text-sky-500 animate-spin" />
-        <span className="text-sm font-bold uppercase tracking-wider text-slate-400">Loading Admin System...</span>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-navy-900 flex-col gap-4">
+        <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Loading Admin System...</span>
       </div>
     );
   }
@@ -801,7 +801,7 @@ export default function AdminPage() {
   // Render Login screen if not logged in
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_right,#1e293b,transparent_60%)] bg-navy-950 p-6 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6 relative overflow-hidden">
         {/* Glow bubbles */}
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-sky-500/5 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
@@ -810,10 +810,10 @@ export default function AdminPage() {
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: "spring", damping: 25, stiffness: 120 }}
-          className="relative max-w-md w-full glass-card-dark p-10 rounded-[32px] border border-white/10 shadow-2xl flex flex-col items-center text-center gap-6"
+          className="relative max-w-md w-full bg-white border border-slate-200 p-10 rounded-[32px] shadow-xl flex flex-col items-center text-center gap-6"
         >
           {/* Logo Icon */}
-          <div className="w-16 h-16 rounded-2xl overflow-hidden border border-white/20 shadow-lg bg-white flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-white flex items-center justify-center">
             <img
               src="/images/logo.png"
               alt="Kohinoor Logo"
@@ -822,15 +822,15 @@ export default function AdminPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <h1 className="text-2xl font-black text-white font-display tracking-tight leading-none">
+            <h1 className="text-2xl font-black text-slate-900 font-display tracking-tight leading-none">
               Kohinoor Commercial II
             </h1>
-            <span className="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest">
+            <span className="text-[10px] text-sky-600 font-extrabold uppercase tracking-widest">
               Administrative Gateway
             </span>
           </div>
 
-          <p className="text-slate-400 text-xs leading-relaxed max-w-[280px]">
+          <p className="text-slate-500 text-xs leading-relaxed max-w-[280px]">
             Please enter your administrative access password to manage events, services, photos, and directory contacts.
           </p>
 
@@ -841,12 +841,12 @@ export default function AdminPage() {
                 placeholder="Admin Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-all font-sans"
+                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-sky-500 focus:bg-white transition-all font-sans"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-navy-900 transition-colors"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -856,9 +856,9 @@ export default function AdminPage() {
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 p-3.5 rounded-xl border border-red-500/20 bg-red-500/10 text-red-400 text-left text-xs font-semibold"
+                className="flex items-center gap-2 p-3.5 rounded-xl border border-red-200 bg-red-50 text-red-800 text-left text-xs font-semibold"
               >
-                <AlertCircle className="w-4.5 h-4.5 shrink-0" />
+                <AlertCircle className="w-4.5 h-4.5 shrink-0 text-red-500" />
                 <span>{loginError}</span>
               </motion.div>
             )}
@@ -866,7 +866,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={submittingLogin}
-              className="w-full py-4.5 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-sky-500/20 transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
             >
               {submittingLogin ? (
                 <>
@@ -1213,14 +1213,14 @@ export default function AdminPage() {
                 {/* Events list */}
                 <div className="flex flex-col gap-4">
                   {db.events.length === 0 ? (
-                    <div className="text-center py-12 bg-white border border-slate-200 p-8 rounded-3xl text-slate-400 text-xs font-bold">
+                    <div className="text-center py-12 bg-white border border-slate-200 p-8 rounded-2xl text-slate-400 text-xs font-bold shadow-sm">
                       No events currently listed. Click "Add Event" to add one!
                     </div>
                   ) : (
                     db.events.map((evt) => (
                       <div
                         key={evt.id}
-                        className="bg-white border border-slate-200/50 p-6 rounded-[28px] shadow-sm flex items-start justify-between gap-6 group hover:border-sky-300/65 transition-all duration-300"
+                        className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex items-start justify-between gap-6 group hover:border-slate-300 transition-all duration-200"
                       >
                         <div className="flex items-start gap-5">
                           {evt.images && evt.images.length > 0 ? (
@@ -1483,14 +1483,14 @@ export default function AdminPage() {
                 {/* Services list */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {db.services.length === 0 ? (
-                    <div className="col-span-2 text-center py-12 bg-white border border-slate-200 p-8 rounded-3xl text-slate-400 text-xs font-bold">
+                    <div className="col-span-2 text-center py-12 bg-white border border-slate-200 p-8 rounded-2xl text-slate-400 text-xs font-bold shadow-sm">
                       No services currently listed. Click "Add Service" to create one!
                     </div>
                   ) : (
                     db.services.map((svc) => (
                       <div
                         key={svc.id}
-                        className="bg-white border border-slate-200/50 p-6 rounded-[28px] shadow-sm flex flex-col gap-5 hover:border-sky-300 transition-all duration-300 group relative"
+                        className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col gap-5 hover:border-slate-300 transition-all duration-200 group relative"
                       >
                         <div className="flex justify-between items-start">
                           <div className="w-12 h-12 bg-sky-500/10 border border-sky-400/20 text-sky-500 rounded-2xl flex items-center justify-center shrink-0">

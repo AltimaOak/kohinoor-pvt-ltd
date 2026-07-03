@@ -44,8 +44,9 @@ export async function GET(
         "Cache-Control": "private, no-cache, no-store, must-revalidate",
       },
     });
-  } catch (err: any) {
-    console.error("[DYNAMIC PDF STREAM ERROR] Failed to stream PDF:", err);
-    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    console.error("[DYNAMIC PDF STREAM ERROR] Failed to stream PDF:", error);
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }
