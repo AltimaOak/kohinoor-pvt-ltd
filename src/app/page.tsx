@@ -31,6 +31,61 @@ import {
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
 
+const MassageChairIcon = ({ className }: { className?: string }) => {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className={className}
+      fill="currentColor"
+    >
+      <defs>
+        {/* Mask for background elements (cuts out around the armrest base and stand) */}
+        <mask id="bg-mask">
+          <rect x="0" y="0" width="100" height="100" fill="white" />
+          <path
+            d="M27 45 h25 c 3 0, 5 2, 5 5 v22 h -35 v -22 c 0 -3, 2 -5, 5 -5 z"
+            fill="black"
+            stroke="black"
+            strokeWidth="6"
+            strokeLinejoin="round"
+          />
+          <rect x="22" y="70" width="37" height="6" rx="3" fill="black" stroke="black" strokeWidth="4" />
+        </mask>
+        {/* Mask for the base (cuts out the button hole) */}
+        <mask id="base-mask">
+          <rect x="0" y="0" width="100" height="100" fill="white" />
+          <circle cx="48" cy="53" r="3.5" fill="black" />
+        </mask>
+      </defs>
+
+      {/* Background elements (backrest and person) */}
+      <g mask="url(#bg-mask)">
+        {/* Chair Backrest */}
+        <rect x="48" y="16" width="16" height="60" rx="8" transform="rotate(28 56 46)" />
+        {/* Head */}
+        <circle cx="61" cy="21" r="7.5" />
+        {/* Torso */}
+        <path d="M59 27 L48 44" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        {/* Thigh */}
+        <path d="M48 44 L29 55" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        {/* Shin */}
+        <path d="M29 55 L16 67" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        {/* Arm */}
+        <path d="M53 32 C48 37, 46 39, 38 39" fill="none" stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" />
+      </g>
+
+      {/* Foreground elements */}
+      {/* Base with button hole */}
+      <path
+        d="M27 45 h25 c 3 0, 5 2, 5 5 v22 h -35 v -22 c 0 -3, 2 -5, 5 -5 z"
+        mask="url(#base-mask)"
+      />
+      {/* Base Stand */}
+      <rect x="22" y="70" width="37" height="6" rx="3" />
+    </svg>
+  );
+};
+
 export default function LandingPage() {
   const [contacts, setContacts] = useState<ContactsData | null>(null);
 
@@ -125,10 +180,10 @@ export default function LandingPage() {
             Establishment & Location
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-            Kohinoor Business Park & Offices
+            Kohinoor Commercial - II
           </h2>
           <p className="text-slate-600 text-sm md:text-base leading-relaxed">
-            Kohinoor Business Park in Kurla West, Mumbai is a premier commercial destination that satisfactorily caters to the demands of its customer base. Built on a core belief of customer centricity, the business park has established long-term relationships and built an outstanding reputation.
+            Kohinoor Commercial - II in Kurla West, Mumbai is a premier commercial destination that satisfactorily caters to the demands of its customer base. Built on a core belief of customer centricity, the business park has established long-term relationships and built an outstanding reputation.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -207,7 +262,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
-              { label: "Conference Room", icon: Building2, desc: "Modern spaces for business meetings and discussions" },
+              { label: "Tranquil Massage Room", icon: MassageChairIcon, desc: "Re-energize your mind and body with our massage chair therapy" },
               { label: "CCTV", icon: Video, desc: "High-definition security surveillance throughout the premises" },
               { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
               { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency healthcare support" },
