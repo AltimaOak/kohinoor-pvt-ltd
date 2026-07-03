@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Compass, ChevronLeft, ChevronRight, X, Star, Sparkles } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { getDb, EventItem } from "@/app/actions";
 
@@ -14,40 +14,56 @@ interface EventDetailModalProps {
 
 function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  // Reset active image index when event changes
+  // Reset active image index and lightbox when event changes
   useEffect(() => {
     setActiveImageIndex(0);
-  }, [event]);
+    setIsLightboxOpen(false);
+  }, [event, isOpen]);
 
-  if (!event) return null;
-
-  const images = event.images && event.images.length > 0
+  const images = event?.images && event.images.length > 0
     ? event.images
-    : event.imageSrc
+    : event?.imageSrc
       ? [event.imageSrc]
       : [];
 
-  const Icon = (LucideIcons as any)[event.iconName] || LucideIcons.HelpCircle;
-
-  const nextImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const nextImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (images.length > 0) {
       setActiveImageIndex((prev) => (prev + 1) % images.length);
     }
   };
 
-  const prevImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const prevImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (images.length > 0) {
       setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
     }
   };
 
+  // Keyboard navigation for Left and Right arrow keys
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen || images.length <= 1) return;
+      if (e.key === "ArrowRight") {
+        nextImage();
+      } else if (e.key === "ArrowLeft") {
+        prevImage();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, images.length]);
+
+  if (!event) return null;
+
+  const Icon = (LucideIcons as any)[event.iconName] || LucideIcons.HelpCircle;
   const currentImage = images[activeImageIndex];
 
   return (
-    <AnimatePresence>
+    <>
+      <AnimatePresence>
       {isOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -73,38 +89,49 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Left side: Images */}
-            <div className="w-full md:w-1/2 bg-slate-50 border-r border-slate-100 flex flex-col justify-between overflow-hidden min-h-[380px] sm:min-h-[500px]">
+            {/* Left side: Images (58% width on desktop) */}
+            <div className="w-full md:w-[58%] bg-slate-50 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-between overflow-hidden relative shrink-0">
               {images.length > 0 ? (
                 <>
-                  {/* Main image viewer area (takes remaining vertical space) */}
-                  <div className="flex-grow w-full relative flex items-center justify-center p-4 sm:p-5 bg-slate-50 min-h-[280px]">
+                  {/* Main image viewer area with fixed responsive height */}
+                  <div className="relative w-full h-auto aspect-[4/3] sm:h-[420px] md:h-[550px] bg-slate-100/50 flex items-center justify-center p-2 overflow-hidden border-b border-slate-100">
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={activeImageIndex}
                         src={currentImage}
                         alt={`${event.title} - Full view`}
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.2 }}
-                        className="max-w-full max-h-[240px] sm:max-h-[340px] w-auto h-auto rounded-2xl shadow-md border border-slate-200/60 bg-white object-contain"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="max-w-full max-h-full object-contain rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-slate-200/50 bg-white select-none cursor-zoom-in hover:opacity-95 transition-opacity"
+                        loading="lazy"
+                        onClick={() => setIsLightboxOpen(true)}
                       />
                     </AnimatePresence>
+
+
+
+                    {/* Image indicator in top right */}
+                    {images.length > 1 && (
+                      <span className="absolute top-4 right-4 z-20 px-2.5 py-1 rounded-full bg-navy-950/65 backdrop-blur-xs text-white text-[10px] font-black tracking-wide select-none border border-white/10 shadow-sm">
+                        {activeImageIndex + 1}/{images.length}
+                      </span>
+                    )}
 
                     {/* Navigation buttons */}
                     {images.length > 1 && (
                       <>
                         <button
                           onClick={prevImage}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50"
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 hover:bg-white/95 text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50 backdrop-blur-xs"
                           aria-label="Previous photo"
                         >
                           <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
                         </button>
                         <button
                           onClick={nextImage}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 hover:bg-white/95 text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50 backdrop-blur-xs"
                           aria-label="Next photo"
                         >
                           <ChevronRight className="w-5 h-5 stroke-[2.5]" />
@@ -113,23 +140,26 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                     )}
                   </div>
 
-                  {/* Static Thumbnail bar below the image viewer (no overlapping possible!) */}
+                  {/* Thumbnail gallery with recommended sizing */}
                   {images.length > 1 && (
-                    <div className="w-full p-4 border-t border-slate-100 bg-white flex gap-2 overflow-x-auto justify-center shrink-0">
+                    <div className="w-full p-4 bg-white flex gap-3 overflow-x-auto justify-center shrink-0 border-t border-slate-100 scrollbar-none select-none">
                       {images.map((img, idx) => (
                         <button
                           key={idx}
                           onClick={() => setActiveImageIndex(idx)}
-                          className={`relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
-                            idx === activeImageIndex
-                              ? "border-sky-500 scale-105 shadow-md"
-                              : "border-slate-200 opacity-70 hover:opacity-100"
-                          }`}
+                          className={`relative rounded-xl overflow-hidden shrink-0 border-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-sm
+                            w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[90px] md:h-[90px]
+                            ${
+                              idx === activeImageIndex
+                                ? "border-sky-500 ring-2 ring-sky-500/20 scale-105"
+                                : "border-slate-200 hover:border-slate-400 opacity-80 hover:opacity-100"
+                            }`}
                         >
                           <img
                             src={img}
-                            alt="thumbnail"
+                            alt={`Thumbnail ${idx + 1}`}
                             className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                         </button>
                       ))}
@@ -137,8 +167,8 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                   )}
                 </>
               ) : (
-                /* Placeholder gradient */
-                <div className="flex-grow w-full h-full bg-gradient-to-br from-slate-900 to-navy-950 flex flex-col items-center justify-center gap-4 p-8 text-center relative">
+                /* Placeholder gradient with fixed responsive heights */
+                <div className="w-full h-auto aspect-[4/3] sm:h-[420px] md:h-[550px] bg-gradient-to-br from-slate-900 to-navy-950 flex flex-col items-center justify-center gap-4 p-8 text-center relative shrink-0">
                   <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.4),transparent_70%)]" />
                   <div className="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-400/20 text-sky-400 flex items-center justify-center shadow-inner relative z-10">
                     <Icon className="w-8 h-8 stroke-[1.5]" />
@@ -151,8 +181,8 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
               )}
             </div>
 
-            {/* Right side: Information */}
-            <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto max-h-[400px] md:max-h-none md:h-auto">
+            {/* Right side: Information (42% width on desktop) */}
+            <div className="w-full md:w-[42%] p-6 sm:p-8 flex flex-col justify-between overflow-y-auto max-h-[400px] md:max-h-none md:h-auto">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold uppercase tracking-wider">
@@ -167,11 +197,38 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
 
                 <div className="h-px bg-slate-100 w-full my-1" />
 
-                <div className="flex flex-col gap-3">
-                  <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">About this event</h4>
-                  <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
-                    {event.desc}
-                  </p>
+                <div className="flex flex-col gap-5 mt-2">
+                  {/* About This Event */}
+                  <div className="flex flex-col gap-2">
+                    <h4 className="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-1.5 font-display">
+                      <Star className="w-4.5 h-4.5 text-sky-500 fill-sky-500/20 stroke-[2]" />
+                      <span>About This Event</span>
+                    </h4>
+                    <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap pl-6">
+                      {event.desc}
+                    </p>
+                  </div>
+
+                  {/* Event Highlights */}
+                  {event.highlights && event.highlights.length > 0 && (
+                    <div className="flex flex-col gap-3 pt-2">
+                      <h4 className="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-1.5 font-display">
+                        <Sparkles className="w-4.5 h-4.5 text-sky-500 fill-sky-500/20 stroke-[2]" />
+                        <span>Event Highlights</span>
+                      </h4>
+                      <div className="flex flex-wrap gap-2.5 pl-6">
+                        {event.highlights.map((hl, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-900/15 bg-blue-50 text-blue-900 text-[11px] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.01)] transition-all"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-900" />
+                            {hl}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -188,6 +245,67 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
         </motion.div>
       )}
     </AnimatePresence>
+
+      {/* Full-screen Lightbox Overlay Modal */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute top-4 right-4 z-[110] p-3 rounded-full bg-white/10 hover:bg-white/25 text-white hover:scale-105 transition-all cursor-pointer border border-white/10"
+              aria-label="Close fullscreen view"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Main Lightbox Image Container */}
+            <div className="relative max-w-7xl max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+              <motion.img
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ type: "spring", damping: 28, stiffness: 220 }}
+                src={currentImage}
+                alt={`${event.title} - Fullscreen view`}
+                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 select-none bg-slate-900/30"
+              />
+
+              {/* Navigation buttons inside lightbox */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length)}
+                    className="absolute -left-4 sm:-left-16 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all z-20 cursor-pointer border border-white/10"
+                    aria-label="Previous photo"
+                  >
+                    <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
+                  </button>
+                  <button
+                    onClick={() => setActiveImageIndex((prev) => (prev + 1) % images.length)}
+                    className="absolute -right-4 sm:-right-16 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all z-20 cursor-pointer border border-white/10"
+                    aria-label="Next photo"
+                  >
+                    <ChevronRight className="w-6 h-6 stroke-[2.5]" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Title / Indicator Label */}
+            <div className="mt-4 text-center text-white/80 text-xs font-bold font-display select-none">
+              {event.title} ({activeImageIndex + 1}/{images.length})
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
