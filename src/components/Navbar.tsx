@@ -40,14 +40,14 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  const isNavbarLightText = scrolled || pathname === "/";
+  const isNavbarLightText = true;
 
   return (
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40 transition-all duration-500 py-5 px-6 md:px-12",
-          scrolled ? "glass-navbar-scrolled py-3.5" : "bg-transparent border-b border-transparent"
+          "fixed top-0 left-0 right-0 z-40 transition-all duration-500 glass-navbar-scrolled px-6 md:px-12",
+          scrolled ? "py-3.5" : "py-5"
         )}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
