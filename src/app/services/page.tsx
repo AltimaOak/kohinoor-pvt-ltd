@@ -439,7 +439,7 @@ export default function ServicesPage() {
                     {isMedicalCamp && (
                       <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-sky-500/5 border border-sky-500/10 text-sky-600 group-hover:bg-sky-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
                         <LucideIcons.CalendarRange className="w-4 h-4 shrink-0" />
-                        <span>View Doctors & Book</span>
+                        <span>Book Appointment</span>
                       </div>
                     )}
 
@@ -453,7 +453,7 @@ export default function ServicesPage() {
                     {isAmbulance && (
                       <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-600 group-hover:bg-rose-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
                         <LucideIcons.PhoneCall className="w-4 h-4 shrink-0 animate-pulse" />
-                        <span>Book Now</span>
+                        <span>Contact Us</span>
                       </div>
                     )}
                   </div>
@@ -482,7 +482,7 @@ export default function ServicesPage() {
 
                   <div className="flex flex-col gap-3">
                     <h3 className="text-xl font-extrabold text-navy-900 tracking-tight">
-                      Green Canopy Nursery
+                      Kohinoor Green Nursery
                     </h3>
                     <p className="text-slate-600 text-sm leading-relaxed">
                       {nursery.description}
@@ -730,11 +730,8 @@ export default function ServicesPage() {
                 </svg>
                 <div className="flex flex-col items-center gap-0.5 sm:gap-1 text-center">
                   <h2 className="text-base sm:text-2xl font-black text-[#0A2D5C] tracking-normal leading-snug" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
-                    {healthCheckupCard?.doctorName || "DOCTOR"}
-                  </h2>
-                  <span className="text-[7px] sm:text-[8px] font-bold text-sky-500 tracking-[0.18em] uppercase leading-none">
                     Consulting Specialist
-                  </span>
+                  </h2>
                 </div>
                 <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
@@ -966,10 +963,10 @@ export default function ServicesPage() {
               <div className="flex flex-col gap-3 text-left pr-10 md:pr-0">
                 <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1.5">
                   <Leaf className="w-4 h-4 text-emerald-500 animate-bounce" />
-                  Kohinoor Green Facility
+                  Kohinoor Commercial 2
                 </span>
                 <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
-                  Green Canopy Plant Nursery
+                  Kohinoor Green Nursery
                 </h2>
                 <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
                   {nursery.description}
@@ -1530,7 +1527,7 @@ export default function ServicesPage() {
                     Corporate Dining Service
                   </span>
                   <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-navy-900 font-display">
-                    Kohinoor Executive Cafeteria
+                    Kohinoor Cafeteria
                   </h2>
                   <p className="text-slate-500 text-xs max-w-xl leading-relaxed">
                     {cafeteria.description}
