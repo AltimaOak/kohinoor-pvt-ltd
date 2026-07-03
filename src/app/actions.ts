@@ -69,6 +69,7 @@ export interface EventItem {
   iconName: string;
   imageSrc?: string;
   images?: string[];
+  highlights?: string[];
 }
 
 export interface ServiceItem {

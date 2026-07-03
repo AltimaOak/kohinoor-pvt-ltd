@@ -1022,7 +1022,8 @@ export default function AdminPage() {
                         desc: "",
                         iconName: "Calendar",
                         imageSrc: "",
-                        images: []
+                        images: [],
+                        highlights: []
                       });
                     }}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all"
@@ -1067,13 +1068,24 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description</label>
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Description (About This Event)</label>
                       <textarea
                         value={editingEvent.desc}
                         onChange={(e) => setEditingEvent({ ...editingEvent, desc: e.target.value })}
                         placeholder="Detailed brief describing the purpose, timing, and coordinate layout of the event..."
                         rows={3}
                         className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50 resize-none leading-relaxed"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Event Highlights (Comma-separated)</label>
+                      <input
+                        type="text"
+                        value={editingEvent.highlights ? editingEvent.highlights.join(", ") : ""}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, highlights: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
+                        placeholder="e.g. Free Entry, Family Friendly, Live Performances"
+                        className="px-4.5 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-sky-500 bg-slate-50/50"
                       />
                     </div>
 

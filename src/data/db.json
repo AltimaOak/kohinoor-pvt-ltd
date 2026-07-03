@@ -1,50 +1,16 @@
 {
   "events": [
     {
-      "id": "evt-blood-donation",
-      "title": "Annual Corporate Blood Donation Drive",
-      "desc": "Partnering with the Red Cross Society to host a voluntary blood donation camp for all residents.",
-      "iconName": "Droplet"
-    },
-    {
-      "id": "evt-rangoli",
-      "title": "Grand Diwali Rangoli Competition",
-      "desc": "An inter-corporate artistic showdown celebrating the festival of lights with sustainable designs.",
-      "iconName": "Sparkles"
-    },
-    {
       "id": "evt-independence",
       "title": "Independence & Republic Day  Cultural Gathering",
       "desc": "Commemorating the national flag hoisting with cultural performances and community high-tea.",
-      "iconName": "Gift"
-    },
-    {
-      "id": "evt-holi",
-      "title": "Ganesh Festival Celebration",
-      "desc": "Ganesh Chaturthi is a vibrant Hindu festival honoring Lord Ganesha,The celebration features installing clay idols in homes and massive public pandals (temporary shrines), daily aartis (prayers), and feasts of sweets like modak",
-      "iconName": "Activity",
-      "images": [
-        "/uploads/1782296683793_ganesh-2.jpg",
-        "/uploads/1782296683961_images__1_.jpg",
-        "/uploads/1782296684136_images__2_.jpg",
-        "/uploads/1782296684313_images__3_.jpg",
-        "/uploads/1782296684632_images.jpg"
-      ],
-      "imageSrc": "/uploads/1782296683793_ganesh-2.jpg"
-    },
-    {
-      "id": "evt-health",
-      "title": "Occupant Eye & General Health Checkup",
-      "desc": "A free diagnostic screening camp in partnership with local multi-specialty hospitals.",
-      "iconName": "Heart"
-    },
-    {
-      "id": "evt-1782285890729",
-      "title": "Dj Navrtri Nights",
-      "desc": "Dj Navratri nights bring the high-energy, pulsing beats of traditional Garba and Dandiya combined with modern EDM, Bollywood remixes",
-      "iconName": "Calendar",
-      "imageSrc": "",
-      "images": []
+      "iconName": "Gift",
+      "highlights": [
+        "Flag Hoisting",
+        "High Tea",
+        "Patriotic Music",
+        "Cultural Speeches"
+      ]
     },
     {
       "id": "evt-1782286309669",
@@ -52,15 +18,13 @@
       "desc": "National Safety Week and National Fire Service Week are major annual campaigns  designed to prevent accidents, educate the public, and honor those who protect us. Both feature mock drills, safety pledges, and awareness in workplaces.",
       "iconName": "Calendar",
       "imageSrc": "",
-      "images": []
-    },
-    {
-      "id": "evt-1782286518872",
-      "title": "Christmas Celebration ",
-      "desc": "Christmas is celebrated with a unique blend of traditional midnight masses, dazzling street illuminations, and festive feasts",
-      "iconName": "Calendar",
-      "imageSrc": "",
-      "images": []
+      "images": [],
+      "highlights": [
+        "Mock Fire Drills",
+        "Safety Pledge",
+        "Training Seminars",
+        "Safety Equipment Demo"
+      ]
     },
     {
       "id": "evt-1782286625909",
@@ -68,7 +32,88 @@
       "desc": "Women's Day is celebrated on March 8th to honor women's social, economic, cultural, and political achievements while advocating for gender equality. Celebrations include panel discussions, career mentorship programs, charity fundraisers, and community events centered around global themes like \"Give to Gain\" and \"Rights. Justice. Action.",
       "iconName": "Calendar",
       "imageSrc": "",
-      "images": []
+      "images": [],
+      "highlights": [
+        "Guest Panelists",
+        "Mentorship Programs",
+        "Equality Walk",
+        "Achievement Awards"
+      ]
+    },
+    {
+      "id": "evt-holi",
+      "title": "Ganesh Festival Celebration",
+      "desc": "Ganesh Chaturthi is a vibrant Hindu festival honoring Lord Ganesha,The celebration features installing clay idols in homes and massive public pandals (temporary shrines), daily aartis (prayers), and feasts of sweets like modak",
+      "iconName": "Activity",
+      "images": [
+        "/uploads/1783066356350_WhatsApp_Image_2026-07-03_at_1.40.52_PM.jpeg"
+      ],
+      "imageSrc": "/uploads/1783066356350_WhatsApp_Image_2026-07-03_at_1.40.52_PM.jpeg",
+      "highlights": [
+        "Cultural",
+        "Free Entry",
+        "Family Friendly",
+        "Live Performances"
+      ]
+    },
+    {
+      "id": "evt-1782285890729",
+      "title": "Dj Navrtri Nights",
+      "desc": "Dj Navratri nights bring the high-energy, pulsing beats of traditional Garba and Dandiya combined with modern EDM, Bollywood remixes",
+      "iconName": "Calendar",
+      "imageSrc": "",
+      "images": [],
+      "highlights": [
+        "Live DJ Beats",
+        "Garba & Dandiya",
+        "Food Stalls",
+        "Traditional Attire Contest"
+      ]
+    },
+    {
+      "id": "evt-blood-donation",
+      "title": "Annual Corporate Blood Donation Drive",
+      "desc": "Partnering with the Red Cross Society to host a voluntary blood donation camp for all residents.",
+      "iconName": "Droplet",
+      "highlights": [
+        "Free Entry",
+        "Health Checkup",
+        "Refreshments Provided",
+        "Certificates for Donors"
+      ]
+    },
+    {
+      "id": "evt-rangoli",
+      "title": "Grand Diwali Rangoli Competition",
+      "desc": "An inter-corporate artistic showdown celebrating the festival of lights with sustainable designs.",
+      "iconName": "Sparkles",
+      "highlights": [
+        "Cash Prizes",
+        "Festive Celebrations",
+        "Open for All Occupants",
+        "Traditional Themes"
+      ],
+      "images": [
+        "/uploads/1783066623134_WhatsApp_Image_2026-07-03_at_1.33.10_PM.jpeg",
+        "/uploads/1783066623215_WhatsApp_Image_2026-07-03_at_1.33.49_PM.jpeg",
+        "/uploads/1783066623297_WhatsApp_Image_2026-07-03_at_1.33.50_PM.jpeg",
+        "/uploads/1783066623394_WhatsApp_Image_2026-07-03_at_1.33.51_PM.jpeg"
+      ],
+      "imageSrc": "/uploads/1783066623134_WhatsApp_Image_2026-07-03_at_1.33.10_PM.jpeg"
+    },
+    {
+      "id": "evt-1782286518872",
+      "title": "Christmas Celebration ",
+      "desc": "Christmas is celebrated with a unique blend of traditional midnight masses, dazzling street illuminations, and festive feasts",
+      "iconName": "Calendar",
+      "imageSrc": "",
+      "images": [],
+      "highlights": [
+        "Secret Santa",
+        "Festive Feasts",
+        "Carols Singing",
+        "Decorations Contest"
+      ]
     }
   ],
   "services": [
