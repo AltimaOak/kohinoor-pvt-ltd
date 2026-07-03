@@ -72,7 +72,7 @@ export default function Navbar() {
                 KOHINOOR CITY OFFICE TOWERS
               </span>
               <span className="text-[7px] uppercase tracking-[0.08em] font-bold text-sky-500 leading-none mt-0.5">
-                INDUSTRIAL ESTATE & PREMISES CO-OP SOC. LTD. COMMERCIAL - II
+                INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD
               </span>
             </div>
           </Link>

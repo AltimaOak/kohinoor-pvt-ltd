@@ -30,7 +30,7 @@ export default async function Footer() {
                   KOHINOOR CITY OFFICE TOWERS
                 </span>
                 <span className="text-[7px] uppercase tracking-[0.05em] font-semibold text-sky-400 leading-none mt-0.5">
-                  INDUSTRIAL ESTATE & PREMISES CO-OP SOC. LTD. COMMERCIAL - II
+                  INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD
                 </span>
               </div>
             </Link>
@@ -130,7 +130,7 @@ export default async function Footer() {
         {/* Lower Footer */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-10 text-xs text-slate-500">
           <span>
-            © {new Date().getFullYear()} KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II. All rights reserved.
+            © {new Date().getFullYear()} INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. All rights reserved.
           </span>
           <div className="flex items-center gap-6">
             <span className="hover:text-sky-400 cursor-pointer transition-colors">Privacy Policy</span>
