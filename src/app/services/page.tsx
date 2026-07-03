@@ -38,7 +38,8 @@ import {
   CreditCard,
   Volume2,
   HeartPulse,
-  Flower2
+  Flower2,
+  Building2
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -373,19 +374,14 @@ export default function ServicesPage() {
                   }
                 }}
                 className={cn(
-                  "bg-white border border-slate-200/50 rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl transition-all duration-500 relative overflow-hidden group hover:-translate-y-1.5 flex flex-col justify-between",
+                  "bg-white border border-slate-200 p-6 md:p-8 hover:shadow-md transition-all duration-200 rounded-2xl flex flex-col justify-between group",
                   isClickable ? "cursor-pointer" : "",
-                  isMedicalCamp && "hover:border-sky-400",
-                  isMassageChair && "hover:border-amber-400",
-                  isAmbulance && "hover:border-rose-400",
-                  (!isMedicalCamp && !isMassageChair && !isAmbulance) && "hover:border-sky-300"
+                  isMedicalCamp && "hover:border-sky-300",
+                  isMassageChair && "hover:border-amber-300",
+                  isAmbulance && "hover:border-rose-300",
+                  (!isMedicalCamp && !isMassageChair && !isAmbulance) && "hover:border-slate-300"
                 )}
               >
-                {/* Glow Ambient behind card */}
-                <div className={cn(
-                  "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -z-10",
-                  svc.glowColor
-                )} />
 
                 <div className="flex flex-col gap-8 h-full justify-between">
                   <div className="flex flex-col gap-6">
@@ -474,10 +470,8 @@ export default function ServicesPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: services.length * 0.15, ease: "easeOut" }}
               onClick={() => setIsNurseryModalOpen(true)}
-              className="bg-white border border-slate-200/50 rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:border-emerald-300 transition-all duration-500 relative overflow-hidden group hover:-translate-y-1.5 flex flex-col justify-between cursor-pointer"
+              className="bg-white border border-slate-200 p-6 md:p-8 hover:shadow-md hover:border-emerald-300 transition-all duration-200 rounded-2xl flex flex-col justify-between cursor-pointer group"
             >
-              {/* Glow Ambient behind card */}
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -z-10" />
 
               <div className="flex flex-col gap-8 h-full justify-between">
                 <div className="flex flex-col gap-6">
@@ -546,10 +540,8 @@ export default function ServicesPage() {
                 setReadyAlertVisible(false);
                 setIsCafeteriaModalOpen(true);
               }}
-              className="bg-white border border-slate-200/50 rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:border-amber-500 transition-all duration-500 relative overflow-hidden group hover:-translate-y-1.5 flex flex-col justify-between cursor-pointer"
+              className="bg-white border border-slate-200 p-6 md:p-8 hover:shadow-md hover:border-amber-400 transition-all duration-200 rounded-2xl flex flex-col justify-between cursor-pointer group"
             >
-              {/* Glow Ambient behind card */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -z-10" />
 
               <div className="flex flex-col gap-8 h-full justify-between">
                 <div className="flex flex-col gap-6">
@@ -609,26 +601,26 @@ export default function ServicesPage() {
       <section className="py-28 md:py-32 border-y border-slate-200/50 bg-[#F8FAFC] relative z-10 mt-12 w-full">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16 w-full">
           <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
-            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">Utility & Security Grids</span>
+            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">PREMISES & AMENITIES</span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
               Core Building Amenities
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Equipped with modern safety control checkpoints, automated energy feeds, and state-of-the-art building management networks.
+              Equipped with 24/7 security, backup power, passenger elevators, and state-of-the-art building systems.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
-              { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and biometric checks" },
-              { label: "Tranquil Massage Room", icon: Flower2, desc: "Relaxation and massage room for building occupants" },
-              { label: "CCTV", icon: Video, desc: "High-definition security surveillance networks" },
+              { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
+              { label: "Conference Room", icon: Building2, desc: "Modern spaces for business meetings and discussions" },
+              { label: "CCTV", icon: Video, desc: "High-definition security surveillance throughout the premises" },
               { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
-              { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency services" },
-              { label: "Visitors Parking", icon: Car, desc: "Dedicated subterranean guest parking decks" },
+              { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency healthcare support" },
+              { label: "Visitors Parking", icon: Car, desc: "Dedicated guest and visitor parking spaces" },
               { label: "Power", icon: Zap, desc: "Dual grid feeds for consistent electricity" },
-              { label: "Power Backup", icon: BatteryCharging, desc: "Heavy generator backup activation in 0.4s" },
-              { label: "Fire Fighting Equipment", icon: Flame, desc: "Advanced localized sprinkler & detector grids" },
+              { label: "Power Backup", icon: BatteryCharging, desc: "Heavy-duty generator backup power support" },
+              { label: "Fire Fighting Equipment", icon: Flame, desc: "Advanced localized sprinkler & detector systems" },
             ].map((item, idx) => {
               const IconComp = item.icon;
               return (
@@ -638,7 +630,7 @@ export default function ServicesPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
-                  className="p-4 sm:p-6 rounded-[20px] sm:rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 flex flex-col items-center text-center gap-4 group"
+                  className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col items-center text-center gap-4 group"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0">
                     <IconComp className="w-6 h-6 stroke-[2]" />

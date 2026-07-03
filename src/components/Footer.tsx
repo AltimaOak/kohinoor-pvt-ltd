@@ -103,22 +103,27 @@ export default async function Footer() {
                   {contacts.siteAddress}
                 </a>
               </li>
-              <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-               EMAIL US
-            </h4>
-              {managerEmails.length > 0 && (
-                <li className="flex items-start gap-3">
-                  <Mail className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-1" />
-                  <div className="flex flex-col gap-1.5">
-                    {managerEmails.map((email, idx) => (
-                      <a key={idx} href={`mailto:${email}`} className="hover:text-sky-400 transition-colors">
-                        {email}
-                      </a>
-                    ))}
-                  </div>
-                </li>
-              )}
             </ul>
+
+            {managerEmails.length > 0 && (
+              <>
+                <h4 className="text-xs font-bold text-white uppercase tracking-widest mt-2">
+                  Email Us
+                </h4>
+                <ul className="flex flex-col gap-4 text-sm text-slate-400">
+                  <li className="flex items-start gap-3">
+                    <Mail className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-1" />
+                    <div className="flex flex-col gap-1.5 font-semibold">
+                      {managerEmails.map((email, idx) => (
+                        <a key={idx} href={`mailto:${email}`} className="hover:text-sky-400 transition-colors">
+                          {email}
+                        </a>
+                      ))}
+                    </div>
+                  </li>
+                </ul>
+              </>
+            )}
           </div>
         </div>
 

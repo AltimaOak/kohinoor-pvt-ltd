@@ -138,49 +138,33 @@ export default function ContactPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    className={`p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col gap-6 text-left hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 relative group ${
-                      mgr.colorTheme === "emerald"
-                        ? "hover:border-emerald-400/30"
-                        : mgr.colorTheme === "amber"
-                        ? "hover:border-amber-400/30"
-                        : mgr.colorTheme === "rose"
-                        ? "hover:border-rose-400/30"
-                        : "hover:border-sky-400/30"
-                    }`}
+                    className="p-6 border border-slate-200 bg-white shadow-sm flex flex-col gap-6 text-left hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-2xl"
                   >
                     <div>
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${
-                        mgr.colorTheme === "emerald"
-                          ? "text-emerald-600 bg-emerald-500/5 border-emerald-400/10"
-                          : mgr.colorTheme === "amber"
-                          ? "text-amber-600 bg-amber-500/5 border-amber-400/10"
-                          : mgr.colorTheme === "rose"
-                          ? "text-rose-600 bg-rose-500/5 border-rose-400/10"
-                          : "text-sky-500 bg-sky-500/5 border-sky-400/10"
-                      }`}>{mgr.category}</span>
-                      <h4 className="text-xl font-black text-navy-900 mt-4 leading-none">{mgr.name}</h4>
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded bg-slate-100 border border-slate-200 text-slate-600">{mgr.category}</span>
+                      <h4 className="text-base font-extrabold text-navy-900 mt-4 leading-none">{mgr.name}</h4>
                       <p className="text-xs text-slate-500 font-semibold mt-1.5">{mgr.role}</p>
                     </div>
                     
-                    <div className="flex flex-col gap-3.5 pt-4 border-t border-slate-200/50">
+                    <div className="flex flex-col gap-3 pt-4 border-t border-slate-100">
                       <a
                         href={`tel:${mgr.phone}`}
-                        className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                        className="group/btn flex items-center gap-3 p-2.5 rounded-xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-200"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
-                          <Phone className="w-4.5 h-4.5" />
+                        <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-105 transition-transform">
+                          <Phone className="w-4 h-4" />
                         </div>
-                        <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors">{mgr.phone}</span>
+                        <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors">{mgr.phone}</span>
                       </a>
                       
                       <a
                         href={`mailto:${mgr.email}`}
-                        className="group/btn flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300"
+                        className="group/btn flex items-center gap-3 p-2.5 rounded-xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-200"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
-                          <Mail className="w-4.5 h-4.5" />
+                        <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-105 transition-transform">
+                          <Mail className="w-4 h-4" />
                         </div>
-                        <span className="text-sm font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all">
+                        <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all">
                           {mgr.email}
                         </span>
                       </a>

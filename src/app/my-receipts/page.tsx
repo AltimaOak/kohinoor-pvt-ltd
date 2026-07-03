@@ -88,27 +88,27 @@ export default function MyReceiptsPage() {
 
   if (!isVerified) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,#0f172a,transparent_60%)] bg-slate-950 flex flex-col items-center justify-center font-sans antialiased px-4 relative overflow-hidden">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-sans antialiased px-4 relative overflow-hidden">
         {/* Glow backdrop bubble */}
-        <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-sky-500/10 blur-[100px] pointer-events-none animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-indigo-500/10 blur-[100px] pointer-events-none animate-pulse" />
+        <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
 
-        <div className="w-full max-w-md bg-slate-900/40 border border-slate-800 rounded-[32px] p-6 sm:p-8 shadow-2xl relative z-10 backdrop-blur-md">
+        <div className="w-full max-w-md bg-white border border-slate-200/80 rounded-[32px] p-6 sm:p-8 shadow-xl relative z-10">
           <div className="flex flex-col items-center text-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+            <div className="w-14 h-14 rounded-2xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600">
               <History className="w-6 h-6" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-white font-display uppercase">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 font-display uppercase">
               Customer Receipt Center
             </h1>
-            <p className="text-xs text-slate-400 max-w-[280px]">
+            <p className="text-xs text-slate-500 max-w-[280px]">
               Enter the email address or phone number associated with your checkout to query your history.
             </p>
           </div>
 
           <form onSubmit={handleVerify} className="flex flex-col gap-4 mt-8 w-full">
             <div className="flex flex-col gap-1.5 text-left w-full">
-              <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
                 Email Address or Phone
               </label>
               <input
@@ -117,12 +117,12 @@ export default function MyReceiptsPage() {
                 value={emailOrPhone}
                 onChange={(e) => setEmailOrPhone(e.target.value)}
                 placeholder="e.g. adrian@corp.com or 9876543210"
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white rounded-xl text-xs font-semibold focus:outline-none focus:border-sky-500 placeholder-slate-700 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-xs font-semibold focus:outline-none focus:border-sky-500 focus:bg-white placeholder-slate-400 transition-all font-sans"
               />
             </div>
 
             {errorMsg && (
-              <div className="flex items-center gap-2 p-3.5 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 text-xs font-semibold leading-relaxed text-left">
+              <div className="flex items-center gap-2 p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-800 text-xs font-semibold leading-relaxed text-left">
                 <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
                 <span>{errorMsg}</span>
               </div>
@@ -131,7 +131,7 @@ export default function MyReceiptsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
+              className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
             >
               {loading ? (
                 <>
@@ -235,7 +235,7 @@ export default function MyReceiptsPage() {
         {/* List of orders */}
         <div className="flex flex-col gap-4">
           {filteredOrders.length === 0 ? (
-            <div className="text-center py-16 bg-white border border-slate-200/60 rounded-[32px] text-slate-400 shadow-sm">
+            <div className="text-center py-16 bg-white border border-slate-200 rounded-2xl text-slate-400 shadow-sm">
               <ShoppingBag className="w-12 h-12 stroke-[1] text-slate-300 mx-auto mb-3" />
               <p className="text-sm font-bold">No matching receipts found in history.</p>
               <p className="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed">
@@ -252,7 +252,7 @@ export default function MyReceiptsPage() {
                 return (
                   <div
                     key={order.receiptNumber}
-                    className="bg-white border border-slate-200/60 rounded-[28px] p-6 shadow-sm hover:shadow-md transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-4 items-center group"
+                    className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center group"
                   >
                     {/* Icon & Receipt Metadata */}
                     <div className="md:col-span-5 flex items-center gap-4">
