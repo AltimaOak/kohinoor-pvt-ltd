@@ -100,7 +100,7 @@ export default async function Footer() {
                   rel="noopener noreferrer"
                   className="leading-relaxed hover:text-sky-400 transition-colors whitespace-pre-line"
                 >
-                  Kohinoor CIty, B-2,Commercial-2,Kirol Road,Kurla(W),Mumbai-400070
+                  Kohinoor City, B-2,Commercial-2,Kirol Road,Kurla(W),Mumbai-400070
                 </a>
               </li>
             </ul>
@@ -130,7 +130,7 @@ export default async function Footer() {
         {/* Lower Footer */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-10 text-xs text-slate-500">
           <span>
-            © {new Date().getFullYear()} INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. All rights reserved.
+            © {new Date().getFullYear()} KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. All rights reserved.
           </span>
           <div className="flex items-center gap-6">
             <span className="hover:text-sky-400 cursor-pointer transition-colors">Privacy Policy</span>
