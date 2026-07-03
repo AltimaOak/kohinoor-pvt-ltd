@@ -155,12 +155,7 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
                 <Briefcase className="w-6 h-6" />
               </div>
-              <div className="flex flex-col gap-2">
-                <h4 className="text-lg font-bold text-navy-900 group-hover:text-sky-500 transition-colors">Premium B2B Catalog</h4>
-                <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
-                  Integrated with India's leading B2B marketplace, Jd Mart, to ensure seamless business engagement. The portal showcases elite offerings through a digital catalogue including Business Center Services, Business Centre Services, Commercial Hubs, and premium Business Centres.
-                </p>
-              </div>
+
             </motion.div>
           </div>
         </div>

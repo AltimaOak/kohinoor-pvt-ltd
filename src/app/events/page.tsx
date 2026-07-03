@@ -2,9 +2,194 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, ChevronLeft, ChevronRight } from "lucide-react";
+import { Compass, ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { getDb, EventItem } from "@/app/actions";
+
+interface EventDetailModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  event: EventItem | null;
+}
+
+function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  // Reset active image index when event changes
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [event]);
+
+  if (!event) return null;
+
+  const images = event.images && event.images.length > 0
+    ? event.images
+    : event.imageSrc
+      ? [event.imageSrc]
+      : [];
+
+  const Icon = (LucideIcons as any)[event.iconName] || LucideIcons.HelpCircle;
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (images.length > 0) {
+      setActiveImageIndex((prev) => (prev + 1) % images.length);
+    }
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (images.length > 0) {
+      setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-center p-4 sm:p-6 md:p-10"
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 15 }}
+            transition={{ type: "spring", damping: 28, stiffness: 220 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-4xl bg-white border border-slate-200/50 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] my-auto animate-in fade-in-50 duration-200"
+          >
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 md:bg-slate-100/80 backdrop-blur-sm text-slate-500 hover:text-navy-900 hover:bg-white md:hover:bg-slate-200 transition-all border border-slate-200/50 hover:scale-105 cursor-pointer shadow-sm"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Left side: Images */}
+            <div className="w-full md:w-1/2 bg-slate-50 border-r border-slate-100 flex flex-col justify-between overflow-hidden min-h-[380px] sm:min-h-[500px]">
+              {images.length > 0 ? (
+                <>
+                  {/* Main image viewer area (takes remaining vertical space) */}
+                  <div className="flex-grow w-full relative flex items-center justify-center p-4 sm:p-5 bg-slate-50 min-h-[280px]">
+                    <div className="w-full aspect-[4/3] max-w-[420px] relative rounded-2xl overflow-hidden shadow-md border border-slate-200/60 bg-white">
+                      <AnimatePresence mode="wait">
+                        <motion.img
+                          key={activeImageIndex}
+                          src={images[activeImageIndex]}
+                          alt={`${event.title} - Full view`}
+                          initial={{ opacity: 0, scale: 0.98 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.98 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Navigation buttons */}
+                    {images.length > 1 && (
+                      <>
+                        <button
+                          onClick={prevImage}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50"
+                          aria-label="Previous photo"
+                        >
+                          <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                        </button>
+                        <button
+                          onClick={nextImage}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50"
+                          aria-label="Next photo"
+                        >
+                          <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Static Thumbnail bar below the image viewer (no overlapping possible!) */}
+                  {images.length > 1 && (
+                    <div className="w-full p-4 border-t border-slate-100 bg-white flex gap-2 overflow-x-auto justify-center shrink-0">
+                      {images.map((img, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveImageIndex(idx)}
+                          className={`relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                            idx === activeImageIndex
+                              ? "border-sky-500 scale-105 shadow-md"
+                              : "border-slate-200 opacity-70 hover:opacity-100"
+                          }`}
+                        >
+                          <img
+                            src={img}
+                            alt="thumbnail"
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* Placeholder gradient */
+                <div className="flex-grow w-full h-full bg-gradient-to-br from-slate-900 to-navy-950 flex flex-col items-center justify-center gap-4 p-8 text-center relative">
+                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.4),transparent_70%)]" />
+                  <div className="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-400/20 text-sky-400 flex items-center justify-center shadow-inner relative z-10">
+                    <Icon className="w-8 h-8 stroke-[1.5]" />
+                  </div>
+                  <div className="flex flex-col gap-1 relative z-10">
+                    <span className="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Kohinoor Events</span>
+                    <p className="text-slate-400 text-xs max-w-[200px]">No event photos uploaded yet</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right side: Information */}
+            <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto max-h-[400px] md:max-h-none md:h-auto">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold uppercase tracking-wider">
+                    <Icon className="w-3.5 h-3.5 text-sky-500" />
+                    <span>Event Details</span>
+                  </span>
+                </div>
+
+                <h2 className="text-xl sm:text-2xl font-black text-navy-900 font-display leading-tight">
+                  {event.title}
+                </h2>
+
+                <div className="h-px bg-slate-100 w-full my-1" />
+
+                <div className="flex flex-col gap-3">
+                  <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">About this event</h4>
+                  <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
+                    {event.desc}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8 pt-4 border-t border-slate-100">
+                <button
+                  onClick={onClose}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold transition-all shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 hover:scale-[1.02] cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 function EventCarousel({ images, title }: { images: string[]; title: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -77,6 +262,7 @@ function EventCarousel({ images, title }: { images: string[]; title: string }) {
 
 export default function EventsPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
 
   useEffect(() => {
     async function loadEvents() {
@@ -132,7 +318,7 @@ export default function EventsPage() {
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((evt, idx) => {
-            const Icon = (LucideIcons as any)[evt.iconName] || LucideIcons.HelpCircle;
+            const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[evt.iconName] || LucideIcons.HelpCircle;
             return (
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
@@ -140,21 +326,9 @@ export default function EventsPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 key={evt.id}
-                className="rounded-[20px] sm:rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.02)] h-full"
+                onClick={() => setSelectedEvent(evt)}
+                className="rounded-[20px] sm:rounded-[28px] border border-slate-200/40 bg-white hover:border-sky-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.02)] h-full cursor-pointer"
               >
-                {/* Carousel or single photo header */}
-                {evt.images && evt.images.length > 0 ? (
-                  <EventCarousel images={evt.images} title={evt.title} />
-                ) : evt.imageSrc ? (
-                  <div className="aspect-[16/10] w-full overflow-hidden bg-slate-100 relative border-b border-slate-100">
-                    <img
-                      src={evt.imageSrc}
-                      alt={evt.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                ) : null}
 
                 <div className="p-5 sm:p-6 flex flex-col gap-4 flex-grow">
                   <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 text-sky-500 flex items-center justify-center group-hover:scale-105 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0">
@@ -165,7 +339,7 @@ export default function EventsPage() {
                     <h3 className="text-sm font-bold text-navy-900 leading-tight group-hover:text-sky-500 transition-colors">
                       {evt.title}
                     </h3>
-                    <p className="text-slate-500 text-[11px] leading-relaxed">
+                    <p className="text-slate-500 text-[11px] leading-relaxed line-clamp-3">
                       {evt.desc}
                     </p>
                   </div>
@@ -175,6 +349,13 @@ export default function EventsPage() {
           })}
         </div>
       </section>
+
+      {/* Event Details Modal */}
+      <EventDetailModal
+        isOpen={selectedEvent !== null}
+        onClose={() => setSelectedEvent(null)}
+        event={selectedEvent}
+      />
 
     </div>
   );

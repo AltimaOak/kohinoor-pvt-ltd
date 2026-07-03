@@ -2017,6 +2017,36 @@ export default function ServicesPage() {
                         </a>
                       )}
 
+                      <a
+                        href={getWhatsAppUrl(
+                          cafeteria?.contact || "8108839330",
+                          `*NEW CAFETERIA ORDER RECEIVED*\n` +
+                          `-----------------------------------\n` +
+                          `Order ID: #${cafeOrderId}\n` +
+                          `Receipt No: ${cafeReceiptId}\n\n` +
+                          `*Customer Details:*\n` +
+                          `- Name: ${cafeName.trim()}\n` +
+                          `- Phone: ${cafePhone.trim()}\n` +
+                          `- Email: ${cafeEmail.trim()}\n\n` +
+                          `*Items Ordered:*\n` +
+                          Object.entries(cafeCart).map(([id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id)!;
+                            return `• ${it.name} x ${qty} - ₹${it.price * qty}`;
+                          }).join('\n') + `\n\n` +
+                          `*Total Price:* ₹${Object.entries(cafeCart).reduce((sum, [id, qty]) => {
+                            const it = cafeteria.menu.find(m => m.id === id);
+                            return sum + (it ? it.price * qty : 0);
+                          }, 0)}\n\n` +
+                          `Please prepare this order for counter pickup.`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-sm cursor-pointer w-full text-center justify-center font-bold"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Send Order Ticket to Kitchen WhatsApp</span>
+                      </a>
+
                       <button
                         type="button"
                         disabled={isResendingCafeReceipt}

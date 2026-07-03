@@ -25,7 +25,7 @@ export async function sendWhatsAppReceipt(
 
   // Generate Receipt URL
   // We'll generate a public link to the online receipt verification/view portal
-  let host = process.env.NEXT_PUBLIC_APP_URL || "localhost:3000";
+  const host = process.env.NEXT_PUBLIC_APP_URL || "localhost:3000";
   const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
   const receiptUrl = `${protocol}://${host}/receipt/${order.receiptNumber}`;
 
@@ -107,11 +107,12 @@ _Thank you for choosing Kohinoor Facilities._`;
         error: errorMsg,
       };
     }
-  } catch (err: any) {
-    console.error(`[META WHATSAPP CONNECTION FAILURE] Error connecting to Meta API:`, err);
+  } catch (err) {
+    const error = err as Error;
+    console.error(`[META WHATSAPP CONNECTION FAILURE] Error connecting to Meta API:`, error);
     return {
       success: false,
-      error: err.message || "Failed to connect to Meta WhatsApp API service",
+      error: error.message || "Failed to connect to Meta WhatsApp API service",
     };
   }
 }

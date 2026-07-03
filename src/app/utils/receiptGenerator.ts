@@ -116,7 +116,7 @@ export async function generateReceiptPdfBuffer(order: Order): Promise<Buffer> {
       
       currentY += 16;
       doc.fillColor("#0f172a").font("Helvetica").text(`Payment Method:`, 50, currentY);
-      doc.text(`${(order as any).paymentMethod || "Card / Online"}`, 140, currentY);
+      doc.text(`${(order as { paymentMethod?: string }).paymentMethod || "Card / Online"}`, 140, currentY);
 
       doc.text(`Transaction ID:`, 320, currentY);
       doc.font("Helvetica-Bold").text(`${order.transactionId}`, 410, currentY);

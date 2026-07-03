@@ -51,7 +51,7 @@ export default function ContactPage() {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
           >
             <Compass className="w-3.5 h-3.5 text-sky-400" />
-            <span>Connect & Details</span>
+            <span>Contact Us</span>
           </motion.div>
           
           <motion.h1
@@ -60,17 +60,8 @@ export default function ContactPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
           >
-            Corporate Relations & Access
+            GET IN TOUCH
           </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-600 text-sm md:text-base leading-relaxed"
-          >
-            Establish your corporate footprint at KOHINOOR CITY OFFICE TOWERS. Learn more about our location details, hotlines, or coordinate direct visits.
-          </motion.p>
         </div>
       </section>
 

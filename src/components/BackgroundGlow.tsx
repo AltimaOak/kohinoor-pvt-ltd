@@ -3,18 +3,61 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+interface Particle {
+  id: number;
+  size: number;
+  delay: number;
+  duration: number;
+  initialX: number;
+  initialY: number;
+  initialOpacity: number;
+  initialScale: number;
+  animX1: number;
+  animX2: number;
+}
+
 export default function BackgroundGlow() {
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => {
+      setMounted(true);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+
+      // Initialize particles on client mount if not mobile
+      if (window.innerWidth >= 768) {
+        const generated = Array.from({ length: 15 }, (_, i) => {
+          const initialX = Math.random() * 100;
+          return {
+            id: i,
+            size: Math.random() * 4 + 2,
+            delay: Math.random() * 5,
+            duration: Math.random() * 15 + 15,
+            initialX,
+            initialY: Math.random() * 100,
+            initialOpacity: Math.random() * 0.3 + 0.1,
+            initialScale: Math.random() * 0.8 + 0.2,
+            animX1: initialX + (Math.random() * 10 - 5),
+            animX2: initialX + (Math.random() * 10 - 5),
+          };
+        });
+        setParticles(generated);
+      }
+    }, 0);
+
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
     };
-    checkMobile();
     window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, []);
 
   if (!mounted) return null;
@@ -88,39 +131,33 @@ export default function BackgroundGlow() {
       {/* Floating Particles - Disabled on Mobile for Performance */}
       {!isMobile && (
         <div className="absolute inset-0">
-          {[...Array(15)].map((_, i) => {
-            const size = Math.random() * 4 + 2;
-            const delay = Math.random() * 5;
-            const duration = Math.random() * 15 + 15;
-            const initialX = Math.random() * 100;
-            const initialY = Math.random() * 100;
-
+          {particles.map((p) => {
             return (
               <motion.div
-                key={i}
+                key={p.id}
                 initial={{
-                  x: `${initialX}vw`,
-                  y: `${initialY}vh`,
-                  opacity: Math.random() * 0.3 + 0.1,
-                  scale: Math.random() * 0.8 + 0.2,
+                  x: `${p.initialX}vw`,
+                  y: `${p.initialY}vh`,
+                  opacity: p.initialOpacity,
+                  scale: p.initialScale,
                 }}
                 animate={{
                   y: ["0vh", "-100vh"],
                   x: [
-                    `${initialX}vw`,
-                    `${initialX + (Math.random() * 10 - 5)}vw`,
-                    `${initialX + (Math.random() * 10 - 5)}vw`
+                    `${p.initialX}vw`,
+                    `${p.animX1}vw`,
+                    `${p.animX2}vw`
                   ],
                 }}
                 transition={{
-                  duration: duration,
+                  duration: p.duration,
                   repeat: Infinity,
-                  delay: -delay,
+                  delay: -p.delay,
                   ease: "linear",
                 }}
                 style={{
-                  width: size,
-                  height: size,
+                  width: p.size,
+                  height: p.size,
                   willChange: "transform",
                 }}
                 className="absolute w-2 h-2 rounded-full bg-sky-300/40 blur-[1px]"
