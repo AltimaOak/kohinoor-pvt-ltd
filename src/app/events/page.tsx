@@ -44,6 +44,8 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
     }
   };
 
+  const currentImage = images[activeImageIndex];
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -77,20 +79,18 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                 <>
                   {/* Main image viewer area (takes remaining vertical space) */}
                   <div className="flex-grow w-full relative flex items-center justify-center p-4 sm:p-5 bg-slate-50 min-h-[280px]">
-                    <div className="w-full aspect-[4/3] max-w-[420px] relative rounded-2xl overflow-hidden shadow-md border border-slate-200/60 bg-white">
-                      <AnimatePresence mode="wait">
-                        <motion.img
-                          key={activeImageIndex}
-                          src={images[activeImageIndex]}
-                          alt={`${event.title} - Full view`}
-                          initial={{ opacity: 0, scale: 0.98 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.98 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                      </AnimatePresence>
-                    </div>
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={activeImageIndex}
+                        src={currentImage}
+                        alt={`${event.title} - Full view`}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                        className="max-w-full max-h-[240px] sm:max-h-[340px] w-auto h-auto rounded-2xl shadow-md border border-slate-200/60 bg-white object-contain"
+                      />
+                    </AnimatePresence>
 
                     {/* Navigation buttons */}
                     {images.length > 1 && (
