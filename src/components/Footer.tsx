@@ -100,7 +100,7 @@ export default async function Footer() {
                   rel="noopener noreferrer"
                   className="leading-relaxed hover:text-sky-400 transition-colors whitespace-pre-line"
                 >
-                  {contacts.siteAddress}
+                  Kohinoor CIty, B-2,Commercial-2,Kirol Road,Kurla(W),Mumbai-400070
                 </a>
               </li>
             </ul>
