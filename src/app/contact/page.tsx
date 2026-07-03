@@ -66,7 +66,7 @@ export default function ContactPage() {
       </section>
 
       {/* 2. CONTACT DETAILS SECTION */}
-      <section className="max-w-3xl mx-auto px-6 md:px-12 w-full relative z-10">
+      <section className="max-w-5xl mx-auto px-6 md:px-12 w-full relative z-10">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-6 text-center items-center">
             <h3 className="text-xl font-extrabold text-navy-900 tracking-tight">
@@ -164,7 +164,7 @@ export default function ContactPage() {
                         <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-105 transition-transform">
                           <Mail className="w-4 h-4" />
                         </div>
-                        <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all">
+                        <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors break-all sm:break-normal sm:whitespace-nowrap">
                           {mgr.email}
                         </span>
                       </a>

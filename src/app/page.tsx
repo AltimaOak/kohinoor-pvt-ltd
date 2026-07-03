@@ -26,7 +26,10 @@ import {
   BatteryCharging,
   Flame,
   HeartPulse,
-  Flower2
+  Flower2,
+  ShoppingCart,
+  Soup,
+  Plane
 } from "lucide-react";
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
@@ -48,7 +51,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col w-full pb-20 overflow-hidden">
-      
+
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[92vh] w-full flex items-center overflow-hidden">
         {/* Background Image - Sharp and Un-blurred */}
@@ -111,7 +114,7 @@ export default function LandingPage() {
 
 
       {/* 3. ABOUT PREVIEW SECTION */}
-      <section id="about" className="pt-10 md:pt-12 pb-28 md:pb-32 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      <section id="about" className="pt-10 md:pt-12 pb-12 md:pb-16 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         {/* Left Side: Text Columns (7 Columns) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -192,7 +195,7 @@ export default function LandingPage() {
       </section>
 
       {/* 4. CORE AMENITIES GRID */}
-      <section className="py-28 md:py-32 border-y border-slate-200/50 bg-[#F8FAFC]">
+      <section className="py-12 md:py-16 border-y border-slate-200/50 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16 w-full">
           <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">PREMISES & AMENITIES</span>
@@ -241,7 +244,7 @@ export default function LandingPage() {
       </section>
 
       {/* 5. INTERACTIVE GALLERY SECTION */}
-      <section className="py-28 md:py-32 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
+      <section className="pt-12 md:pt-16 pb-8 md:pb-12 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
         <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
           <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">COMPLEX SHOWCASE</span>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
@@ -255,8 +258,104 @@ export default function LandingPage() {
         <InteractiveGallery />
       </section>
 
+      {/* 6. NEARBY LANDMARKS SECTION */}
+      <section className="pt-8 md:pt-12 pb-12 md:pb-16 bg-white text-slate-800 relative w-full">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left side: Header info */}
+            <div className="lg:col-span-5 flex flex-col gap-6 text-left">
+              <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
+                <Compass className="w-4.5 h-4.5 text-sky-500 animate-spin-slow" />
+                Connectivity & Location
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
+                Prime Location & <br className="hidden md:inline" /> Nearby Landmarks
+              </h2>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Kohinoor City Office Towers is strategically located in Kurla (West) with unparalleled proximity to public transit, healthcare, premium shopping malls, and elite dining options.
+              </p>
+      
+              <div className="flex items-center gap-6 text-slate-500">
+                <div className="w-px h-1 bg-slate-200" />
+                <div className="flex flex-col">
+                
+                </div>
+              </div>
+            </div>
+
+            {/* Right side: Landmarks list widget styled like the image */}
+            <div className="lg:col-span-7 w-full max-w-lg mx-auto lg:ml-auto">
+              <div className="rounded-3xl border border-slate-200/60 bg-white shadow-sm p-6 sm:p-8 flex flex-col gap-6">
+                <h3 className="text-lg font-bold tracking-tight text-navy-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-sky-500" />
+                  <span>Nearby Landmarks</span>
+                </h3>
+
+                <div className="flex flex-col">
+                  {[
+                    {
+                      name: "Vidyavihar Station",
+                      distance: "1.0 km away",
+                      time: null,
+                      icon: MapPin,
+                    },
+                    {
+                      name: "CritiCare Asia Hospital",
+                      distance: "0.5 km away",
+                      time: null,
+                      icon: HeartPulse,
+                    },
+                    {
+                      name: "Phoenix Marketcity",
+                      distance: "0.6 km away",
+                      time: null,
+                      icon: ShoppingCart,
+                    },
+                    {
+                      name: "Kohinoor Elite",
+                      distance: "0.9 km away",
+                      time: null,
+                      icon: Soup,
+                    },
+                    {
+                      name: "BOM-2",
+                      distance: "5.9 km away",
+                      time: null,
+                      icon: Plane,
+                    },
+                  ].map((landmark, idx) => {
+                    const LandmarkIcon = landmark.icon;
+                    return (
+                      <div
+                        key={idx}
+                        className={`flex items-start gap-4 py-4 ${
+                          idx !== 4 ? "border-b border-slate-100" : ""
+                        } hover:bg-slate-50/80 px-2 rounded-xl transition-all duration-200`}
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 flex items-center justify-center shrink-0 text-sky-500">
+                          <LandmarkIcon className="w-5 h-5" />
+                        </div>
+                        <div className="flex flex-col text-left">
+                          <h4 className="text-sm font-bold text-navy-900 leading-normal">{landmark.name}</h4>
+                          <p className="text-xs text-slate-500 mt-1">
+                            <span className="font-extrabold text-sky-600">{landmark.distance}</span>
+                            {landmark.time && (
+                              <span className="text-slate-400 font-medium"> ({landmark.time})</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 7. LEASING ENQUIRY & CONTACT SECTION */}
-      <section id="contact" className="py-28 md:py-32 max-w-7xl mx-auto px-6 md:px-12 w-full">
+      <section id="contact" className="py-12 md:py-16 max-w-7xl mx-auto px-6 md:px-12 w-full">
         <div className="flex flex-col gap-12 text-center items-center">
           <div className="flex flex-col gap-3 items-center">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
