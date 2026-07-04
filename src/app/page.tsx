@@ -105,13 +105,14 @@ export default function LandingPage() {
       <section className="relative min-h-[75vh] w-full flex items-center overflow-hidden">
         {/* Background Image - Sharp and Un-blurred */}
         <div className="absolute inset-0 z-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/hero_bg.jpg"
             alt="Kohinoor Towers Complex"
             className="w-full h-full object-cover object-center"
           />
-          {/* Subtle light overlay to keep image fully visible and bright while maintaining text readability */}
-          <div className="absolute inset-0 bg-slate-950/20" />
+          {/* Transparent soft gradient overlay to ensure 100% building image visibility on right, with text contrast on left */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/65 via-slate-950/30 to-transparent" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pt-20 pb-8 relative z-20">
@@ -122,37 +123,52 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="flex flex-col gap-2"
+                className="flex items-center gap-1.5 text-sky-400 text-[10px] sm:text-xs font-black uppercase tracking-wider select-none mb-2"
               >
-                <span className="text-[11px] font-bold text-sky-400 uppercase tracking-widest">
-                  Welcome to Kohinoor
-                </span>
-                <h1 className="text-4xl md:text-5xl lg:text-6.5xl font-black font-display tracking-tight text-white leading-[1.1]">
-                  Where Business Meets Opportunity
-                </h1>
+                <div className="flex flex-col gap-[3px] w-3 shrink-0">
+                  <div className="h-[2px] bg-sky-400 w-3 rounded-full" />
+                  <div className="h-[2px] bg-sky-400 w-2 rounded-full" />
+                </div>
+                <span>WELCOME TO KOHINOOR</span>
               </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="text-4xl md:text-5xl lg:text-6.5xl font-black font-display tracking-tight text-white leading-[1.1]"
+              >
+                Where Business Meets Opportunity
+              </motion.h1>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="h-[2.5px] bg-[#0055d4] w-8 my-4"
+              />
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
                 className="text-slate-100 text-sm md:text-base leading-relaxed max-w-xl mt-0.5 font-medium"
               >
-                KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. A Commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
+                Kohinoor City Office Towers Industrial Estate & Premises Co-op Society Ltd. offers premium office spaces, modern infrastructure, and a secure environment designed to help your business grow.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-wrap items-center gap-4 mt-3"
+                className="mt-5"
               >
                 <Link
                   href="#about"
-                  className="group flex items-center gap-2 px-6 py-3 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs uppercase tracking-wider transition-all duration-300"
+                  className="group inline-flex items-center gap-2 px-6 py-3 bg-[#0055d4] hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 rounded-sm select-none"
                 >
-                  <span>About Us</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <span>ABOUT US</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </motion.div>
             </div>

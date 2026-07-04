@@ -38,7 +38,8 @@ import {
   CreditCard,
   Volume2,
   Building2,
-  HeartPulse
+  HeartPulse,
+  ShoppingCart
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -1200,7 +1201,7 @@ export default function ServicesPage() {
                         required
                         value={buyerName}
                         onChange={(e) => setBuyerName(e.target.value)}
-                        placeholder="e.g. Adrian Carter"
+                        placeholder="Enter Your Name"
                         className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 text-slate-700 font-semibold"
                       />
                     </div>
@@ -1213,7 +1214,7 @@ export default function ServicesPage() {
                           required
                           value={buyerEmail}
                           onChange={(e) => setBuyerEmail(e.target.value)}
-                          placeholder="adrian@corp.com"
+                          placeholder="Enter Email Address"
                           className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 text-slate-700 font-semibold"
                         />
                       </div>
@@ -1224,7 +1225,7 @@ export default function ServicesPage() {
                           required
                           value={buyerPhone}
                           onChange={(e) => setBuyerPhone(e.target.value)}
-                          placeholder="e.g. 8657902810"
+                          placeholder="Enter Phone Number"
                           className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-emerald-500 bg-slate-50/50 text-slate-700 font-semibold font-mono"
                         />
                       </div>
@@ -1521,43 +1522,55 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-8 flex flex-col gap-6 overflow-y-auto"
+              className="relative w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] bg-white border border-slate-150 rounded-[24px] shadow-2xl p-6 flex flex-col gap-6 overflow-y-auto"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsCafeteriaModalOpen(false)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50"
+                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white text-slate-400 hover:text-slate-900 border border-slate-200/60 shadow-xs hover:shadow-sm transition-all cursor-pointer flex items-center justify-center group"
+                aria-label="Close modal"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 transition-transform duration-350 group-hover:rotate-90" />
               </button>
 
               {/* Modal Header */}
               {cafeStep !== "success" && (
                 <div className="flex flex-col gap-2.5 text-left pr-10 md:pr-0">
-                  <span className="text-xs font-bold text-amber-600 uppercase tracking-widest flex items-center gap-1.5">
-                    <Coffee className="w-4 h-4 text-amber-500 animate-pulse" />
+                  <span className="text-xs font-bold text-orange-600 uppercase tracking-widest flex items-center gap-1.5">
+                    <Utensils className="w-4 h-4 text-orange-500" />
                     Corporate Dining Service
                   </span>
-                  <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-navy-900 font-display">
+                  <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
                     Kohinoor Cafeteria
                   </h2>
-                  <p className="text-slate-500 text-xs max-w-xl leading-relaxed">
+                  <p className="text-slate-550 text-xs max-w-xl leading-relaxed">
                     {cafeteria.description}
                   </p>
 
                   {/* Cafeteria Details strip */}
-                  <div className="flex flex-wrap gap-3 mt-1.5 text-[10px] md:text-xs text-slate-500">
-                    <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-200/50 shadow-sm">
-                      <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>Location: <span className="font-semibold text-slate-800">{cafeteria.location}</span></span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1 select-none">
+                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
+                      <MapPin className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
+                      <div className="text-xs text-left leading-normal">
+                        <span className="text-slate-500">Location: </span>
+                        <span className="font-semibold text-slate-800">{cafeteria.location}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-200/50 shadow-sm">
-                      <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>Timings: <span className="font-semibold text-slate-800">{cafeteria.timing}</span></span>
+                    
+                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
+                      <Clock className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
+                      <div className="text-xs text-left leading-normal">
+                        <span className="text-slate-500">Timings: </span>
+                        <span className="font-semibold text-slate-800">{cafeteria.timing}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full border border-slate-200/50 shadow-sm">
-                      <PhoneCall className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>Contact: <span className="font-semibold text-slate-800">{cafeteria.contact}</span></span>
+
+                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
+                      <PhoneCall className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
+                      <div className="text-xs text-left leading-normal">
+                        <span className="text-slate-500">Contact: </span>
+                        <span className="font-semibold text-slate-800">{cafeteria.contact}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1567,15 +1580,15 @@ export default function ServicesPage() {
               {cafeStep === "menu" && (
                 <div className="flex flex-col gap-5 text-left">
                   {/* Category Selection Tabs */}
-                  <div className="flex items-center gap-2 border-b border-slate-200 pb-1">
+                  <div className="flex items-center gap-6 border-b border-slate-200 pb-1 mt-1">
                     {(["Drinks", "Breakfast", "Lunch"] as const).map((cat) => (
                       <button
                         key={cat}
                         onClick={() => setCafeActiveTab(cat)}
                         className={cn(
-                          "px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer",
+                          "px-1 py-2 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer",
                           cafeActiveTab === cat
-                            ? "border-amber-500 text-amber-600 font-extrabold"
+                            ? "border-orange-600 text-orange-600 font-extrabold"
                             : "border-transparent text-slate-400 hover:text-slate-600"
                         )}
                       >
@@ -1585,7 +1598,7 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Menu Items Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {cafeteria.menu
                       .filter((item) => item.category === cafeActiveTab)
                       .map((item) => {
@@ -1593,11 +1606,11 @@ export default function ServicesPage() {
                         return (
                           <div
                             key={item.id}
-                            className="bg-white border border-slate-200/60 rounded-2xl p-3 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group/cafeitem"
+                            className="bg-white border border-slate-200/60 rounded-xl p-3 shadow-[0_2px_12px_rgba(0,0,0,0.01)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group/cafeitem"
                           >
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-2">
                               {/* Product Image */}
-                              <div className="aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-100 relative shadow-inner">
+                              <div className="h-24 sm:h-28 w-full rounded-lg overflow-hidden bg-slate-100 border border-slate-100 relative shadow-inner">
                                 {item.imageSrc ? (
                                   // eslint-disable-next-line @next/next/no-img-element
                                   <img
@@ -1607,26 +1620,26 @@ export default function ServicesPage() {
                                   />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                    <Utensils className="w-10 h-10 stroke-[1]" />
+                                    <Utensils className="w-6 h-6 stroke-[1]" />
                                   </div>
                                 )}
                                 <div className={cn(
-                                  "absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border shadow-sm",
+                                  "absolute top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border shadow-sm",
                                   item.quantity > 0
-                                    ? "bg-amber-500/90 text-white border-amber-400"
-                                    : "bg-rose-500/90 text-white border-rose-400"
+                                    ? "bg-orange-600 text-white border-orange-500"
+                                    : "bg-rose-500 text-white border-rose-450"
                                 )}>
                                   {item.quantity > 0 ? `${item.quantity} Available` : "Sold Out"}
                                 </div>
                               </div>
 
                               {/* Details */}
-                              <div className="flex flex-col gap-1">
+                              <div className="flex flex-col gap-0.5 text-left">
                                 <div className="flex items-start justify-between gap-1.5">
-                                  <h4 className="font-extrabold text-navy-900 text-sm leading-snug group-hover/cafeitem:text-amber-600 transition-colors">
+                                  <h4 className="font-extrabold text-slate-900 text-xs leading-snug group-hover/cafeitem:text-orange-600 transition-colors line-clamp-1">
                                     {item.name}
                                   </h4>
-                                  <span className="font-black text-amber-600 text-sm shrink-0">
+                                  <span className="font-bold text-orange-600 text-xs shrink-0">
                                     ₹{item.price}
                                   </span>
                                 </div>
@@ -1637,22 +1650,22 @@ export default function ServicesPage() {
                             </div>
 
                             {/* Quantity buttons */}
-                            <div className="mt-3 flex items-center gap-2">
+                            <div className="mt-2.5 flex items-center gap-2">
                               {cartQty > 0 ? (
-                                <div className="flex items-center justify-between w-full border border-amber-200 rounded-xl bg-amber-500/5 p-1">
+                                <div className="flex items-center justify-between w-full border border-orange-200 rounded-lg bg-orange-50/50 p-0.5">
                                   <button
                                     onClick={() => setCafeCart({ ...cafeCart, [item.id]: cartQty - 1 })}
-                                    className="w-7 h-7 rounded-lg bg-white border border-amber-200 text-amber-600 flex items-center justify-center hover:bg-amber-100 transition-colors cursor-pointer"
+                                    className="w-6 h-6 rounded bg-white border border-orange-200 text-orange-600 flex items-center justify-center hover:bg-orange-100 transition-colors cursor-pointer"
                                   >
-                                    <Minus className="w-3.5 h-3.5" />
+                                    <Minus className="w-2.5 h-2.5" />
                                   </button>
-                                  <span className="text-xs font-black text-navy-900 px-2">{cartQty}</span>
+                                  <span className="text-[10px] font-black text-slate-800 px-1">{cartQty} in Cart</span>
                                   <button
                                     disabled={cartQty >= item.quantity}
                                     onClick={() => setCafeCart({ ...cafeCart, [item.id]: cartQty + 1 })}
-                                    className="w-7 h-7 rounded-lg bg-white border border-amber-200 text-amber-600 flex items-center justify-center hover:bg-amber-100 transition-colors cursor-pointer disabled:opacity-50"
+                                    className="w-6 h-6 rounded bg-white border border-orange-200 text-orange-600 flex items-center justify-center hover:bg-orange-100 transition-colors cursor-pointer disabled:opacity-50"
                                   >
-                                    <Plus className="w-3.5 h-3.5" />
+                                    <Plus className="w-2.5 h-2.5" />
                                   </button>
                                 </div>
                               ) : (
@@ -1660,13 +1673,13 @@ export default function ServicesPage() {
                                   disabled={item.quantity <= 0}
                                   onClick={() => setCafeCart({ ...cafeCart, [item.id]: 1 })}
                                   className={cn(
-                                    "w-full py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm border",
+                                    "w-full py-1.5 rounded-lg font-bold text-[9px] uppercase tracking-wider flex items-center justify-center gap-1 transition-all duration-300 cursor-pointer shadow-sm border active:scale-[0.99]",
                                     item.quantity > 0
-                                      ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-500"
+                                      ? "bg-orange-600 hover:bg-orange-700 text-white border-orange-500"
                                       : "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
                                   )}
                                 >
-                                  <Plus className="w-3 h-3" />
+                                  <ShoppingCart className="w-3 h-3" />
                                   <span>Add to Cart</span>
                                 </button>
                               )}
@@ -1677,10 +1690,10 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Summary & Checkout Button */}
-                  <div className="mt-4 p-4 bg-slate-100 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="mt-4 p-4 bg-slate-50 border border-slate-150 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex flex-col text-left">
-                      <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Cart Total</span>
-                      <span className="text-xl font-black text-amber-600">
+                      <span className="text-[9px] uppercase font-bold text-slate-450 tracking-wider">Cart Total</span>
+                      <span className="text-xl font-black text-orange-600">
                         ₹{Object.entries(cafeCart).reduce((sum, [id, qty]) => {
                           const it = cafeteria.menu.find(m => m.id === id);
                           return sum + (it ? it.price * qty : 0);
@@ -1694,12 +1707,12 @@ export default function ServicesPage() {
                       className={cn(
                         "w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-350 cursor-pointer text-center flex items-center justify-center gap-2",
                         Object.values(cafeCart).reduce((sum, qty) => sum + qty, 0) > 0
-                          ? "bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
-                          : "bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300"
+                          ? "bg-orange-600 hover:bg-orange-700 text-white shadow-sm active:scale-[0.99]"
+                          : "bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-355"
                       )}
                     >
                       <span>Checkout Order</span>
-                      <ShoppingBag className="w-4.5 h-4.5" />
+                      <ShoppingCart className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -1777,8 +1790,8 @@ export default function ServicesPage() {
                       required
                       value={cafeName}
                       onChange={(e) => setCafeName(e.target.value)}
-                      placeholder="e.g. Tanmay Mhatre"
-                      className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-amber-500 bg-white text-slate-700 font-semibold"
+                      placeholder="e.g. Enter Your Name"
+                      className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-orange-500 bg-white text-slate-700 font-semibold"
                     />
                   </div>
 
@@ -1790,8 +1803,8 @@ export default function ServicesPage() {
                         required
                         value={cafeEmail}
                         onChange={(e) => setCafeEmail(e.target.value)}
-                        placeholder="tanmay@corp.com"
-                        className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-amber-500 bg-white text-slate-700 font-semibold"
+                        placeholder="Enter Email"
+                        className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-orange-500 bg-white text-slate-700 font-semibold"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -1801,8 +1814,8 @@ export default function ServicesPage() {
                         required
                         value={cafePhone}
                         onChange={(e) => setCafePhone(e.target.value)}
-                        placeholder="e.g. 9372025677"
-                        className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-amber-500 bg-white text-slate-700 font-semibold font-mono"
+                        placeholder="Enter Phone Number"
+                        className="px-4 py-3 border border-slate-200 rounded-xl text-xs w-full focus:outline-none focus:border-orange-500 bg-white text-slate-700 font-semibold font-mono"
                       />
                     </div>
                   </div>
@@ -1821,7 +1834,7 @@ export default function ServicesPage() {
                     })}
                     <div className="border-t border-slate-200 pt-2 flex justify-between font-black text-sm text-navy-900">
                       <span>Total to Pay:</span>
-                      <span className="text-amber-600">
+                      <span className="text-orange-600">
                         ₹{Object.entries(cafeCart).reduce((sum, [id, qty]) => {
                           const it = cafeteria.menu.find(m => m.id === id);
                           return sum + (it ? it.price * qty : 0);
@@ -1848,7 +1861,7 @@ export default function ServicesPage() {
                       type="submit"
                       disabled={isSubmittingCafeOrder}
                       className={cn(
-                        "px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2",
+                        "px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2",
                         isSubmittingCafeOrder && "opacity-80 cursor-wait"
                       )}
                     >
@@ -1870,7 +1883,7 @@ export default function ServicesPage() {
 
               {cafeStep === "success" && (
                 <div className="flex flex-col items-center gap-6 my-2">
-                  <div className="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center border border-amber-200">
+                  <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center border border-orange-200">
                     <Check className="w-7 h-7 stroke-[3]" />
                   </div>
 
@@ -1896,13 +1909,13 @@ export default function ServicesPage() {
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2">
                         {orderReadyState === "preparing" ? (
-                          <div className="w-6 h-6 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                          <div className="w-6 h-6 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
                         ) : (
                           <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">✓</div>
                         )}
                         <span className="text-xs font-bold text-slate-800">Preparing Food & Drink</span>
                       </div>
-                      <span className="text-[10px] text-amber-500 font-bold animate-pulse">{orderReadyState === "preparing" ? "In Progress..." : "Completed"}</span>
+                      <span className="text-[10px] text-orange-500 font-bold animate-pulse">{orderReadyState === "preparing" ? "In Progress..." : "Completed"}</span>
                     </div>
 
                     <div className="flex items-center justify-between gap-4">

@@ -45,116 +45,128 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col w-full pb-6 sm:pb-12 overflow-hidden bg-white">
       
-      {/* 1. HEADER PAGE BANNER */}
-      <section className="relative pt-12 pb-8 md:pt-16 md:pb-10 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      {/* 1. UNIFIED GET IN TOUCH & MAP SPLIT */}
+      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10 bg-white">
         {/* Glow backdrop */}
         <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-sky-50 border border-sky-100 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
-          >
-            <Compass className="w-3.5 h-3.5 text-sky-400" />
-            <span>Contact Us</span>
-          </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative z-10">
           
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
-          >
-            GET IN TOUCH
-          </motion.h1>
+          {/* Left Column: Get In Touch + Info Cards */}
+          <div className="lg:col-span-5 flex flex-col gap-5 text-left">
+            <div className="flex flex-col gap-3">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-[#0055d4] text-[10px] font-bold uppercase tracking-wider select-none"
+              >
+                CONTACT US
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight"
+              >
+                Get In Touch
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md"
+              >
+                We're here to help. Reach out to our team for any queries, support or partnership opportunities.
+              </motion.p>
+            </div>
+
+            {/* Address & Email Cards Stack */}
+            <div className="flex flex-col gap-4 mt-2 w-full">
+              {/* Card 1: Address */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-start gap-4 p-4 bg-white border border-slate-100 rounded-xl shadow-xs hover:border-sky-300 transition-all duration-300"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 text-blue-600">
+                  <MapPin className="w-5 h-5 stroke-[2]" />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs font-bold text-slate-800">Office Address</span>
+                  <a
+                    href={contacts.siteAddressMapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-500 text-[11px] sm:text-xs leading-normal hover:text-sky-500 transition-colors whitespace-pre-line"
+                  >
+                    {contacts.siteAddress}
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* Card 2: Email */}
+              {managerEmails.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex items-start gap-4 p-4 bg-white border border-slate-100 rounded-xl shadow-xs hover:border-sky-300 transition-all duration-300"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 text-blue-600">
+                    <Mail className="w-5 h-5 stroke-[2]" />
+                  </div>
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <span className="text-xs font-bold text-slate-800">Email Address</span>
+                    <div className="flex flex-col gap-0.5">
+                      {managerEmails.map((email, idx) => (
+                        <a
+                          key={idx}
+                          href={`mailto:${email}`}
+                          className="text-slate-500 text-[11px] sm:text-xs hover:text-sky-500 transition-colors break-all leading-normal"
+                        >
+                          {email}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column: Google Maps & Header */}
+          <div className="lg:col-span-7 w-full flex flex-col gap-3 text-left">
+            <div className="flex items-center gap-2 text-slate-800 select-none">
+              <MapPin className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-semibold">Our Location</span>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="w-full h-[200px] sm:h-[330px] rounded-2xl overflow-hidden border border-slate-150 bg-white shadow-xs hover:shadow-sm transition-all duration-300"
+            >
+              <iframe
+                title="Google Map showing corporate office address location"
+                src="https://maps.google.com/maps?q=19.081129,72.886431&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                className="w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </motion.div>
+          </div>
+
         </div>
       </section>
 
-      {/* 2. CONTACT DETAILS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10">
-        <div className="flex flex-col gap-6 sm:gap-10">
-          <div className="flex flex-col gap-6 items-center">
-            <h3 className="text-xl font-extrabold text-navy-900 tracking-tight text-center">
-              Corporate Headquarters
-            </h3>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full mt-4 items-stretch">
-              {/* Left Column: Contact Cards */}
-              <div className="lg:col-span-6 flex flex-col justify-center w-full">
-                <ul className="flex flex-col gap-5 text-sm text-slate-600 text-left w-full max-w-lg mx-auto lg:mx-0">
-                  <motion.li
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                    className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-200/40 rounded-[20px] sm:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
-                  >
-                    <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
-                      <MapPin className="w-5 h-5" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Physical Site Address</span>
-                      <a
-                        href={contacts.siteAddressMapLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-navy-800 font-bold mt-1.5 leading-relaxed hover:text-sky-500 transition-colors whitespace-pre-line"
-                      >
-                        {contacts.siteAddress}
-                      </a>
-                    </div>
-                  </motion.li>
-                  
-                  {managerEmails.length > 0 && (
-                    <motion.li
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: 0.1 }}
-                      className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-200/40 rounded-[20px] sm:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
-                    >
-                      <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
-                        <Mail className="w-5 h-5" />
-                      </div>
-                      <div className="flex flex-col gap-1.5 min-w-0">
-                        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Corporate & Operations Email</span>
-                        {managerEmails.map((email, idx) => (
-                          <a
-                            key={idx}
-                            href={`mailto:${email}`}
-                            className="text-navy-800 font-bold hover:text-sky-500 transition-colors break-all"
-                          >
-                            {email}
-                          </a>
-                        ))}
-                      </div>
-                    </motion.li>
-                  )}
-                </ul>
-              </div>
-
-              {/* Right Column: Google Maps Iframe */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="lg:col-span-6 w-full h-[280px] sm:h-[340px] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:border-sky-300 hover:shadow-md transition-all duration-300"
-              >
-                <iframe
-                  title="Google Map showing corporate office address location"
-                  src="https://maps.google.com/maps?q=19.081129,72.886431&t=&z=17&ie=UTF8&iwloc=&output=embed"
-                  className="w-full h-full border-0"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </motion.div>
-            </div>
-
-            {/* Emergency Contacts Section */}
-            <div className="w-full mt-10 sm:mt-16 max-w-5xl mx-auto">
+      {/* 2. EMERGENCY CONTACTS DIRECTORY */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10 py-10 sm:py-12 border-t border-slate-100 bg-white">
+        <div className="w-full max-w-5xl mx-auto">
               <div className="flex flex-col items-center gap-2 mb-8 text-center">
                 <h3 className="text-xl md:text-2xl font-black text-navy-900 tracking-tight">
                   Emergency Contacts Directory

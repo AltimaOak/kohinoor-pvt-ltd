@@ -5,7 +5,10 @@ import { motion } from "framer-motion";
 import {
   Compass,
   Building,
-  TrendingUp
+  Eye,
+  Maximize2,
+  Users,
+  ShieldCheck
 } from "lucide-react";
 
 const towersData = [
@@ -15,11 +18,11 @@ const towersData = [
     sub: "Commercial - II",
     description: "Tower 1 is a premium financial gateway and corporate hub, hosting key departments of the National Stock Exchange of India and top financial training institutions.",
     offices: [
-      "National Stock Exchange of India Limited",
-      "The Clearing Corporation of India Ltd",
-      "Indian Institute of Banking and Finance",
-      "Indepesca Overseas Pvt. Ltd",
-      "Rhythm House Pvt. Ltd"
+      " 1. National Stock Exchange of India Limited",
+      " 2. The Clearing Corporation of India Ltd",
+      " 3. Indian Institute of Banking and Finance",
+      " 4. Indepesca Overseas Pvt. Ltd",
+      " 5. Rhythm House Pvt. Ltd"
     ]
   },
   {
@@ -28,11 +31,11 @@ const towersData = [
     sub: "Commercial - II",
     description: "Tower 2 stands as a major administrative, logistics, and engineering centerpiece, hosting key consultancy partners and commercial service entities.",
     offices: [
-      "Sterling Engineering Consultancy Services Private Limited",
-      "M. Pallonji Logistics Pvt Ltd",
-      "Ashoka Sthapathya Private Ltd",
-      "Nahar Retail Trading Services Ltd",
-      "Vishyam Estate Pvt. Ltd"
+      "1. Sterling Engineering Consultancy Services Pvt.Ltd",
+      "2. M. Pallonji Logistics Pvt.Ltd",
+      "3. Ashoka Sthapathya Pvt.Ltd",
+      "4. Nahar Retail Trading Services Ltd",
+      "5. Vishyam Estate Pvt.Ltd"
     ]
   },
   {
@@ -51,85 +54,151 @@ const towersData = [
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col w-full pb-12 overflow-hidden">
+    <div className="flex flex-col w-full pb-12 overflow-hidden bg-white">
 
-      {/* 1. HERO PAGE BANNER */}
-      <section className="relative pt-16 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      {/* 1. HERO PAGE BANNER & VISION SPLIT */}
+      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
         {/* Decorative ambient neon circle */}
         <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-sky-50 border border-sky-100 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
-          >
-            <Compass className="w-3.5 h-3.5 text-sky-400 animate-spin-slow" />
-            <span>Landmark Blueprint</span>
-          </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+          
+          {/* Left Column: Text & Header */}
+          <div className="md:col-span-7 flex flex-col gap-4 text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-1.5 text-[#0055d4] text-[10px] font-bold uppercase tracking-wider select-none"
+            >
+              <Compass className="w-3.5 h-3.5 shrink-0" />
+              <span>ABOUT US</span>
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
-          >
-            Engineering the Future of Corporate Landmarks
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15]"
+            >
+              Engineering the Future of <br className="hidden sm:inline" />
+              <span className="text-[#0055d4]">Corporate Landmarks</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-600 text-sm md:text-base leading-relaxed"
-          >
-            KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. Is more than an office address; it is a monumental structural statement. Engineered to serve global financial, technology, and commercial organizations with zero-latency operational infrastructure.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-slate-500 text-sm md:text-base leading-relaxed max-w-2xl"
+            >
+               KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. We empower businesses with innovative spaces, world-class infrastructure, and unmatched Services.
+            </motion.p>
+          </div>
+
+          {/* Right Column: Vision Card */}
+          <div className="md:col-span-5 w-full">
+            <motion.div
+              initial={{ opacity: 0, x: 25 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="p-6 sm:p-8 border border-slate-100 bg-white shadow-md rounded-[20px] w-full flex flex-col gap-4 text-left"
+            >
+              <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-xs">
+                <Eye className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Our Vision</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mt-2">
+                  To redefine premium commercial environments that combine design, functionality, and sustainability, establishing new benchmarks for corporate spaces.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
         </div>
       </section>
 
-      {/* 2. VISION & MISSION CARDS */}
-      <section className="py-8 max-w-2xl mx-auto px-6 md:px-12 flex justify-center w-full">
-        <motion.div
-          initial={{ opacity: 0, x: -25 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ type: "spring", damping: 25 }}
-          className="p-5 border border-slate-100 bg-white shadow-xs hover:border-slate-200 hover:shadow-sm transition-all duration-200 rounded-xl w-full"
-        >
-          <div className="w-10 h-10 rounded-lg bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-500 shrink-0">
-            <TrendingUp className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold text-navy-900 mt-4">Our Vision</h3>
-          <p className="text-slate-600 text-sm leading-relaxed mt-2">
-            To create premium commercial environments that combine modern design, functionality, and sustainability, establishing a benchmark for corporate workspaces.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* 4. ARCHITECTURAL HIGHLIGHTS */}
-      <section className="py-10 md:py-16 border-y border-slate-200/50 bg-[#F8FAFC] w-full">
-        <div className="flex flex-col gap-8 max-w-[90rem] mx-auto px-6 md:px-12">
-          <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
-            <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">Establishment & Location</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
+      {/* 2. OUR LANDMARK IN KURLA & STATS */}
+      <section className="py-12 border-t border-slate-100 bg-[#FAFBFC] w-full">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col gap-8 text-center items-center">
+          
+          <div className="flex flex-col items-center gap-2 max-w-xl mx-auto select-none">
+            <span className="text-[10px] font-bold text-[#0055d4] uppercase tracking-widest">Our Landmark in Kurla</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
               Kohinoor Commercial-II
             </h2>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD.
-              <br />Is situated within a prestigious and thriving commercial hub in Mumbai.
+            <div className="w-12 h-[2px] bg-[#0055d4] rounded-full mt-1.5" />
+            <p className="text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed">
+              KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD <br className="hidden sm:inline" />
+              is dedicated to creating spaces that inspire growth and lasting relationships.
             </p>
           </div>
 
-          <div className="py-4 px-8 rounded-2xl border border-slate-200/80 bg-gradient-to-r from-white to-slate-50/50 shadow-xs flex flex-col items-center gap-2 w-max max-w-full mx-auto mt-4">
-            <h3 className="text-xl md:text-2xl font-extrabold text-navy-900 tracking-tight">
-              Our Engaged Clients
-            </h3>
-            {/* Underline covering the entire width of the box */}
-            <div className="w-full h-[2px] bg-gradient-to-r from-sky-400 via-sky-500 to-sky-400 rounded-full shadow-2xs" />
+          {/* Stats Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100/85 bg-white border border-slate-100 rounded-2xl p-4 sm:p-5 shadow-xs max-w-4xl w-full select-none items-center mt-2">
+            
+            {/* Stat 1 */}
+            <div className="flex items-center gap-3.5 justify-center py-3 md:py-1">
+              <div className="w-10 h-10 rounded-full bg-blue-50/50 border border-blue-100/40 flex items-center justify-center text-blue-600 shrink-0">
+                <Building className="w-5 h-5 stroke-[2]" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-lg font-black text-slate-900 leading-none">4</span>
+                <span className="text-[8px] font-bold text-slate-450 uppercase tracking-wider mt-1">Towers</span>
+              </div>
+            </div>
+
+            {/* Stat 2 */}
+            <div className="flex items-center gap-3.5 justify-center py-3 md:py-1 px-2">
+              <div className="w-10 h-10 rounded-full bg-blue-50/50 border border-blue-100/40 flex items-center justify-center text-blue-600 shrink-0">
+                <Maximize2 className="w-5 h-5 stroke-[2]" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-lg font-black text-slate-900 leading-none">4.5M+</span>
+                <span className="text-[8px] font-bold text-slate-450 uppercase tracking-wider mt-1">Sq. Ft. Built-up Area</span>
+              </div>
+            </div>
+
+            {/* Stat 3 */}
+            <div className="flex items-center gap-3.5 justify-center py-3 md:py-1 px-2">
+              <div className="w-10 h-10 rounded-full bg-blue-50/50 border border-blue-100/40 flex items-center justify-center text-blue-600 shrink-0">
+                <Users className="w-5 h-5 stroke-[2]" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-lg font-black text-slate-900 leading-none">10+</span>
+                <span className="text-[8px] font-bold text-slate-450 uppercase tracking-wider mt-1">Businesses</span>
+              </div>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="flex items-center gap-3.5 justify-center py-3 md:py-1">
+              <div className="w-10 h-10 rounded-full bg-blue-50/50 border border-blue-100/40 flex items-center justify-center text-blue-600 shrink-0">
+                <ShieldCheck className="w-5 h-5 stroke-[2]" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-lg font-black text-slate-900 leading-none">1</span>
+                <span className="text-[8px] font-bold text-slate-450 uppercase tracking-wider mt-1">Vision</span>
+              </div>
+            </div>
+
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
+        </div>
+      </section>
+
+      {/* 3. OUR ENGAGED CLIENTS / TOWERS GRID */}
+      <section className="py-12 bg-white w-full border-t border-slate-100">
+        <div className="max-w-[90rem] mx-auto px-6 md:px-12 flex flex-col gap-10">
+          
+          {/* Header */}
+          <div className="flex flex-col items-center gap-2 max-w-xl mx-auto select-none">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              Our Engaged Clients
+            </h2>
+            <div className="w-12 h-[2px] bg-[#0055d4] rounded-full mt-1" />
+          </div>
+
+          {/* Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {towersData.map((tower, idx) => (
               <motion.div
                 key={tower.id}
@@ -137,75 +206,49 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="relative overflow-hidden p-6 rounded-xl border border-slate-200/60 bg-gradient-to-b from-white to-slate-50/50 hover:shadow-sm hover:-translate-y-1 hover:border-sky-500/30 transition-all duration-300 flex flex-col justify-between"
+                className="relative overflow-hidden p-6 rounded-2xl border border-slate-100 bg-white hover:border-sky-200 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
               >
-                {/* Large watermark number on top right */}
-                <div className="absolute -top-1 -right-2 text-6xl font-black text-slate-200/50 select-none pointer-events-none font-display tracking-tighter">
-                  0{idx + 1}
-                </div>
-
-                <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                  {tower.offices && tower.offices.length > 0 ? (
-                    <div className="flex flex-col gap-4">
-                      <div>
-                        <div className="flex items-center gap-4 mb-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500/10 to-blue-500/5 border border-sky-500/10 flex items-center justify-center text-sky-600 shrink-0 shadow-xs">
-                            <Building className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-black text-navy-900 leading-none">{tower.name}</h4>
-                            <p className="text-[10px] text-sky-600 font-bold tracking-widest uppercase mt-1">{tower.sub}</p>
-                          </div>
-                        </div>
-
-                        {tower.description && (
-                          <p className="text-slate-600 text-xs md:text-sm leading-relaxed mb-1 font-medium font-sans">
-                            {tower.description}
-                          </p>
-                        )}
+                <div className="flex flex-col gap-4 h-full justify-between">
+                  <div>
+                    {/* Tower Badge & Name */}
+                    <div className="flex items-center gap-3 mb-4 select-none">
+                      <div className="w-6 h-6 rounded bg-[#0055d4] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                        0{idx + 1}
                       </div>
-
-                      <div className="flex flex-col gap-1 border-t border-slate-200 pt-3">
-                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1 text-center">
-                          Associated Offices
-                        </div>
-                        <div className="flex flex-col gap-0.5">
-                          {tower.offices.map((office, oIdx) => (
-                            <div
-                              key={oIdx}
-                              className="text-center text-slate-700 font-semibold text-xs tracking-wide leading-relaxed py-0.5"
-                            >
-                              {office}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                      <h4 className="text-base font-extrabold text-slate-900 leading-none">{tower.name}</h4>
                     </div>
-                  ) : (
-                    <div className="flex flex-col h-full justify-between gap-6">
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500/10 to-blue-500/5 border border-sky-500/10 flex items-center justify-center text-sky-600 shrink-0 shadow-xs">
-                            <Building className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-black text-navy-900 leading-none">{tower.name}</h4>
-                            <p className="text-[10px] text-sky-600 font-bold tracking-widest uppercase mt-1">{tower.sub}</p>
-                          </div>
-                        </div>
 
-                        {tower.description && (
-                          <p className="text-slate-600 text-xs md:text-sm leading-relaxed font-medium font-sans">
-                            {tower.description}
-                          </p>
-                        )}
-                      </div>
+                    {/* Tower Description */}
+                    {tower.description && (
+                      <p className="text-slate-550 text-[11px] sm:text-xs leading-relaxed mb-4">
+                        {tower.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Associated Offices (Prestigious Partners) */}
+                  {tower.offices && tower.offices.length > 0 && (
+                    <div className="flex flex-col gap-2 border-t border-slate-100 pt-4 mt-auto">
+                      <span className="text-[8px] font-extrabold text-[#0055d4] uppercase tracking-wider">
+                        Our Clients
+                      </span>
+                      <ul className="flex flex-col gap-1.5">
+                        {tower.offices.map((office, oIdx) => (
+                          <li
+                            key={oIdx}
+                            className="text-slate-600 font-semibold text-[10.5px] leading-snug tracking-wide list-none pl-0 text-left"
+                          >
+                            {office}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
               </motion.div>
             ))}
           </div>
+
         </div>
       </section>
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, ChevronLeft, ChevronRight, X, Star, Sparkles } from "lucide-react";
+import { Compass, ChevronLeft, ChevronRight, X, Star, Sparkles, Users } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { getDb, EventItem } from "@/app/actions";
 
@@ -400,36 +400,37 @@ export default function EventsPage() {
     <div className="flex flex-col w-full pb-12 overflow-hidden">
       
       {/* 1. HEADER PAGE BANNER */}
-      <section className="relative pt-16 pb-10 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
         {/* Glow backdrop */}
         <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
+        <div className="max-w-3xl flex flex-col gap-4 text-left relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-sky-50 border border-sky-100 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
+            className="inline-flex items-center gap-1.5 text-[#0055d4] text-[10px] font-bold uppercase tracking-wider select-none"
           >
-            <Compass className="w-3.5 h-3.5 text-sky-400 animate-spin-slow" />
-            <span>Community Events</span>
+            <Users className="w-3.5 h-3.5 shrink-0" />
+            <span>COMMUNITY EVENTS</span>
           </motion.div>
           
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15]"
           >
-            Community Gatherings & Cultural Events
+            Community Gatherings & <br className="hidden sm:inline" />
+            <span className="text-[#0055d4]">Cultural Events</span>
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-600 text-sm md:text-base leading-relaxed"
+            className="text-slate-505 text-sm md:text-base leading-relaxed max-w-2xl"
           >
-            Bringing our corporate community together. Join our regular festive celebrations, employee engagement contests, wellness workshops, and social care drives.
+            Bringing our corporate community together. Join our regular festive celebrations, employee engagement initiatives, and cultural events.
           </motion.p>
         </div>
       </section>
