@@ -279,7 +279,7 @@
         "description": "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
         "price": 250,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 10
+        "quantity": 13
       },
       {
         "id": "plant-areca",
@@ -1481,6 +1481,38 @@
       "emailSentTimestamp": "2026-06-24T08:22:28.412Z",
       "whatsAppSentTimestamp": "2026-06-24T08:22:28.499Z",
       "whatsAppMessageId": "sim_meta_1782289348478"
+    },
+    {
+      "id": "KOH-NUR-20260703-00001",
+      "orderId": "order_mock_1783075877556",
+      "serviceType": "Nursery",
+      "date": "2026-07-03T10:51:25.325Z",
+      "customerName": "Aditya yadav",
+      "customerPhone": "9372025677",
+      "customerEmail": "adi144.yadav@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 3
+        }
+      ],
+      "totalAmountPaid": 750,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "sent",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-07-03T10:51:30.244Z",
+          "status": "success",
+          "messageId": "sim_meta_1783075890220"
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-07-03T10:51:30.172Z",
+      "whatsAppSentTimestamp": "2026-07-03T10:51:30.244Z",
+      "whatsAppMessageId": "sim_meta_1783075890220"
     }
   ],
   "orders": [
@@ -1847,6 +1879,27 @@
       "receiptNumber": "KOH-NUR-20260624-00001",
       "createdAt": "2026-06-24T08:22:22.942Z",
       "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1783075877556",
+      "customerName": "Aditya yadav",
+      "customerEmail": "adi144.yadav@gmail.com",
+      "customerPhone": "9372025677",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 3
+        }
+      ],
+      "amount": 750,
+      "transactionId": "pay_sim_1783075884619",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260703-00001",
+      "createdAt": "2026-07-03T10:51:25.325Z",
+      "orderStatus": "placed"
     }
   ],
   "receiptLogs": [
@@ -1974,6 +2027,13 @@
       "orderId": "order_mock_1782289336656",
       "emailStatus": "sent",
       "emailSentAt": "2026-06-24T08:22:28.412Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260703-00001",
+      "orderId": "order_mock_1783075877556",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-07-03T10:51:30.172Z",
       "resendCount": 0
     }
   ],

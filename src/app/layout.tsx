@@ -59,6 +59,56 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakartaSans.variable} ${outfit.variable} antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var ignoreExtensionErrors = function(e) {
+                  var isExtension = false;
+                  if (e && e.error && e.error.stack && e.error.stack.includes('chrome-extension://')) {
+                    isExtension = true;
+                  }
+                  if (e && e.filename && e.filename.includes('chrome-extension://')) {
+                    isExtension = true;
+                  }
+                  if (e && e.message && (e.message.includes('MetaMask') || e.message.includes('Failed to connect to MetaMask'))) {
+                    isExtension = true;
+                  }
+                  if (isExtension) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                };
+                var ignorePromiseRejections = function(e) {
+                  var isExtension = false;
+                  if (e && e.reason) {
+                    var reasonStr = '';
+                    if (e.reason.stack) {
+                      reasonStr = e.reason.stack;
+                    } else if (e.reason.message) {
+                      reasonStr = e.reason.message;
+                    } else {
+                      try {
+                        reasonStr = JSON.stringify(e.reason);
+                      } catch(err) {}
+                    }
+                    if (reasonStr && (reasonStr.includes('chrome-extension://') || reasonStr.includes('MetaMask') || reasonStr.includes('Failed to connect to MetaMask'))) {
+                      isExtension = true;
+                    }
+                  }
+                  if (isExtension) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                };
+                window.addEventListener('error', ignoreExtensionErrors, true);
+                window.addEventListener('unhandledrejection', ignorePromiseRejections, true);
+              })();
+            `
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col font-sans bg-slate-50 text-navy-900 selection:bg-sky-500/20 selection:text-sky-900">
         <SmoothScroll>
           {/* Ambient scrolling glowing backdrops */}
