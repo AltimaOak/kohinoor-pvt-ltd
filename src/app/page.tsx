@@ -5,28 +5,21 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Building2,
   Award,
-  ShieldAlert,
   Compass,
   ArrowUpRight,
   CheckCircle2,
   Mail,
-  Send,
-  MessageSquare,
   MapPin,
   Phone,
   Zap,
   Shield,
-  Cpu,
   Video,
   ArrowUpDown,
-  Lock,
   Car,
   BatteryCharging,
   Flame,
   HeartPulse,
-  Flower2,
   ShoppingCart,
   Soup,
   Plane,
@@ -106,10 +99,10 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full pb-20 overflow-hidden">
+    <div className="flex flex-col w-full pb-12 overflow-hidden">
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[92vh] w-full flex items-center overflow-hidden">
+      <section className="relative min-h-[75vh] w-full flex items-center overflow-hidden">
         {/* Background Image - Sharp and Un-blurred */}
         <div className="absolute inset-0 z-0">
           <img
@@ -121,28 +114,29 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-slate-950/20" />
         </div>
 
-        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pt-28 pb-10 relative z-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center w-full">
-            {/* Hero Content (8 Columns) - sitting over the brightened background */}
+        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pt-20 pb-8 relative z-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center w-full">
+            {/* Hero Content (8 Columns) */}
             <div className="lg:col-span-8 flex flex-col gap-3 text-left max-w-2xl">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-2"
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-gradient-sky-light leading-[1.1] drop-shadow-[0_4px_16px_rgba(15,23,42,0.7)]">
-                  Where Business Meets
+                <span className="text-[11px] font-bold text-sky-400 uppercase tracking-widest">
+                  Welcome to Kohinoor
+                </span>
+                <h1 className="text-4xl md:text-5xl lg:text-6.5xl font-black font-display tracking-tight text-white leading-[1.1]">
+                  Where Business Meets Opportunity
                 </h1>
-                {/* Thick Blue Underline */}
-                <div className="w-full max-w-[28rem] h-[4px] bg-sky-500 rounded-full shadow-xs" />
               </motion.div>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-white text-base md:text-lg leading-relaxed max-w-xl mt-0.5 drop-shadow-[0_2px_8px_rgba(15,23,42,0.8)] font-semibold"
+                className="text-slate-100 text-sm md:text-base leading-relaxed max-w-xl mt-0.5 font-medium"
               >
                 KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. A Commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
               </motion.p>
@@ -155,7 +149,7 @@ export default function LandingPage() {
               >
                 <Link
                   href="#about"
-                  className="group flex items-center gap-2.5 px-8 py-4 rounded-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300"
+                  className="group flex items-center gap-2 px-6 py-3 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs uppercase tracking-wider transition-all duration-300"
                 >
                   <span>About Us</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -169,56 +163,56 @@ export default function LandingPage() {
 
 
       {/* 3. ABOUT PREVIEW SECTION */}
-      <section id="about" className="pt-10 md:pt-12 pb-12 md:pb-16 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      <section id="about" className="pt-8 md:pt-10 pb-10 md:pb-12 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Left Side: Text Columns (7 Columns) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="lg:col-span-7 flex flex-col gap-6"
+          className="lg:col-span-7 flex flex-col gap-4"
         >
           <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
-            <Award className="w-4.5 h-4.5 text-sky-400" />
+            <Award className="w-4 h-4 text-sky-500" />
             Establishment & Location
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 font-display leading-tight">
             Kohinoor Commercial - II
           </h2>
           <p className="text-slate-600 text-sm md:text-base leading-relaxed">
             Kohinoor Commercial - II in Kurla West, Mumbai is a premier commercial destination that satisfactorily caters to the demands of its customer base. Built on a core belief of customer centricity, the business park has established long-term relationships and built an outstanding reputation.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
             <div className="flex gap-4 group">
-              <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
-                <Compass className="w-5 h-5 text-sky-500 group-hover:text-white transition-colors" />
+              <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:border-sky-200 group-hover:bg-sky-50/50 transition-colors duration-300">
+                <Compass className="w-5 h-5 text-slate-500 group-hover:text-sky-600 transition-colors" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-sm font-bold text-navy-900">Kurla West Commercial Hub</h4>
-                <p className="text-slate-500 text-xs mt-1.5 leading-relaxed">
+                <h4 className="text-sm font-semibold text-slate-950">Kurla West Commercial Hub</h4>
+                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                   Ideally situated in Kurla West, Mumbai, providing prime business accessibility and connectivity.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4 group">
-              <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
-                <CheckCircle2 className="w-5 h-5 text-sky-500 group-hover:text-white transition-colors" />
+              <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:border-sky-200 group-hover:bg-sky-50/50 transition-colors duration-300">
+                <CheckCircle2 className="w-5 h-5 text-slate-500 group-hover:text-sky-600 transition-colors" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-sm font-bold text-navy-900">Customer Centricity</h4>
-                <p className="text-slate-500 text-xs mt-1.5 leading-relaxed">
+                <h4 className="text-sm font-semibold text-slate-950">Customer Centricity</h4>
+                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                   Prioritizing a positive customer experience and top-notch quality for all business operations.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-2">
             <Link
               href="/about"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 uppercase tracking-widest hover:text-navy-900 transition-colors group"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 uppercase tracking-widest hover:text-sky-700 transition-colors group"
             >
               <span>Learn About the Infrastructure</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -234,13 +228,13 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex items-start gap-5 group"
+            className="p-5 sm:p-6 rounded-xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-xs transition-all duration-200 flex items-start gap-5 group"
           >
-            <div className="p-3 bg-sky-500/10 border border-sky-400/20 rounded-2xl text-sky-600 font-bold text-xs uppercase tracking-wider shrink-0">
+            <div className="px-2.5 py-1 bg-sky-50 border border-sky-100 rounded-md text-sky-600 font-bold text-[10px] uppercase tracking-wider shrink-0">
               TRUST
             </div>
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">100+ Reviews</h4>
+              <h4 className="text-sm font-semibold text-slate-950 group-hover:text-sky-600 transition-colors">100+ Reviews</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
                 Strong reputation built on trust, quality offerings, and long-term customer relationships.
               </p>
@@ -250,9 +244,9 @@ export default function LandingPage() {
       </section>
 
       {/* 4. CORE AMENITIES GRID */}
-      <section className="py-12 md:py-16 border-y border-slate-200/50 bg-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16 w-full">
-          <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
+      <section className="py-10 md:py-12 border-y border-slate-200/50 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-10 w-full">
+          <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">PREMISES & AMENITIES</span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
               Core Building Amenities
@@ -262,7 +256,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
               { label: "Tranquil Massage Room", icon: MassageChairIcon, desc: "Re-energize your mind and body with our massage chair therapy" },
@@ -282,13 +276,13 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
-                  className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col items-center text-center gap-4 group"
+                  className="p-4 sm:p-5 rounded-xl border border-slate-100 bg-white hover:border-slate-200 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-350 shrink-0">
-                    <IconComp className="w-6 h-6 stroke-[2]" />
+                  <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-sky-50 group-hover:border-sky-200 group-hover:text-sky-600 transition-all duration-300 shrink-0">
+                    <IconComp className="w-5.5 h-5.5 stroke-[1.8]" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">{item.label}</h4>
+                    <h4 className="text-xs font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">{item.label}</h4>
                     <p className="text-[10px] text-slate-500 leading-normal">{item.desc}</p>
                   </div>
                 </motion.div>
@@ -299,8 +293,8 @@ export default function LandingPage() {
       </section>
 
       {/* 5. INTERACTIVE GALLERY SECTION */}
-      <section className="pt-12 md:pt-16 pb-8 md:pb-12 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16">
-        <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
+      <section className="pt-10 md:pt-12 pb-6 md:pb-8 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-8">
+        <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
           <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">COMPLEX SHOWCASE</span>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
             Visual Landmark Quality
@@ -314,11 +308,11 @@ export default function LandingPage() {
       </section>
 
       {/* 6. NEARBY LANDMARKS SECTION */}
-      <section className="pt-8 md:pt-12 pb-12 md:pb-16 bg-white text-slate-800 relative w-full">
+      <section className="pt-6 md:pt-8 pb-10 md:pb-12 bg-white text-slate-800 relative w-full">
         <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left side: Header info */}
-            <div className="lg:col-span-5 flex flex-col gap-6 text-left">
+            <div className="lg:col-span-5 flex flex-col gap-4 text-left">
               <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
                 <Compass className="w-4.5 h-4.5 text-sky-500 animate-spin-slow" />
                 Connectivity & Location
@@ -340,9 +334,9 @@ export default function LandingPage() {
 
             {/* Right side: Landmarks list widget styled like the image */}
             <div className="lg:col-span-7 w-full max-w-lg mx-auto lg:ml-auto">
-              <div className="rounded-3xl border border-slate-200/60 bg-white shadow-sm p-6 sm:p-8 flex flex-col gap-6">
-                <h3 className="text-lg font-bold tracking-tight text-navy-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-sky-500" />
+              <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 flex flex-col gap-4">
+                <h3 className="text-base font-bold tracking-tight text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-2">
+                  <MapPin className="w-4.5 h-4.5 text-sky-500" />
                   <span>Nearby Landmarks</span>
                 </h3>
 
@@ -389,17 +383,17 @@ export default function LandingPage() {
                     return (
                       <div
                         key={idx}
-                        className={`flex items-start gap-4 py-4 ${
-                          idx !== 4 ? "border-b border-slate-100" : ""
-                        } hover:bg-slate-50/80 px-2 rounded-xl transition-all duration-200`}
+                        className={`flex items-start gap-4 py-2 ${
+                          idx !== 5 ? "border-b border-slate-100" : ""
+                        } hover:bg-slate-50 px-2 rounded-lg transition-all duration-200`}
                       >
-                        <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/10 flex items-center justify-center shrink-0 text-sky-500">
-                          <LandmarkIcon className="w-5 h-5" />
+                        <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 text-slate-500">
+                          <LandmarkIcon className="w-4.5 h-4.5" />
                         </div>
                         <div className="flex flex-col text-left">
-                          <h4 className="text-sm font-bold text-navy-900 leading-normal">{landmark.name}</h4>
-                          <p className="text-xs text-slate-500 mt-1">
-                            <span className="font-extrabold text-sky-600">{landmark.distance}</span>
+                          <h4 className="text-sm font-semibold text-slate-900 leading-normal">{landmark.name}</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            <span className="font-semibold text-sky-600">{landmark.distance}</span>
                             {landmark.time && (
                               <span className="text-slate-400 font-medium"> ({landmark.time})</span>
                             )}
@@ -416,9 +410,9 @@ export default function LandingPage() {
       </section>
 
       {/* 7. LEASING ENQUIRY & CONTACT SECTION */}
-      <section id="contact" className="py-12 md:py-16 max-w-7xl mx-auto px-6 md:px-12 w-full">
-        <div className="flex flex-col gap-12 text-center items-center">
-          <div className="flex flex-col gap-3 items-center">
+      <section id="contact" className="py-10 md:py-12 max-w-7xl mx-auto px-6 md:px-12 w-full">
+        <div className="flex flex-col gap-8 text-center items-center">
+          <div className="flex flex-col gap-2 items-center">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
               <Mail className="w-4.5 h-4.5 text-sky-400" />
               Corporate Relations
@@ -426,12 +420,12 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
               Contact & Address
             </h2>
-            <p className="text-slate-600 text-sm leading-relaxed mt-2 max-w-lg">
+            <p className="text-slate-600 text-sm leading-relaxed mt-0.5 max-w-lg">
               Interested in establishing your headquarters or acquiring commercial space? Reach out directly to our team.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-8 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-4 text-left">
             {/* Site Address Card */}
             {contacts && (
               <motion.div
@@ -439,22 +433,22 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="p-6 border border-slate-200 bg-white shadow-sm flex flex-col justify-between gap-6 hover:shadow-md hover:border-slate-300 transition-all duration-200 rounded-2xl min-h-[280px]"
+                className="p-5 border border-slate-100 bg-white shadow-xs flex flex-col justify-between gap-4 hover:shadow-sm hover:border-slate-200 transition-all duration-200 rounded-xl"
               >
-                <div className="flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-600 shrink-0">
-                    <MapPin className="w-5 h-5" />
+                <div className="flex flex-col gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                    <MapPin className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold block">Physical Site Address</span>
-                    <h4 className="text-base font-extrabold text-navy-900 leading-tight mt-1">Kohinoor Office Towers</h4>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Physical Site Address</span>
+                    <h4 className="text-sm font-bold text-slate-900 leading-tight mt-1">Kohinoor Office Towers</h4>
                   </div>
-                  <div className="w-full pt-4 border-t border-slate-100">
+                  <div className="w-full pt-3 border-t border-slate-100">
                     <a
                       href={contacts.siteAddressMapLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs font-semibold text-slate-600 hover:text-sky-600 transition-colors block leading-relaxed py-1 whitespace-pre-line"
+                      className="text-xs font-semibold text-slate-600 hover:text-sky-600 transition-colors block leading-relaxed py-0.5 whitespace-pre-line"
                       title={contacts.siteAddress}
                     >
                       {contacts.siteAddress}
@@ -462,12 +456,12 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div>
+                <div className="pt-2">
                   <a
                     href={contacts.siteAddressMapLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-all duration-200 font-bold text-xs shadow-sm"
+                    className="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white transition-all duration-300 font-semibold text-xs"
                   >
                     View on Maps
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -484,38 +478,38 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.1 * (idx + 1) }}
-                className="p-6 border border-slate-200 bg-white shadow-sm flex flex-col justify-between gap-6 hover:shadow-md hover:border-slate-300 transition-all duration-200 rounded-2xl min-h-[280px] w-full"
+                className="p-5 border border-slate-100 bg-white shadow-xs flex flex-col justify-between gap-4 hover:shadow-sm hover:border-slate-200 transition-all duration-200 rounded-xl w-full"
               >
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <div>
-                    <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded bg-slate-100 border border-slate-200 text-slate-600">{mgr.category}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-slate-50 border border-slate-200 text-slate-600">{mgr.category}</span>
                   </div>
                   <div>
-                    <h4 className="text-base font-extrabold text-navy-900 leading-tight">{mgr.name}</h4>
-                    <p className="text-xs text-slate-500 font-semibold mt-1.5">{mgr.role}</p>
+                    <h4 className="text-sm font-bold text-slate-900 leading-tight">{mgr.name}</h4>
+                    <p className="text-xs text-slate-500 font-semibold mt-1">{mgr.role}</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3 pt-4 border-t border-slate-100 w-full mt-auto">
+                <div className="flex flex-col gap-3 pt-3 border-t border-slate-100 w-full mt-auto">
                   <a
                     href={`tel:${mgr.phone}`}
-                    className="group/btn flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300 w-full"
+                    className="group/btn flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-sky-200 hover:bg-sky-50/40 transition-all duration-300 w-full"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
-                      <Phone className="w-4 h-4" />
+                    <div className="w-7 h-7 rounded bg-slate-100 border border-slate-200/30 text-slate-500 flex items-center justify-center shrink-0 group-hover/btn:scale-105 transition-transform">
+                      <Phone className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors whitespace-nowrap overflow-x-auto no-scrollbar py-0.5">
+                    <span className="text-xs font-semibold text-slate-800 group-hover/btn:text-sky-600 transition-colors whitespace-nowrap overflow-x-auto no-scrollbar py-0.5">
                       {mgr.phone}
                     </span>
                   </a>
                   <a
                     href={`mailto:${mgr.email}`}
-                    className="group/btn flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-200/50 bg-white hover:border-sky-300 hover:bg-sky-500/5 transition-all duration-300 w-full"
+                    className="group/btn flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-sky-200 hover:bg-sky-50/40 transition-all duration-300 w-full"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-600 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
-                      <Mail className="w-4 h-4" />
+                    <div className="w-7 h-7 rounded bg-slate-100 border border-slate-200/30 text-slate-500 flex items-center justify-center shrink-0 group-hover/btn:scale-105 transition-transform">
+                      <Mail className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-bold text-navy-800 group-hover/btn:text-sky-600 transition-colors whitespace-nowrap overflow-x-auto no-scrollbar py-0.5">
+                    <span className="text-xs font-semibold text-slate-800 group-hover/btn:text-sky-600 transition-colors whitespace-nowrap overflow-x-auto no-scrollbar py-0.5">
                       {mgr.email}
                     </span>
                   </a>

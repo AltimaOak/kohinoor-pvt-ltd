@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
@@ -54,13 +55,15 @@ export default function Navbar() {
           scrolled ? "py-3.5" : "py-5"
         )}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-[85rem] mx-auto flex items-center justify-between">
           {/* Logo with double-tower SVG */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
             <div className="relative h-11 w-11 overflow-hidden rounded-xl shadow-md border border-slate-200/50 bg-white flex items-center justify-center group-hover:scale-105 group-hover:border-sky-400 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.25)] transition-all duration-300">
-              <img
+              <Image
                 src="/images/logo.png"
                 alt="Kohinoor City Logo"
+                width={44}
+                height={44}
                 className="h-full w-full object-contain p-1"
               />
             </div>
