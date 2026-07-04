@@ -71,80 +71,98 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* 2. CORPORATE HEADQUARTERS SECTION */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10 py-8 sm:py-10">
-        <div className="flex flex-col gap-4 text-center items-center">
-          <h3 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-            Corporate Headquarters
-          </h3>
-          
-          <ul className="flex flex-col gap-4 text-sm text-slate-600 text-left w-full mt-4 max-w-lg">
-            <motion.li
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-100 rounded-xl shadow-xs group hover:border-sky-300 transition-all duration-300"
-            >
-              <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 text-slate-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
-                <MapPin className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Office Address</span>
-                <a 
-                  href="https://maps.google.com/?q=Kohinoor+City,+B-2,+Commercial-2,+Kirol+Road,+Kurla+(W),+Mumbai-400070"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-800 font-semibold hover:text-sky-500 transition-colors leading-relaxed"
-                >
-                  Kohinoor City, B-2, Commercial-2, Kirol Road, Kurla (W), Mumbai-400070
-                </a>
-              </div>
-            </motion.li>
-
-            {managerEmails.length > 0 && (
-              <motion.li
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-100 rounded-xl shadow-xs group hover:border-sky-300 transition-all duration-300"
-              >
-                <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 text-slate-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div className="flex flex-col gap-1 min-w-0">
-                  <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Corporate & Operations Email</span>
-                  {managerEmails.map((email, idx) => (
-                    <a
-                      key={idx}
-                      href={`mailto:${email}`}
-                      className="text-slate-800 font-semibold hover:text-sky-500 transition-colors break-all"
-                    >
-                      {email}
-                    </a>
-                  ))}
-                </div>
-              </motion.li>
-            )}
-          </ul>
-        </div>
-      </section>
-
-      {/* 3. EMERGENCY CONTACTS DIRECTORY (Full Width, Neutral Background) */}
-      <section className="w-full bg-[#FAFBFC] border-y border-[#E8E8E8] py-10 sm:py-12 relative z-10">
-        <div className="max-w-6xl mx-auto px-6 md:px-8">
-          
-          {/* Header */}
-          <div className="flex flex-col items-center text-center max-w-[600px] mx-auto mb-8">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Emergency Contacts</span>
-            <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mt-1.5">
-              Emergency Contacts Directory
+      {/* 2. CONTACT DETAILS SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10">
+        <div className="flex flex-col gap-6 sm:gap-10">
+          <div className="flex flex-col gap-6 items-center">
+            <h3 className="text-xl font-extrabold text-navy-900 tracking-tight text-center">
+              Corporate Headquarters
             </h3>
-            <p className="text-slate-500 text-sm leading-relaxed mt-1.5">
-              Quick access to nearby emergency services. Tap any number to call instantly during emergencies.
-            </p>
-          </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full mt-4 items-stretch">
+              {/* Left Column: Contact Cards */}
+              <div className="lg:col-span-6 flex flex-col justify-center w-full">
+                <ul className="flex flex-col gap-5 text-sm text-slate-600 text-left w-full max-w-lg mx-auto lg:mx-0">
+                  <motion.li
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-200/40 rounded-[20px] sm:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
+                  >
+                    <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Physical Site Address</span>
+                      <a
+                        href={contacts.siteAddressMapLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-navy-800 font-bold mt-1.5 leading-relaxed hover:text-sky-500 transition-colors whitespace-pre-line"
+                      >
+                        {contacts.siteAddress}
+                      </a>
+                    </div>
+                  </motion.li>
+                  
+                  {managerEmails.length > 0 && (
+                    <motion.li
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="flex items-start gap-4 p-4 sm:p-5 bg-white border border-slate-200/40 rounded-[20px] sm:rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] group hover:border-sky-300 transition-all duration-300"
+                    >
+                      <div className="w-10.5 h-10.5 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center shrink-0 text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300">
+                        <Mail className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col gap-1.5 min-w-0">
+                        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Corporate & Operations Email</span>
+                        {managerEmails.map((email, idx) => (
+                          <a
+                            key={idx}
+                            href={`mailto:${email}`}
+                            className="text-navy-800 font-bold hover:text-sky-500 transition-colors break-all"
+                          >
+                            {email}
+                          </a>
+                        ))}
+                      </div>
+                    </motion.li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Right Column: Google Maps Iframe */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="lg:col-span-6 w-full h-[280px] sm:h-[340px] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:border-sky-300 hover:shadow-md transition-all duration-300"
+              >
+                <iframe
+                  title="Google Map showing corporate office address location"
+                  src="https://maps.google.com/maps?q=19.081129,72.886431&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                  className="w-full h-full border-0"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </motion.div>
+            </div>
+
+            {/* Emergency Contacts Section */}
+            <div className="w-full mt-10 sm:mt-16 max-w-5xl mx-auto">
+              <div className="flex flex-col items-center gap-2 mb-8 text-center">
+                <h3 className="text-xl md:text-2xl font-black text-navy-900 tracking-tight">
+                  Emergency Contacts Directory
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 max-w-md leading-relaxed">
+                  Important local emergency assistance numbers. Click on any contact number to launch your dialer immediately.
+                </p>
+              </div>
 
           {/* Grid */}
           <div role="tablist" className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full items-start">
