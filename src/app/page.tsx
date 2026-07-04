@@ -23,7 +23,8 @@ import {
   ShoppingCart,
   Soup,
   Plane,
-  Building
+  Building,
+  MoreVertical
 } from "lucide-react";
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
@@ -85,6 +86,7 @@ const MassageChairIcon = ({ className }: { className?: string }) => {
 
 export default function LandingPage() {
   const [contacts, setContacts] = useState<ContactsData | null>(null);
+  const [expandedReviews, setExpandedReviews] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
     async function loadContacts() {
@@ -244,16 +246,177 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="p-5 sm:p-6 rounded-xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-xs transition-all duration-200 flex items-start gap-5 group"
+            className="p-5 sm:p-6 rounded-3xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-xs transition-all duration-300 flex flex-col gap-4 group w-full relative overflow-hidden"
           >
-            <div className="px-2.5 py-1 bg-sky-50 border border-sky-100 rounded-md text-sky-600 font-bold text-[10px] uppercase tracking-wider shrink-0">
-              TRUST
+            <style dangerouslySetInnerHTML={{ __html: `
+              .reviews-scroll::-webkit-scrollbar {
+                width: 4px;
+              }
+              .reviews-scroll::-webkit-scrollbar-track {
+                background: transparent;
+              }
+              .reviews-scroll::-webkit-scrollbar-thumb {
+                background: #E2E8F0;
+                border-radius: 10px;
+              }
+              .reviews-scroll::-webkit-scrollbar-thumb:hover {
+                background: #CBD5E1;
+              }
+            `}} />
+
+            <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 w-full">
+              <div className="flex flex-col gap-2 text-left">
+                <h4 className="text-xl font-bold tracking-tight text-slate-900 leading-none">
+                  Kohinoor City Office Towers.
+                </h4>
+                <div className="flex items-center gap-1.5 text-blue-600 font-bold text-[10px] uppercase tracking-wider">
+                  <span>Verified Reviews</span>
+                  <svg className="w-3.5 h-3.5 text-blue-500 fill-current shrink-0" viewBox="0 0 24 24">
+                    <path d="M23 12l-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68L23 12zm-13 5l-4-4 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-0.5 shrink-0">
+                <div className="flex items-center gap-1">
+                  <span className="text-amber-500 text-sm">★</span>
+                  <span className="text-base font-bold text-slate-950">4.0</span>
+                </div>
+                <p className="text-[10px] text-slate-400 font-semibold">358 user reviews</p>
+              </div>
             </div>
-            <div className="flex flex-col gap-1">
-              <h4 className="text-sm font-semibold text-slate-950 group-hover:text-sky-600 transition-colors">100+ Reviews</h4>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Strong reputation built on trust, quality offerings, and long-term customer relationships.
-              </p>
+
+            <div 
+              className="flex flex-col gap-3.5 max-h-[400px] overflow-y-auto pr-1.5 reviews-scroll"
+            >
+              {[
+                {
+                  author: "Sudarshan",
+                  stars: 5,
+                  text: "The building is well designed and houses the State Bank of India and some others. Parking is poorly lit and full of auto-rickshaws which seem to parked for ages. One wonders why they are not plying on the road. There is a 1 ft wall that one",
+                  fullText: "The building is well designed and houses the State Bank of India and some others. Parking is poorly lit and full of auto-rickshaws which seem to parked for ages. One wonders why they are not plying on the road. There is a 1 ft wall that one has to cross or bypass to get into the building.",
+                  hasReadMore: true,
+                  initial: "S",
+                  avatarBg: "bg-[#fdf0e7] text-[#c2410c]"
+                },
+                {
+                  author: "ADITYA OJHA (Aditya)",
+                  stars: 5,
+                  text: "Quite good place for all the businesses. Perfect facilities and services available here. But it lacks in security when it is compared to",
+                  fullText: "Quite good place for all the businesses. Perfect facilities and services available here. But it lacks in security when it is compared to other business parks.",
+                  hasReadMore: true,
+                  initial: "A",
+                  avatarBg: "bg-[#f0f9ff] text-[#0369a1]"
+                },
+                {
+                  author: "Nitin R.",
+                  stars: 5,
+                  text: "Good corporate offices hub but area surrounding are congested during peak traffic hours.",
+                  hasReadMore: false,
+                  initial: "N",
+                  avatarBg: "bg-[#f5f3ff] text-[#6d28d9]"
+                },
+                {
+                  author: "Saurabh P.",
+                  stars: 5,
+                  text: "Well maintained business park, neat and clean with multiple amenities. Great location and connectivity.",
+                  hasReadMore: false,
+                  initial: "S",
+                  avatarBg: "bg-[#fff1f2] text-[#be123c]"
+                },
+                {
+                  author: "Sameer S.",
+                  stars: 5,
+                  text: "Best office location in Kurla, very close to BKC and local railway station.",
+                  hasReadMore: false,
+                  initial: "S",
+                  avatarBg: "bg-[#ecfdf5] text-[#047857]"
+                },
+                {
+                  author: "Kiran M.",
+                  stars: 5,
+                  text: "The security is very strict, cleanliness is top notch. High class commercial offices.",
+                  hasReadMore: false,
+                  initial: "K",
+                  avatarBg: "bg-[#f0fdfa] text-[#0f766e]"
+                },
+                {
+                  author: "Prakash B.",
+                  stars: 4,
+                  text: "Good place to work, fast lifts and clean washrooms. Parking space is also available.",
+                  hasReadMore: false,
+                  initial: "P",
+                  avatarBg: "bg-[#ecfeff] text-[#0e7490]"
+                },
+                {
+                  author: "Sheetal T.",
+                  stars: 4,
+                  text: "Nice commercial complex, standard facilities. Food options are close by.",
+                  hasReadMore: false,
+                  initial: "S",
+                  avatarBg: "bg-[#fdf4ff] text-[#a21caf]"
+                },
+                {
+                  author: "Sunita D.",
+                  stars: 5,
+                  text: "Beautiful architecture, clean lobbies. Very professional crowd.",
+                  hasReadMore: false,
+                  initial: "S",
+                  avatarBg: "bg-[#fffbeb] text-[#b45309]"
+                },
+                {
+                  author: "Ashish G.",
+                  stars: 5,
+                  text: "Premium office infrastructure, well-connected to LBS road and BKC.",
+                  hasReadMore: false,
+                  initial: "A",
+                  avatarBg: "bg-[#fdf2f8] text-[#be185d]"
+                }
+              ].map((rev, idx) => {
+                const isExpanded = expandedReviews[idx];
+                const displayText = rev.hasReadMore
+                  ? (isExpanded ? rev.fullText : rev.text)
+                  : rev.text;
+
+                return (
+                  <div key={idx} className="flex gap-3 pb-4 border-b border-slate-100 last:pb-0 last:border-b-0">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${rev.avatarBg}`}>
+                      {rev.initial}
+                    </div>
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-xs font-bold text-slate-900 truncate text-left">
+                          {rev.author}
+                        </span>
+                      </div>
+                      <div className="flex text-amber-500 text-[10px] leading-none mt-0.5">
+                        {Array.from({ length: rev.stars }).map((_, i) => (
+                          <span key={i}>★</span>
+                        ))}
+                        {Array.from({ length: 5 - rev.stars }).map((_, i) => (
+                          <span key={i} className="text-slate-200">★</span>
+                        ))}
+                      </div>
+                      <p className="text-slate-600 text-[11px] leading-normal mt-1.5 font-normal text-left">
+                        {displayText}
+                      </p>
+                      {rev.hasReadMore && (
+                        <button
+                          onClick={() => setExpandedReviews(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                          className="text-blue-600 font-bold text-[10px] mt-1.5 hover:underline cursor-pointer block text-left"
+                        >
+                          {isExpanded ? "Read less" : "Read more"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-3.5 border-t border-slate-100 flex items-center justify-center w-full text-xs text-slate-400 font-semibold">
+              <span className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors cursor-pointer shrink-0">
+                ↓ Scroll to read more
+              </span>
             </div>
           </motion.div>
         </div>

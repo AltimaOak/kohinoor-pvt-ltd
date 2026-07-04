@@ -144,21 +144,24 @@ export default function ContactPage() {
               <span className="text-sm font-semibold">Our Location</span>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="w-full h-[200px] sm:h-[330px] rounded-2xl overflow-hidden border border-slate-150 bg-white shadow-xs hover:shadow-sm transition-all duration-300"
-            >
-              <iframe
-                title="Google Map showing corporate office address location"
-                src="https://maps.google.com/maps?q=19.081129,72.886431&t=&z=17&ie=UTF8&iwloc=&output=embed"
-                className="w-full h-full border-0"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </motion.div>
+              {/* Right Column: Google Maps Iframe */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="lg:col-span-6 w-full h-[280px] sm:h-[340px] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:border-sky-300 hover:shadow-md transition-all duration-300"
+              >
+                <iframe
+                  title="Google Map showing corporate office address location"
+                  src="https://maps.google.com/maps?q=19.081129,72.886431&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                  className="w-full h-full border-0"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </motion.div>
+            </div>
           </div>
 
         </div>
@@ -469,7 +472,8 @@ export default function ContactPage() {
             </motion.div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* 4. ADMIN & OPERATIONS DIRECTORY SECTION */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10 py-10">

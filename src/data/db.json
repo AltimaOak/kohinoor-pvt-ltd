@@ -10,7 +10,14 @@
         "High Tea",
         "Patriotic Music",
         "Cultural Speeches"
-      ]
+      ],
+      "images": [
+        "/uploads/1783171624428_WhatsApp_Image_2026-07-03_at_3.55.40_PM.jpeg",
+        "/uploads/1783171635089_WhatsApp_Image_2026-07-03_at_3.55.45_PM.jpeg",
+        "/uploads/1783171635203_WhatsApp_Image_2026-07-03_at_3.55.44_PM.jpeg",
+        "/uploads/1783171640269_WhatsApp_Image_2026-07-03_at_3.55.41_PM.jpeg"
+      ],
+      "imageSrc": "/uploads/1783171624428_WhatsApp_Image_2026-07-03_at_3.55.40_PM.jpeg"
     },
     {
       "id": "evt-1782286309669",
@@ -31,8 +38,14 @@
       "title": "Women's day celebration",
       "desc": "Women's Day is celebrated on March 8th to honor women's social, economic, cultural, and political achievements while advocating for gender equality. Celebrations include panel discussions, career mentorship programs, charity fundraisers, and community events centered around global themes like \"Give to Gain\" and \"Rights. Justice. Action.",
       "iconName": "Calendar",
-      "imageSrc": "",
-      "images": [],
+      "imageSrc": "/uploads/1783171526773_WhatsApp_Image_2026-07-03_at_3.54.01_PM.jpeg",
+      "images": [
+        "/uploads/1783171526773_WhatsApp_Image_2026-07-03_at_3.54.01_PM.jpeg",
+        "/uploads/1783171536248_WhatsApp_Image_2026-07-03_at_3.53.59_PM.jpeg",
+        "/uploads/1783171536350_WhatsApp_Image_2026-07-03_at_3.54.00_PM.jpeg",
+        "/uploads/1783171536441_WhatsApp_Image_2026-07-03_at_3.54.02PM.jpeg",
+        "/uploads/1783171549592_WhatsApp_Image_2026-07-03_at_3.52.55_PM.jpeg"
+      ],
       "highlights": [
         "Guest Panelists",
         "Mentorship Programs",
@@ -46,9 +59,12 @@
       "desc": "Ganesh Chaturthi is a vibrant Hindu festival honoring Lord Ganesha,The celebration features installing clay idols in homes and massive public pandals (temporary shrines), daily aartis (prayers), and feasts of sweets like modak",
       "iconName": "Activity",
       "images": [
-        "/uploads/1783066356350_WhatsApp_Image_2026-07-03_at_1.40.52_PM.jpeg"
+        "/uploads/1783171486993_WhatsApp_Image_2026-07-03_at_1.41.32_PM.jpeg",
+        "/uploads/1783171494108_WhatsApp_Image_2026-07-03_at_1.40.52_PM.jpeg",
+        "/uploads/1783171501516_WhatsApp_Image_2026-07-03_at_1.41.31_PM.jpeg",
+        "/uploads/1783171501611_WhatsApp_Image_2026-07-03_at_1.41.59_PM.jpeg"
       ],
-      "imageSrc": "/uploads/1783066356350_WhatsApp_Image_2026-07-03_at_1.40.52_PM.jpeg",
+      "imageSrc": "/uploads/1783171486993_WhatsApp_Image_2026-07-03_at_1.41.32_PM.jpeg",
       "highlights": [
         "Cultural",
         "Free Entry",
@@ -168,7 +184,7 @@
     },
     {
       "id": "gal-ext-2",
-      "title": "Corporate Walkway & Plaza",
+      "title": "Corporate Gateway",
       "category": "exterior",
       "categoryLabel": "Exterior",
       "src": "/images/walkway_plaza.png",
@@ -176,7 +192,7 @@
     },
     {
       "id": "gal-ext-3",
-      "title": "Complex East Promenade",
+      "title": "Signature Walkway",
       "category": "exterior",
       "categoryLabel": "Exterior",
       "src": "/images/plaza_path.png",
