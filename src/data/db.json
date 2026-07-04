@@ -271,7 +271,7 @@
     "description": "Lush green oasis within the Kohinoor complex offering a wide selection of indoor and outdoor plants to brighten your workspace and improve air quality.",
     "location": "Tower-1 back side near Entry Ramp ground floor",
     "timing": "9:00 AM - 6:00 PM (Monday - Sunday)",
-    "contact": "+91 8657935459 ",
+    "contact": "+91 9372025677",
     "plants": [
       {
         "id": "plant-snake",
@@ -279,7 +279,7 @@
         "description": "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
         "price": 250,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 13
+        "quantity": 10
       },
       {
         "id": "plant-areca",
@@ -287,7 +287,7 @@
         "description": "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
         "price": 350,
         "imageSrc": "/images/areca_palm.png",
-        "quantity": 2
+        "quantity": 1
       },
       {
         "id": "plant-1781075621847",
@@ -295,7 +295,7 @@
         "description": "Lush green test plant",
         "price": 140,
         "imageSrc": "/images/snake_plant.png",
-        "quantity": 1000
+        "quantity": 999
       }
     ],
     "orders": [
@@ -1513,6 +1513,112 @@
       "emailSentTimestamp": "2026-07-03T10:51:30.172Z",
       "whatsAppSentTimestamp": "2026-07-03T10:51:30.244Z",
       "whatsAppMessageId": "sim_meta_1783075890220"
+    },
+    {
+      "id": "KOH-NUR-20260704-00001",
+      "orderId": "order_mock_1783155595661",
+      "serviceType": "Nursery",
+      "date": "2026-07-04T09:00:08.818Z",
+      "customerName": "tanisha",
+      "customerPhone": "7738578382",
+      "customerEmail": "tanisha8@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 3
+        }
+      ],
+      "totalAmountPaid": 750,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "sent",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-07-04T09:00:14.317Z",
+          "status": "success",
+          "messageId": "sim_meta_1783155614286"
+        },
+        {
+          "timestamp": "2026-07-04T09:01:43.403Z",
+          "status": "success",
+          "messageId": "sim_meta_1783155703403"
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-07-04T09:00:14.248Z",
+      "whatsAppSentTimestamp": "2026-07-04T09:01:43.403Z",
+      "whatsAppMessageId": "sim_meta_1783155703403"
+    },
+    {
+      "id": "KOH-NUR-20260704-00002",
+      "orderId": "order_mock_1783155912700",
+      "serviceType": "Nursery",
+      "date": "2026-07-04T09:05:18.393Z",
+      "customerName": "Tanisha Mhatre",
+      "customerPhone": "7738578382",
+      "customerEmail": "tanishamhatre8@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 140,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "sent",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-07-04T09:05:22.436Z",
+          "status": "success",
+          "messageId": "sim_meta_1783155922417"
+        },
+        {
+          "timestamp": "2026-07-04T09:05:39.626Z",
+          "status": "success",
+          "messageId": "sim_meta_1783155939626"
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-07-04T09:05:22.366Z",
+      "whatsAppSentTimestamp": "2026-07-04T09:05:39.626Z",
+      "whatsAppMessageId": "sim_meta_1783155939626"
+    },
+    {
+      "id": "KOH-NUR-20260704-00003",
+      "orderId": "order_mock_1783156303587",
+      "serviceType": "Nursery",
+      "date": "2026-07-04T09:11:48.426Z",
+      "customerName": "Tanu",
+      "customerPhone": "7738578382",
+      "customerEmail": "tanu@gmail.com",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 350,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "sent",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-07-04T09:11:53.707Z",
+          "status": "success",
+          "messageId": "sim_meta_1783156313686"
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-07-04T09:11:53.638Z",
+      "whatsAppSentTimestamp": "2026-07-04T09:11:53.707Z",
+      "whatsAppMessageId": "sim_meta_1783156313686"
     }
   ],
   "orders": [
@@ -1900,6 +2006,69 @@
       "receiptNumber": "KOH-NUR-20260703-00001",
       "createdAt": "2026-07-03T10:51:25.325Z",
       "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1783155595661",
+      "customerName": "tanisha",
+      "customerEmail": "tanisha8@gmail.com",
+      "customerPhone": "7738578382",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-snake",
+          "name": "Snake Plant (Sansevieria)",
+          "price": 250,
+          "quantity": 3
+        }
+      ],
+      "amount": 750,
+      "transactionId": "pay_sim_1783155601454",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260704-00001",
+      "createdAt": "2026-07-04T09:00:08.818Z",
+      "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1783155912700",
+      "customerName": "Tanisha Mhatre",
+      "customerEmail": "tanishamhatre8@gmail.com",
+      "customerPhone": "7738578382",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-1781075621847",
+          "name": "Test Fern",
+          "price": 140,
+          "quantity": 1
+        }
+      ],
+      "amount": 140,
+      "transactionId": "pay_sim_1783155917328",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260704-00002",
+      "createdAt": "2026-07-04T09:05:18.393Z",
+      "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1783156303587",
+      "customerName": "Tanu",
+      "customerEmail": "tanu@gmail.com",
+      "customerPhone": "7738578382",
+      "serviceType": "Nursery",
+      "items": [
+        {
+          "itemId": "plant-areca",
+          "name": "Areca Palm",
+          "price": 350,
+          "quantity": 1
+        }
+      ],
+      "amount": 350,
+      "transactionId": "pay_sim_1783156307680",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-NUR-20260704-00003",
+      "createdAt": "2026-07-04T09:11:48.426Z",
+      "orderStatus": "placed"
     }
   ],
   "receiptLogs": [
@@ -2034,6 +2203,27 @@
       "orderId": "order_mock_1783075877556",
       "emailStatus": "sent",
       "emailSentAt": "2026-07-03T10:51:30.172Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260704-00001",
+      "orderId": "order_mock_1783155595661",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-07-04T09:00:14.248Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260704-00002",
+      "orderId": "order_mock_1783155912700",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-07-04T09:05:22.366Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-NUR-20260704-00003",
+      "orderId": "order_mock_1783156303587",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-07-04T09:11:53.638Z",
       "resendCount": 0
     }
   ],
