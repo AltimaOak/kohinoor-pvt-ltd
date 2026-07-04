@@ -130,3 +130,75 @@ Kohinoor Facilities Team`,
     };
   }
 }
+
+/**
+ * Sends a notification email to the seller when a new plant purchase is placed.
+ */
+export async function sendSellerOrderNotification(
+  order: {
+    id: string;
+    receiptId: string;
+    plantName: string;
+    quantity: number;
+    totalPrice: number;
+    userName: string;
+    userPhone: string;
+    userEmail?: string;
+  },
+  sellerEmail: string
+): Promise<EmailSendResult> {
+  try {
+    const transporter = await getTransporter();
+    const fromAddress = process.env.SMTP_FROM || "Kohinoor Facilities <receipts@kohinoorfacilities.com>";
+
+    const mailOptions = {
+      from: fromAddress,
+      to: sellerEmail,
+      subject: `[NEW NURSERY ORDER] Plant Purchase Confirmation - Order #${order.id}`,
+      text: `Dear Nursery Team and Managers,
+
+A new plant purchase order has been submitted.
+
+Order Details:
+- Order ID: ${order.id}
+- Receipt ID: ${order.receiptId}
+- Plant Name: ${order.plantName}
+- Quantity: ${order.quantity}
+- Total Price: ₹${order.totalPrice}
+
+Purchaser Details:
+- Name: ${order.userName}
+- Contact: ${order.userPhone}
+- Email: ${order.userEmail || "N/A"}
+
+Please prepare the order for handoff. The customer will bring their email/WhatsApp confirmation to collect the plant.
+
+Best Regards,
+Kohinoor Facilities Automation System`
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EMAIL SUCCESS] Seller order notification sent to ${sellerEmail}. Message ID: ${info.messageId}`);
+    
+    // If using Ethereal sandbox, get the test preview URL
+    const previewUrl = nodemailer.getTestMessageUrl(info) || undefined;
+    if (previewUrl) {
+      console.log(`\n======================================================================`);
+      console.log(`[EMAIL SANDBOX PREVIEW URL] View sent seller notification mail here:`);
+      console.log(`${previewUrl}`);
+      console.log(`======================================================================\n`);
+    }
+
+    return {
+      success: true,
+      previewUrl
+    };
+  } catch (err) {
+    const error = err as Error;
+    console.error(`[EMAIL ERROR] Failed to send order notification to seller ${sellerEmail}:`, error);
+    return {
+      success: false,
+      error: error.message || "Failed to send order notification email to seller via SMTP"
+    };
+  }
+}

@@ -121,7 +121,15 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-4">
+          <div className="py-4 px-8 rounded-2xl border border-slate-200/80 bg-gradient-to-r from-white to-slate-50/50 shadow-xs flex flex-col items-center gap-2 w-max max-w-full mx-auto mt-4">
+            <h3 className="text-xl md:text-2xl font-extrabold text-navy-900 tracking-tight">
+              Our Engaged Clients
+            </h3>
+            {/* Underline covering the entire width of the box */}
+            <div className="w-full h-[2px] bg-gradient-to-r from-sky-400 via-sky-500 to-sky-400 rounded-full shadow-2xs" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
             {towersData.map((tower, idx) => (
               <motion.div
                 key={tower.id}

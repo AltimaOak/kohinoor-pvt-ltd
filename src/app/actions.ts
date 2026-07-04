@@ -4,8 +4,8 @@ import fs from "fs/promises";
 import path from "path";
 import { cookies, headers } from "next/headers";
 import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
-import { sendReceiptEmail } from "./utils/emailSender";
-import { sendWhatsAppReceipt } from "./utils/whatsAppSender";
+import { sendReceiptEmail, sendSellerOrderNotification } from "./utils/emailSender";
+import { sendWhatsAppReceipt, sendWhatsAppMessage } from "./utils/whatsAppSender";
 
 const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
@@ -861,6 +861,53 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     // Save database
     await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 
+    // Trigger WhatsApp notification to the Seller (Nursery Contact)
+    try {
+      const sellerPhone = db.nursery.contact || "+91 9372025677";
+      const sellerMessage = `*Kohinoor Nursery - New Order Received* 🌿
+
+Dear Seller,
+
+A new plant order has been placed successfully.
+
+*Order Details:*
+• *Receipt Number:* ${receiptId}
+• *Order ID:* ${orderId}
+• *Plant Name:* ${order.plantName}
+• *Quantity:* ${order.quantity}
+• *Total Amount Paid:* ₹${order.totalPrice}
+
+*Buyer Details:*
+• *Name:* ${order.userName}
+• *Phone:* ${order.userPhone}
+• *Email:* ${order.userEmail || "N/A"}
+
+Please prepare the order for pickup. The customer will bring their receipt confirmation.
+
+---
+_Kohinoor Facilities Automation_`;
+
+      await sendWhatsAppMessage(sellerPhone, sellerMessage);
+    } catch (waErr) {
+      console.error("[SELLER NOTIFICATION ERROR] Failed to send WhatsApp notification to seller:", waErr);
+    }
+
+    // Trigger Email notification to the Seller (Nursery Manager)
+    try {
+      await sendSellerOrderNotification({
+        id: orderId,
+        receiptId: receiptId,
+        plantName: order.plantName,
+        quantity: order.quantity,
+        totalPrice: order.totalPrice,
+        userName: order.userName,
+        userPhone: order.userPhone,
+        userEmail: order.userEmail
+      }, "nursery@kohinoorcommercial2.in");
+    } catch (mailErr) {
+      console.error("[SELLER NOTIFICATION ERROR] Failed to send Email notification to seller:", mailErr);
+    }
+
     // Asynchronously trigger background retry worker for any failed receipts
     Promise.resolve().then(() => retryFailedWhatsAppSends());
 
@@ -1455,6 +1502,48 @@ export async function verifyRazorpayPaymentAction({
       }
     } catch (waErr) {
       console.error("[DELIVERY ERROR] Failed to send receipt WhatsApp after payment success:", waErr);
+    }
+
+    // 7.6. WhatsApp Notification to Seller (if Nursery order)
+    if (checkoutData.serviceType === "Nursery") {
+      try {
+        const latestDb = await getDb();
+        const sellerPhone = latestDb.nursery?.contact || "+91 9372025677";
+        
+        // Build items list text
+        const itemsText = newOrder.items
+          .map((item) => `• ${item.name} x ${item.quantity} (₹${item.price * item.quantity})`)
+          .join("\n");
+
+        const sellerMessage = `*Kohinoor Nursery - New Order Received* 🌿
+
+Dear Seller,
+
+A new plant order has been placed and paid successfully.
+
+*Order Details:*
+• *Receipt Number:* ${receiptNumber}
+• *Order ID:* ${razorpay_order_id}
+• *Payment ID:* ${razorpay_payment_id}
+• *Total Amount Paid:* ₹${checkoutData.amount}
+
+*Items:*
+${itemsText}
+
+*Buyer Details:*
+• *Name:* ${checkoutData.customerName}
+• *Phone:* ${checkoutData.customerPhone}
+• *Email:* ${checkoutData.customerEmail || "N/A"}
+
+Please prepare the order for pickup. The customer will bring their receipt.
+
+---
+_Kohinoor Facilities Automation_`;
+
+        await sendWhatsAppMessage(sellerPhone, sellerMessage);
+      } catch (sellerWaErr) {
+        console.error("[DELIVERY ERROR] Failed to send WhatsApp notification to seller after payment success:", sellerWaErr);
+      }
     }
 
     // 8. Place ownership cookie inside the browser
