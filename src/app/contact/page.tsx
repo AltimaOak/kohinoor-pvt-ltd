@@ -152,6 +152,7 @@ export default function ContactPage() {
                 />
               </motion.div>
             </div>
+          </div>
 
             {/* Emergency Contacts Section */}
             <div className="w-full mt-10 sm:mt-16 max-w-5xl mx-auto">
@@ -457,7 +458,8 @@ export default function ContactPage() {
             </motion.div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* 4. ADMIN & OPERATIONS DIRECTORY SECTION */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10 py-10">
