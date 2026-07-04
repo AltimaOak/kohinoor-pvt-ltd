@@ -168,7 +168,7 @@
     },
     {
       "id": "gal-ext-2",
-      "title": "Corporate Walkway & Plaza",
+      "title": "Corporate Gateway",
       "category": "exterior",
       "categoryLabel": "Exterior",
       "src": "/images/walkway_plaza.png",
@@ -176,7 +176,7 @@
     },
     {
       "id": "gal-ext-3",
-      "title": "Complex East Promenade",
+      "title": "Signature Walkway",
       "category": "exterior",
       "categoryLabel": "Exterior",
       "src": "/images/plaza_path.png",
