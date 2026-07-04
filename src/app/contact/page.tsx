@@ -69,8 +69,8 @@ export default function ContactPage() {
       </section>
 
       {/* 2. CONTACT DETAILS SECTION */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 w-full relative z-10">
-        <div className="flex flex-col gap-8">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 w-full relative z-10">
+        <div className="flex flex-col gap-6 sm:gap-10">
           <div className="flex flex-col gap-6 text-center items-center">
             <h3 className="text-xl font-extrabold text-navy-900 tracking-tight">
               Corporate Headquarters

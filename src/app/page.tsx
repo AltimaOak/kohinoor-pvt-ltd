@@ -29,7 +29,8 @@ import {
   Flower2,
   ShoppingCart,
   Soup,
-  Plane
+  Plane,
+  Building
 } from "lucide-react";
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
@@ -123,35 +124,34 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pt-28 pb-10 relative z-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center w-full">
             {/* Hero Content (8 Columns) - sitting over the brightened background */}
-            <div className="lg:col-span-8 flex flex-col gap-6 text-left max-w-2xl">
-              <motion.h1
+            <div className="lg:col-span-8 flex flex-col gap-3 text-left max-w-2xl">
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-gradient-sky-light leading-[1.1] drop-shadow-[0_4px_16px_rgba(15,23,42,0.7)]"
+                className="flex flex-col gap-3"
               >
-                Where Business Meets <br className="hidden md:inline" />
-                <span className="text-sky-400 relative inline-block mt-1">
-                  Modern Excellence
-                  {/* Underline decorative gradient */}
-                  <span className="absolute left-0 right-0 -bottom-2.5 h-1.5 bg-gradient-to-r from-sky-400 to-sky-600 rounded-full shadow-sm" />
-                </span>
-              </motion.h1>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-gradient-sky-light leading-[1.1] drop-shadow-[0_4px_16px_rgba(15,23,42,0.7)]">
+                  Where Business Meets
+                </h1>
+                {/* Thick Blue Underline */}
+                <div className="w-full max-w-[28rem] h-[4px] bg-sky-500 rounded-full shadow-xs" />
+              </motion.div>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-white text-base md:text-lg leading-relaxed max-w-xl mt-2 drop-shadow-[0_2px_8px_rgba(15,23,42,0.8)] font-semibold"
+                className="text-white text-base md:text-lg leading-relaxed max-w-xl mt-0.5 drop-shadow-[0_2px_8px_rgba(15,23,42,0.8)] font-semibold"
               >
-                KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. COMMERCIAL - II is a premier commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
+                KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. A Commercial landmark offering state-of-the-art office spaces, elite infrastructure, and a highly secure operational environment for modern businesses.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-wrap items-center gap-4 mt-4"
+                className="flex flex-wrap items-center gap-4 mt-3"
               >
                 <Link
                   href="#about"
@@ -373,7 +373,13 @@ export default function LandingPage() {
                       icon: Soup,
                     },
                     {
-                      name: "BOM-2",
+                      name: "Don Bosco Institute",
+                      distance: "250 m away",
+                      time: null,
+                      icon: Building,
+                    },
+                    {
+                      name: "Airport",
                       distance: "5.9 km away",
                       time: null,
                       icon: Plane,
