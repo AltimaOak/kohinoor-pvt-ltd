@@ -78,23 +78,23 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
             exit={{ scale: 0.95, opacity: 0, y: 15 }}
             transition={{ type: "spring", damping: 28, stiffness: 220 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl bg-white border border-slate-200/50 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] my-auto animate-in fade-in-50 duration-200"
+            className="relative w-full max-w-4xl bg-white border border-slate-150 rounded-[20px] overflow-hidden shadow-xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] my-auto animate-in fade-in-50 duration-200"
           >
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 md:bg-slate-100/80 backdrop-blur-sm text-slate-500 hover:text-navy-900 hover:bg-white md:hover:bg-slate-200 transition-all border border-slate-200/50 hover:scale-105 cursor-pointer shadow-sm"
+              className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white text-slate-400 hover:text-slate-900 border border-slate-200/60 shadow-xs hover:shadow-sm transition-all cursor-pointer flex items-center justify-center group"
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4.5 h-4.5 transition-transform duration-300 group-hover:rotate-90" />
             </button>
 
-            {/* Left side: Images (58% width on desktop) */}
-            <div className="w-full md:w-[58%] bg-slate-50 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-between overflow-hidden relative shrink-0">
+            {/* Left side: Images (56% width on desktop) */}
+            <div className="w-full md:w-[56%] bg-slate-50 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-between overflow-hidden relative shrink-0">
               {images.length > 0 ? (
                 <>
                   {/* Main image viewer area with fixed responsive height */}
-                  <div className="relative w-full h-auto aspect-[4/3] sm:h-[420px] md:h-[550px] bg-slate-100/50 flex items-center justify-center p-2 overflow-hidden border-b border-slate-100">
+                  <div className="relative w-full h-auto aspect-[4/3] sm:h-[420px] md:h-[550px] bg-slate-100/50 flex items-center justify-center p-4 overflow-hidden border-b border-slate-100">
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={activeImageIndex}
@@ -104,17 +104,15 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="max-w-full max-h-full object-contain rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-slate-200/50 bg-white select-none cursor-zoom-in hover:opacity-95 transition-opacity"
+                        className="max-w-full max-h-full object-contain rounded-[14px] shadow-xs hover:shadow-md border border-[#ECECEC] bg-white select-none cursor-zoom-in transition-all duration-355"
                         loading="lazy"
                         onClick={() => setIsLightboxOpen(true)}
                       />
                     </AnimatePresence>
 
-
-
                     {/* Image indicator in top right */}
                     {images.length > 1 && (
-                      <span className="absolute top-4 right-4 z-20 px-2.5 py-1 rounded-full bg-navy-950/65 backdrop-blur-xs text-white text-[10px] font-black tracking-wide select-none border border-white/10 shadow-sm">
+                      <span className="absolute top-6 right-6 z-20 px-2.5 py-1 rounded-full bg-navy-950/65 backdrop-blur-xs text-white text-[10px] font-black tracking-wide select-none border border-white/10 shadow-sm">
                         {activeImageIndex + 1}/{images.length}
                       </span>
                     )}
@@ -124,14 +122,14 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                       <>
                         <button
                           onClick={prevImage}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 hover:bg-white/95 text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50 backdrop-blur-xs"
+                          className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 hover:bg-white/95 text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50 backdrop-blur-xs"
                           aria-label="Previous photo"
                         >
                           <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
                         </button>
                         <button
                           onClick={nextImage}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 hover:bg-white/95 text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50 backdrop-blur-xs"
+                          className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 hover:bg-white/95 text-navy-900 flex items-center justify-center shadow-md hover:scale-105 transition-all z-20 cursor-pointer border border-slate-200/50 backdrop-blur-xs"
                           aria-label="Next photo"
                         >
                           <ChevronRight className="w-5 h-5 stroke-[2.5]" />
@@ -142,17 +140,17 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
 
                   {/* Thumbnail gallery with recommended sizing */}
                   {images.length > 1 && (
-                    <div className="w-full p-4 bg-white flex gap-3 overflow-x-auto justify-center shrink-0 border-t border-slate-100 scrollbar-none select-none">
+                    <div className="w-full p-3 bg-white flex gap-3.5 overflow-x-auto justify-center shrink-0 border-t border-slate-100 scrollbar-none select-none">
                       {images.map((img, idx) => (
                         <button
                           key={idx}
                           onClick={() => setActiveImageIndex(idx)}
-                          className={`relative rounded-xl overflow-hidden shrink-0 border-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-sm
+                          className={`relative rounded-[14px] overflow-hidden shrink-0 border border-[#ECECEC] transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs
                             w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[90px] md:h-[90px]
                             ${
                               idx === activeImageIndex
                                 ? "border-sky-500 ring-2 ring-sky-500/20 scale-105"
-                                : "border-slate-200 hover:border-slate-400 opacity-80 hover:opacity-100"
+                                : "hover:border-slate-400 opacity-80 hover:opacity-100"
                             }`}
                         >
                           <img
@@ -181,48 +179,50 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
               )}
             </div>
 
-            {/* Right side: Information (42% width on desktop) */}
-            <div className="w-full md:w-[42%] p-6 sm:p-8 flex flex-col justify-between overflow-y-auto max-h-[400px] md:max-h-none md:h-auto">
-              <div className="flex flex-col gap-4">
+            {/* Right side: Information (44% width on desktop) */}
+            <div className="w-full md:w-[44%] p-5 sm:p-6 flex flex-col justify-between overflow-y-auto max-h-[400px] md:max-h-none md:h-auto gap-4">
+              <div className="flex flex-col gap-3">
+                {/* Event Badge */}
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold uppercase tracking-wider">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[10px] border border-sky-100 bg-sky-50 text-sky-700 text-[10px] font-semibold uppercase tracking-wider">
                     <Icon className="w-3.5 h-3.5 text-sky-500" />
                     <span>Event Details</span>
                   </span>
                 </div>
 
-                <h2 className="text-xl sm:text-2xl font-black text-navy-900 font-display leading-tight">
+                {/* Event Title */}
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight">
                   {event.title}
                 </h2>
 
-                <div className="h-px bg-slate-100 w-full my-1" />
+                <div className="h-px bg-[#F1F5F9] w-full my-0.5" />
 
-                <div className="flex flex-col gap-5 mt-2">
+                <div className="flex flex-col gap-4 mt-1.5">
                   {/* About This Event */}
-                  <div className="flex flex-col gap-2">
-                    <h4 className="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-1.5 font-display">
-                      <Star className="w-4.5 h-4.5 text-sky-500 fill-sky-500/20 stroke-[2]" />
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                      <Star className="w-4 h-4 text-sky-500 fill-sky-500/10 stroke-[2]" />
                       <span>About This Event</span>
                     </h4>
-                    <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap pl-6">
+                    <p className="text-slate-700 text-sm leading-[1.7] whitespace-pre-wrap max-w-[42ch]">
                       {event.desc}
                     </p>
                   </div>
 
                   {/* Event Highlights */}
                   {event.highlights && event.highlights.length > 0 && (
-                    <div className="flex flex-col gap-3 pt-2">
-                      <h4 className="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-1.5 font-display">
-                        <Sparkles className="w-4.5 h-4.5 text-sky-500 fill-sky-500/20 stroke-[2]" />
+                    <div className="flex flex-col gap-2 pt-1 text-left">
+                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-sky-500 fill-sky-500/10 stroke-[2]" />
                         <span>Event Highlights</span>
                       </h4>
-                      <div className="flex flex-wrap gap-2.5 pl-6">
+                      <div className="flex flex-wrap gap-2">
                         {event.highlights.map((hl, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-900/15 bg-blue-50 text-blue-900 text-[11px] font-bold shadow-[0_2px_8px_rgba(0,0,0,0.01)] transition-all"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] border border-slate-150 bg-white text-slate-700 text-[11px] font-medium transition-all hover:border-slate-350 shadow-xs"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-900" />
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-sky-500" />
                             {hl}
                           </span>
                         ))}
@@ -232,12 +232,14 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-8 pt-4 border-t border-slate-100">
+              {/* Action Button CTA */}
+              <div className="flex gap-3 mt-4 pt-3 border-t border-slate-100">
                 <button
                   onClick={onClose}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold transition-all shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 hover:scale-[1.02] cursor-pointer"
+                  className="w-full flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white text-xs font-semibold transition-all shadow-md shadow-sky-500/10 hover:shadow-sky-500/25 active:scale-[0.99] group cursor-pointer"
                 >
-                  Close
+                  <span>Close</span>
+                  <ChevronRight className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </button>
               </div>
             </div>
@@ -395,18 +397,18 @@ export default function EventsPage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full pb-24 overflow-hidden">
+    <div className="flex flex-col w-full pb-12 overflow-hidden">
       
       {/* 1. HEADER PAGE BANNER */}
-      <section className="relative pt-24 pb-20 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      <section className="relative pt-16 pb-10 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Glow backdrop */}
         <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
+        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
+            className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-sky-50 border border-sky-100 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
           >
             <Compass className="w-3.5 h-3.5 text-sky-400 animate-spin-slow" />
             <span>Community Events</span>
@@ -434,7 +436,7 @@ export default function EventsPage() {
 
       {/* 2. EVENTS GRID */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map((evt, idx) => {
             const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[evt.iconName] || LucideIcons.HelpCircle;
             return (
@@ -445,7 +447,7 @@ export default function EventsPage() {
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 key={evt.id}
                 onClick={() => setSelectedEvent(evt)}
-                className="rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden group h-full cursor-pointer shadow-sm"
+                className="rounded-xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col overflow-hidden group h-full cursor-pointer shadow-xs"
               >
                 {/* Event Image Banner on Card */}
                 {evt.imageSrc ? (
@@ -462,10 +464,10 @@ export default function EventsPage() {
                   </div>
                 )}
 
-                <div className="p-5 sm:p-6 flex flex-col gap-4 flex-grow">
+                <div className="p-4 sm:p-5 flex flex-col gap-3 flex-grow">
                   <div className="flex justify-between items-center">
-                    <div className="w-9 h-9 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center shrink-0">
-                      <Icon className="w-4.5 h-4.5 stroke-[2]" />
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center shrink-0">
+                      <Icon className="w-4 h-4 stroke-[2]" />
                     </div>
                     {evt.images && evt.images.length > 1 && (
                       <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider bg-slate-100 px-2 py-0.5 rounded">
@@ -474,7 +476,7 @@ export default function EventsPage() {
                     )}
                   </div>
                   
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <h3 className="text-sm font-bold text-navy-900 leading-tight group-hover:text-sky-500 transition-colors">
                       {evt.title}
                     </h3>

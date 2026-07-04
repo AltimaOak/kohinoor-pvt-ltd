@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Mail, MapPin, ArrowRight, Globe, Building2 } from "lucide-react";
+import { Mail, MapPin, Globe, Building2 } from "lucide-react";
 import { getDb } from "@/app/actions";
 
 export default async function Footer() {
@@ -8,17 +8,17 @@ export default async function Footer() {
   const contacts = db.contacts;
   const managerEmails = Array.from(new Set(contacts.managers.map(m => m.email)));
   return (
-    <footer className="relative border-t border-slate-800 bg-[#0F172A] pt-24 pb-12 overflow-hidden text-slate-400">
+    <footer className="relative border-t border-slate-800 bg-[#0F172A] pt-12 pb-8 overflow-hidden text-slate-400">
       {/* Decorative Blur Dot */}
       <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-slate-800">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 pb-10 border-b border-slate-800">
           
           {/* Logo & Intro Column (5 Columns) */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
+          <div className="lg:col-span-5 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="relative h-10 w-10 overflow-hidden rounded-lg shadow-sm border border-slate-800 bg-white flex items-center justify-center">
+              <div className="relative h-10 w-10 overflow-hidden rounded border border-slate-800 bg-white flex items-center justify-center">
                 <img
                   src="/images/logo.png"
                   alt="Kohinoor City Logo"
@@ -40,7 +40,7 @@ export default async function Footer() {
             </p>
 
             {/* Social Media Link Items */}
-            <div className="flex items-center gap-3 mt-2">
+            <div className="flex items-center gap-3 mt-1">
               {[
                 { icon: Globe, href: "#" },
                 { icon: Mail, href: managerEmails.length > 0 ? `mailto:${managerEmails[0]}` : "#" },
@@ -51,7 +51,7 @@ export default async function Footer() {
                   <a
                     key={i}
                     href={soc.href}
-                    className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:border-sky-400/30 hover:-translate-y-0.5 transition-all duration-300 shadow-sm"
+                    className="w-8 h-8 rounded bg-slate-800/60 border border-slate-700/40 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:border-sky-400 transition-colors"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -61,11 +61,11 @@ export default async function Footer() {
           </div>
 
           {/* Sitemap Navigation (3 Columns) */}
-          <div className="lg:col-span-3 flex flex-col gap-5">
+          <div className="lg:col-span-3 flex flex-col gap-3.5">
             <h4 className="text-xs font-bold text-white uppercase tracking-widest">
              Quick Navigation
             </h4>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-2">
               {[
                 { name: "Home ", href: "/" },
                 { name: "About Us", href: "/about" },
@@ -76,9 +76,8 @@ export default async function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-slate-400 hover:text-sky-400 hover:translate-x-1.5 transition-all duration-300 inline-flex items-center gap-1.5 group"
+                    className="text-sm text-slate-400 hover:text-sky-400 transition-colors"
                   >
-                    <ArrowRight className="w-3 h-3 text-sky-400 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
                     <span>{link.name}</span>
                   </Link>
                 </li>
@@ -87,11 +86,11 @@ export default async function Footer() {
           </div>
 
           {/* Contact Details Column (4 Columns) */}
-          <div className="lg:col-span-4 flex flex-col gap-5">
+          <div className="lg:col-span-4 flex flex-col gap-3.5">
             <h4 className="text-xs font-bold text-white uppercase tracking-widest">
               Visit Our Office
             </h4>
-            <ul className="flex flex-col gap-4 text-sm text-slate-400">
+            <ul className="flex flex-col gap-2.5 text-sm text-slate-400">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-0.5" />
                 <a
@@ -107,10 +106,10 @@ export default async function Footer() {
 
             {managerEmails.length > 0 && (
               <>
-                <h4 className="text-xs font-bold text-white uppercase tracking-widest mt-2">
+                <h4 className="text-xs font-bold text-white uppercase tracking-widest mt-1.5">
                   Email Us
                 </h4>
-                <ul className="flex flex-col gap-4 text-sm text-slate-400">
+                <ul className="flex flex-col gap-2.5 text-sm text-slate-400">
                   <li className="flex items-start gap-3">
                     <Mail className="w-4.5 h-4.5 text-sky-400 shrink-0 mt-1" />
                     <div className="flex flex-col gap-1.5 font-semibold">
@@ -128,7 +127,7 @@ export default async function Footer() {
         </div>
 
         {/* Lower Footer */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-10 text-xs text-slate-500">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 text-xs text-slate-500">
           <span>
             © {new Date().getFullYear()} KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. All rights reserved.
           </span>

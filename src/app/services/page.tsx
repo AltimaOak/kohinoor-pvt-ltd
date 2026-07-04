@@ -376,11 +376,11 @@ export default function ServicesPage() {
       />
 
       {/* 1. HEADER SECTION */}
-      <section className="relative pt-24 pb-20 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      <section className="relative pt-16 pb-10 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Glow backdrop */}
         <div className="absolute top-0 left-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
+        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -403,7 +403,7 @@ export default function ServicesPage() {
 
       {/* 2. SERVICES GRID */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {services.map((svc, index) => {
             const Icon = (LucideIcons as any)[svc.iconName] || LucideIcons.HelpCircle;
             const isMedicalCamp = svc.id === "svc-medical-camp";
@@ -428,31 +428,31 @@ export default function ServicesPage() {
                   }
                 }}
                 className={cn(
-                  "bg-white border border-slate-200 p-6 md:p-8 hover:shadow-md transition-all duration-200 rounded-2xl flex flex-col justify-between group",
+                  "bg-white border border-slate-100 p-5 md:p-6 hover:shadow-xs transition-all duration-200 rounded-xl flex flex-col justify-between group",
                   isClickable ? "cursor-pointer" : "",
                   isMedicalCamp && "hover:border-sky-300",
                   isMassageChair && "hover:border-amber-300",
                   isAmbulance && "hover:border-rose-300",
-                  (!isMedicalCamp && !isMassageChair && !isAmbulance) && "hover:border-slate-300"
+                  (!isMedicalCamp && !isMassageChair && !isAmbulance) && "hover:border-slate-200"
                 )}
               >
 
-                <div className="flex flex-col gap-8 h-full justify-between">
-                  <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-5 h-full justify-between">
+                  <div className="flex flex-col gap-4">
                     {/* Icon Wrapper */}
                     <div className={cn(
-                      "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 shrink-0",
+                      "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 shrink-0",
                       isMassageChair
-                        ? "bg-amber-500/10 border border-amber-400/20 text-amber-500 group-hover:bg-amber-500 group-hover:text-white"
+                        ? "bg-amber-50 border border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500"
                         : isAmbulance
-                          ? "bg-rose-500/10 border border-rose-400/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white"
-                          : "bg-sky-500/10 border border-sky-400/20 text-sky-500 group-hover:bg-sky-500 group-hover:text-white"
+                          ? "bg-rose-50 border border-rose-100 text-rose-600 group-hover:bg-rose-500 group-hover:text-white group-hover:border-rose-500"
+                          : "bg-sky-50 border border-sky-100 text-sky-600 group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-500"
                     )}>
-                      <Icon className="w-7 h-7 stroke-[2]" />
+                      <Icon className="w-5 h-5 stroke-[1.8]" />
                     </div>
 
-                    <div className="flex flex-col gap-3">
-                      <h3 className="text-xl font-extrabold text-navy-900 tracking-tight">
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-lg font-bold text-slate-900 tracking-tight">
                         {svc.title}
                       </h3>
                       <p className="text-slate-600 text-sm leading-relaxed">
@@ -461,27 +461,21 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-4">
                     <div className="h-px bg-slate-100 w-full" />
 
                     {/* Features checklist */}
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold">
                         Key Features & Support
                       </span>
-                      <ul className="flex flex-col gap-3">
+                      <ul className="flex flex-col gap-2">
                         {svc.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-3">
-                            <div className={cn(
-                              "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 border",
-                              isMassageChair
-                                ? "bg-amber-500/10 border-amber-400/20 text-amber-600"
-                                : isAmbulance
-                                  ? "bg-rose-500/10 border-rose-400/20 text-rose-600"
-                                  : "bg-sky-500/10 border-sky-400/20 text-sky-600"
-                            )}>
-                              <Check className="w-3 h-3 stroke-[2.5]" />
-                            </div>
+                            <Check className={cn(
+                              "w-4 h-4 shrink-0 mt-0.5",
+                              isMassageChair ? "text-amber-600" : isAmbulance ? "text-rose-600" : "text-sky-600"
+                            )} />
                             <span className="text-xs font-semibold text-slate-700 leading-tight">
                               {feature}
                             </span>
@@ -491,22 +485,22 @@ export default function ServicesPage() {
                     </div>
 
                     {isMedicalCamp && (
-                      <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-sky-500/5 border border-sky-500/10 text-sky-600 group-hover:bg-sky-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
+                      <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-sky-50 border border-sky-100 text-sky-600 group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
                         <LucideIcons.CalendarRange className="w-4 h-4 shrink-0" />
                         <span>Book Appointment</span>
                       </div>
                     )}
 
                     {isMassageChair && (
-                      <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
-                        <LucideIcons.Flame className="w-4 h-4 shrink-0 animate-pulse" />
+                      <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
+                        <LucideIcons.Flame className="w-4 h-4 shrink-0" />
                         <span>View Details & Book</span>
                       </div>
                     )}
 
                     {isAmbulance && (
-                      <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-600 group-hover:bg-rose-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
-                        <LucideIcons.PhoneCall className="w-4 h-4 shrink-0 animate-pulse" />
+                      <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-rose-50 border border-rose-100 text-rose-600 group-hover:bg-rose-500 group-hover:text-white group-hover:border-rose-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
+                        <LucideIcons.PhoneCall className="w-4 h-4 shrink-0" />
                         <span>Contact Us</span>
                       </div>
                     )}
@@ -524,18 +518,18 @@ export default function ServicesPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: services.length * 0.15, ease: "easeOut" }}
               onClick={() => setIsNurseryModalOpen(true)}
-              className="bg-white border border-slate-200 p-6 md:p-8 hover:shadow-md hover:border-emerald-300 transition-all duration-200 rounded-2xl flex flex-col justify-between cursor-pointer group"
+              className="bg-white border border-slate-100 p-6 md:p-8 hover:shadow-xs hover:border-emerald-300 transition-all duration-200 rounded-xl flex flex-col justify-between cursor-pointer group"
             >
 
               <div className="flex flex-col gap-8 h-full justify-between">
                 <div className="flex flex-col gap-6">
                   {/* Icon Wrapper */}
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-400/20 text-emerald-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white shrink-0">
-                    <Leaf className="w-7 h-7 stroke-[2]" />
+                  <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 shrink-0">
+                    <Leaf className="w-5 h-5 stroke-[1.8]" />
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-xl font-extrabold text-navy-900 tracking-tight">
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-lg font-bold text-slate-900 tracking-tight">
                       Kohinoor Green Nursery
                     </h3>
                     <p className="text-slate-600 text-sm leading-relaxed">
@@ -559,9 +553,7 @@ export default function ServicesPage() {
                         "Expert Botanical Care Advice"
                       ].map((feature, i) => (
                         <li key={i} className="flex items-start gap-3">
-                          <div className="w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-400/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-emerald-600 stroke-[2.5]" />
-                          </div>
+                          <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                           <span className="text-xs font-semibold text-slate-700 leading-tight">
                             {feature}
                           </span>
@@ -570,7 +562,7 @@ export default function ServicesPage() {
                     </ul>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
+                  <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
                     <ShoppingBag className="w-4 h-4 shrink-0" />
                     <span>Browse & Buy Plants</span>
                   </div>
@@ -594,18 +586,18 @@ export default function ServicesPage() {
                 setReadyAlertVisible(false);
                 setIsCafeteriaModalOpen(true);
               }}
-              className="bg-white border border-slate-200 p-6 md:p-8 hover:shadow-md hover:border-amber-400 transition-all duration-200 rounded-2xl flex flex-col justify-between cursor-pointer group"
+              className="bg-white border border-slate-100 p-6 md:p-8 hover:shadow-xs hover:border-amber-400 transition-all duration-200 rounded-xl flex flex-col justify-between cursor-pointer group"
             >
 
               <div className="flex flex-col gap-8 h-full justify-between">
                 <div className="flex flex-col gap-6">
                   {/* Icon Wrapper */}
-                  <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-400/20 text-amber-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white shrink-0">
-                    <Coffee className="w-7 h-7 stroke-[2]" />
+                  <div className="w-10 h-10 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 shrink-0">
+                    <Coffee className="w-5 h-5 stroke-[1.8]" />
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-xl font-extrabold text-navy-900 tracking-tight">
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-lg font-bold text-slate-900 tracking-tight">
                       Kohinoor Cafeteria
                     </h3>
                     <p className="text-slate-600 text-sm leading-relaxed">
@@ -630,9 +622,7 @@ export default function ServicesPage() {
                         "Counter Collection Alerts"
                       ].map((feature, i) => (
                         <li key={i} className="flex items-start gap-3">
-                          <div className="w-5 h-5 rounded-full bg-amber-500/10 border border-amber-400/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-amber-600 stroke-[2.5]" />
-                          </div>
+                          <Check className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <span className="text-xs font-semibold text-slate-700 leading-tight">
                             {feature}
                           </span>
@@ -641,7 +631,7 @@ export default function ServicesPage() {
                     </ul>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-350 font-bold text-xs uppercase tracking-wider">
+                  <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
                     <Utensils className="w-4 h-4 shrink-0" />
                     <span>View Menu & Order</span>
                   </div>
@@ -652,9 +642,9 @@ export default function ServicesPage() {
         </div>
       </section>
       {/* 3. CORE AMENITIES GRID */}
-      <section className="py-28 md:py-32 border-y border-slate-200/50 bg-[#F8FAFC] relative z-10 mt-12 w-full">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-16 w-full">
-          <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
+      <section className="py-10 md:py-12 border-y border-slate-200/50 bg-[#F8FAFC] relative z-10 mt-8 w-full">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-10 w-full">
+          <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">PREMISES & AMENITIES</span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
               Core Building Amenities
@@ -664,10 +654,10 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
-                { label: "Tranquil Massage Room", icon: MassageChairIcon, desc: "Re-energize your mind and body with our massage chair therapy" },
+              { label: "Tranquil Massage Room", icon: MassageChairIcon, desc: "Re-energize your mind and body with our massage chair therapy" },
               { label: "CCTV", icon: Video, desc: "High-definition security surveillance throughout the premises" },
               { label: "Lift", icon: ArrowUpDown, desc: "High-speed corporate passenger elevators" },
               { label: "Medical Room", icon: HeartPulse, desc: "First-aid medical room and emergency healthcare support" },
@@ -684,13 +674,13 @@ export default function ServicesPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
-                  className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col items-center text-center gap-4 group"
+                  className="p-4 sm:p-5 rounded-xl border border-slate-100 bg-white hover:border-slate-200 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shrink-0">
-                    <IconComp className="w-6 h-6 stroke-[2]" />
+                  <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-sky-50 group-hover:border-sky-200 group-hover:text-sky-600 transition-all duration-300 shrink-0">
+                    <IconComp className="w-5.5 h-5.5 stroke-[1.8]" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-sm font-bold text-navy-900 group-hover:text-sky-500 transition-colors">{item.label}</h4>
+                    <h4 className="text-xs font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">{item.label}</h4>
                     <p className="text-[10px] text-slate-500 leading-normal">{item.desc}</p>
                   </div>
                 </motion.div>
@@ -716,128 +706,96 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-[340px] sm:max-w-md bg-white border border-slate-100/80 rounded-[24px] sm:rounded-[32px] shadow-2xl p-4 sm:p-8 flex flex-col gap-1 sm:gap-1.5 my-auto overflow-hidden items-center"
+              className="relative w-full max-w-[480px] bg-white border border-slate-100 rounded-2xl shadow-xl p-6 sm:p-8 my-auto overflow-hidden flex flex-col gap-5 sm:gap-6"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsCampModalOpen(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50 bg-white/80 border border-slate-100 shadow-sm"
+                className="absolute top-4 right-4 w-9 h-9 rounded-full border border-slate-100/80 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 flex items-center justify-center shadow-sm transition-all focus:outline-none cursor-pointer z-50"
               >
-                <LucideIcons.X className="w-5 h-5" />
+                <LucideIcons.X className="w-4 h-4" />
               </button>
 
-              {/* Card Header visual */}
-              <div className="flex items-center gap-2 w-full justify-between pb-1 select-none">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 relative flex items-center justify-center">
+              {/* Top Row: Logo & Badge & Title Column */}
+              <div className="flex gap-4 sm:gap-5 items-start select-none pr-6">
+                {/* Logo Box */}
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border border-slate-100 bg-white flex items-center justify-center p-2.5 shadow-xs shrink-0">
                   <img src="/images/logo.png" alt="KC Logo" className="object-contain w-full h-full" />
                 </div>
-                <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-200" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-200" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-200" />
-                </div>
-              </div>
 
-              {/* Society / Org Title */}
-              <h3 className="text-[9px] sm:text-[11px] font-black text-[#0B355B] tracking-tight leading-snug text-center px-1 sm:px-2 select-none uppercase">
-                {healthCheckupCard?.societyName || "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd"}
-              </h3>
-
-              {/* Divider element with medical cross indicator */}
-              <div className="relative w-full flex items-center justify-center my-1.5 sm:my-3 select-none">
-                <div className="h-[2px] bg-gradient-to-r from-transparent via-sky-300 to-transparent w-full" />
-                <span className="absolute bg-white px-2 text-sky-500 flex items-center justify-center">
-                  <LucideIcons.Plus className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[3.5] text-[#1E57A5]" />
-                </span>
-              </div>
-
-              {/* Dotted spin wheel calendar layout */}
-              <div className="flex items-center justify-center w-full mt-1 sm:mt-2 px-1">
-                {/* Dotted spinning visual container */}
-                <div className="relative flex items-center justify-center py-1.5 sm:py-2 shrink-0">
-                  <div className="absolute w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] border-2 border-dashed border-sky-200 rounded-full animate-[spin_50s_linear_infinite]" />
-                  <div className="absolute w-[70px] h-[70px] sm:w-[105px] sm:h-[105px] border border-dashed border-sky-400/30 rounded-full" />
-                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#1E57A5] to-[#0A2D5C] flex items-center justify-center shadow-lg relative group transition-transform duration-300 hover:scale-105">
-                    <LucideIcons.CalendarRange className="w-7 h-7 sm:w-11 sm:h-11 text-white stroke-[1.5]" />
-                    <div className="absolute bottom-0.5 right-0.5 w-4.5 h-4.5 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-[#0A2D5C] flex items-center justify-center border-2 border-[#0A2D5C] shadow-md">
-                      <LucideIcons.Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 stroke-[3]" />
-                    </div>
+                {/* Badge & Title Details */}
+                <div className="flex flex-col gap-1.5 text-left">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-blue-100 bg-blue-50/50 text-[#0066cc] text-[9px] font-bold uppercase tracking-wider w-max">
+                    <LucideIcons.Heart className="w-3.5 h-3.5 text-[#0066cc] stroke-[2.5]" />
+                    <span>Health & Wellness</span>
                   </div>
+
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight leading-tight mt-0.5">
+                    Consulting Specialist Checkup
+                  </h3>
+                  <span className="text-[8.5px] sm:text-[9.5px] font-bold text-slate-400 uppercase tracking-wider leading-relaxed max-w-[280px] sm:max-w-sm">
+                    {healthCheckupCard?.societyName || "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd"}
+                  </span>
                 </div>
               </div>
 
-              {/* Dynamic redirection book button */}
-              <button
-                onClick={handleBookCampAppointment}
-                className="w-full mt-2 sm:mt-3 py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-full bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] hover:from-[#1d5fb9] hover:to-[#0f3d7c] text-white font-extrabold text-[10px] sm:text-xs uppercase tracking-wider shadow-[0_4px_12px_rgba(24,79,155,0.25)] hover:shadow-[0_6px_18px_rgba(24,79,155,0.35)] transition-all flex items-center justify-center gap-1.5 sm:gap-2 group cursor-pointer"
-              >
-                <div className="w-5 h-5 sm:w-6.5 sm:h-6.5 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
-                  <LucideIcons.Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                </div>
-                <span className="font-bold select-none tracking-widest">Book Appointment</span>
-                <LucideIcons.ChevronRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 stroke-[3] group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 w-full mt-3.5 sm:mt-5 select-none">
-                <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
-                </svg>
-                <div className="flex flex-col items-center gap-0.5 sm:gap-1 text-center">
-                  <h2 className="text-base sm:text-2xl font-black text-[#0A2D5C] tracking-normal leading-snug" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
-                    Consulting Specialist
-                  </h2>
-                </div>
-                <svg className="w-8 h-4 sm:w-12 sm:h-6 text-red-500 shrink-0" viewBox="0 0 100 30" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M0,15 H30 L38,5 L48,25 L54,10 L58,18 L64,15 H100" />
-                </svg>
-              </div>
-
-              {/* Schedule and calendar column cards */}
-              <div className="w-full mt-2.5 sm:mt-4 bg-white border border-slate-100 rounded-2xl p-2 sm:p-3 shadow-[0_4px_15px_rgba(0,0,0,0.02)] grid grid-cols-2 divide-x divide-slate-100 gap-1 sm:gap-1.5 items-center select-none">
-                <div className="flex items-center gap-1.5 sm:gap-2.5 px-0.5 sm:px-1 justify-center">
-                  <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
-                    <LucideIcons.CalendarRange className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
+              {/* 3-Column Info Card */}
+              <div className="grid grid-cols-3 gap-2 bg-[#F8FAFC]/75 border border-slate-100 rounded-2xl p-4 text-center divide-x divide-slate-100 select-none">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-8.5 h-8.5 rounded-full bg-blue-50/60 border border-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
+                    <LucideIcons.Calendar className="w-4 h-4 stroke-[2]" />
                   </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-[6px] sm:text-[7px] uppercase font-black text-slate-400 tracking-wider">Schedule</span>
-                    <span className="text-[8px] sm:text-[9.5px] font-black text-slate-800 leading-tight">
-                      {healthCheckupCard?.frequencyText || "EVERY MONTH"}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[8.5px] uppercase font-bold text-slate-450 tracking-wider">Schedule</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
+                      {healthCheckupCard?.frequencyText ? healthCheckupCard.frequencyText.replace("EVERY MONTH", "Monthly") : "Monthly"}
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 sm:gap-2.5 px-1.5 sm:px-3 justify-center">
-                  <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-lg bg-sky-50 flex items-center justify-center text-[#184F9B] shrink-0 border border-sky-100">
-                    <LucideIcons.Clock className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
+
+                <div className="flex flex-col items-center gap-2 pl-1">
+                  <div className="w-8.5 h-8.5 rounded-full bg-blue-50/60 border border-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
+                    <LucideIcons.CalendarCheck className="w-4 h-4 stroke-[2]" />
                   </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-[6px] sm:text-[7px] uppercase font-black text-slate-400 tracking-wider">Visiting Days</span>
-                    <span className="text-[8px] sm:text-[9.5px] font-black text-slate-800 leading-tight">
-                      {healthCheckupCard?.daysText || "2ND & 4TH WEDNESDAY"}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[8.5px] uppercase font-bold text-slate-455 tracking-wider">Visiting Days</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
+                      {healthCheckupCard?.daysText ? healthCheckupCard.daysText.replace("2ND & 4TH WEDNESDAY", "2nd & 4th Wed") : "2nd & 4th Wed"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-2 pl-1">
+                  <div className="w-8.5 h-8.5 rounded-full bg-blue-50/60 border border-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
+                    <LucideIcons.Clock className="w-4 h-4 stroke-[2]" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[8.5px] uppercase font-bold text-slate-450 tracking-wider">Timings</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
+                      {healthCheckupCard?.timingsText ? healthCheckupCard.timingsText.replace("12.00 pm - 02.00 pm", "12 PM - 2 PM") : "12 PM - 2 PM"}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Hours / timings capsule */}
-              <div className="w-full mt-2.5 sm:mt-4 py-1.5 px-3 sm:py-2.5 sm:px-5 bg-gradient-to-r from-[#184F9B] to-[#0A2D5C] rounded-full text-white flex items-center justify-center gap-2 sm:gap-3 shadow-inner select-none">
-                <LucideIcons.Clock className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 text-sky-300" />
-                <span className="w-px h-3 sm:h-3.5 bg-sky-400/30" />
-                <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-widest text-sky-100">Timing</span>
-                <span className="text-[8.5px] sm:text-[10px] font-bold font-mono tracking-tight text-white">
-                  {healthCheckupCard?.timingsText || "12.00 pm - 02.00 pm"}
-                </span>
-              </div>
+              {/* Action Button & Divider Footer */}
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={handleBookCampAppointment}
+                  className="w-full py-3 px-6 rounded-xl bg-[#0055d4] hover:bg-[#0047b3] active:scale-[0.99] text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 group cursor-pointer shadow-sm hover:shadow"
+                >
+                  <LucideIcons.Calendar className="w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 stroke-[2.2]" />
+                  <span>Book Appointment</span>
+                  <LucideIcons.ArrowRight className="w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                </button>
 
-              {/* Shield health priority badge */}
-              <div className="mt-2.5 sm:mt-4 mb-0.5 sm:mb-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center gap-1.5 sm:gap-2 text-sky-700 font-extrabold text-[7px] sm:text-[8px] uppercase tracking-wider select-none">
-                <LucideIcons.ShieldAlert className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-sky-600 fill-sky-200" />
-                <span>{healthCheckupCard?.footerText || "Your health is our priority"}</span>
-              </div>
-
-              {/* Layered waves background */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden pointer-events-none rounded-b-[32px] -z-10 bg-gradient-to-t from-sky-50 to-white/0">
-                <div className="absolute -bottom-8 left-0 right-0 h-16 bg-[#184F9B]/10 rounded-[50%_50%_0_0_/_100%_100%_0_0] scale-x-125 transform" />
-                <div className="absolute -bottom-12 left-0 right-0 h-16 bg-[#0A2D5C]/15 rounded-[50%_50%_0_0_/_100%_100%_0_0] scale-x-110 transform" />
+                <div className="flex items-center gap-3 w-full select-none pt-1">
+                  <div className="h-px bg-slate-100 flex-grow" />
+                  <span className="text-[8.5px] sm:text-[9.5px] font-bold text-slate-400 uppercase tracking-widest shrink-0">
+                    {healthCheckupCard?.footerText || "Your health is our priority"}
+                  </span>
+                  <div className="h-px bg-slate-100 flex-grow" />
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -860,12 +818,12 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg bg-white border border-slate-200/60 rounded-[28px] shadow-2xl p-5 sm:p-7 flex flex-col gap-5 sm:gap-6 my-auto overflow-hidden"
+              className="relative w-full max-w-lg bg-white border border-slate-200/50 rounded-xl shadow-md p-6 flex flex-col gap-5 my-auto overflow-hidden"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsMassageModalOpen(false)}
-                className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50"
+                className="absolute top-4 right-4 p-1 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50 bg-white/80 border border-slate-100/50 shadow-xs"
               >
                 <LucideIcons.X className="w-5 h-5" />
               </button>
@@ -889,55 +847,55 @@ export default function ServicesPage() {
               <div className="flex flex-col gap-5 relative z-10 w-full">
 
                 {/* Header row with icon & badge */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-amber-500/[0.02] border border-amber-500/10 rounded-2xl p-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-amber-500/[0.01] border border-amber-500/10 rounded-xl p-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-400/20 text-amber-500 flex items-center justify-center shrink-0">
-                      <Flame className="w-5.5 h-5.5 stroke-[2]" />
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                      <Flame className="w-5 h-5 stroke-[1.8]" />
                     </div>
                     <div>
-                      <h3 className="text-sm sm:text-base font-bold text-navy-900 leading-tight">Robot Massage Chair Session</h3>
+                      <h3 className="text-sm font-bold text-slate-900 leading-tight">Robot Massage Chair Session</h3>
                       <span className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase">Kohinoor Premium Experience</span>
                     </div>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wider animate-pulse self-start sm:self-auto">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100/50 uppercase tracking-wider self-start sm:self-auto">
                     <Ticket className="w-3 h-3" />
                     Special Offer
                   </span>
                 </div>
 
                 {/* Price block */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/[0.02] border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-600">Limited-Time Pricing</span>
                     <span className="text-slate-500 text-xs">Exclusive rate for park occupants:</span>
                   </div>
-                  <div className="flex items-baseline gap-1 text-amber-600 shrink-0">
+                  <div className="flex items-baseline gap-1 text-slate-900 shrink-0">
                     <span className="text-lg font-bold">₹</span>
-                    <span className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-navy-900 to-amber-600">100</span>
+                    <span className="text-3xl font-black tracking-tight text-slate-900">100</span>
                     <span className="text-xs font-semibold text-slate-400">/ Session</span>
                   </div>
                 </div>
 
                 {/* Grid details */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
+                  <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/55 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200/50">
                       <Clock className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider">Duration</span>
-                      <span className="text-xs font-bold text-navy-800">20 Minute Session</span>
+                      <span className="text-xs font-bold text-slate-800">20 Minute Session</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/10">
+                  <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/55 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200/50">
                       <CalendarRange className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider">Timings</span>
-                      <span className="text-xs font-bold text-navy-800">8:30 AM – 8:00 PM</span>
+                      <span className="text-xs font-bold text-slate-800">8:30 AM – 8:00 PM</span>
                     </div>
                   </div>
                 </div>
@@ -950,12 +908,12 @@ export default function ServicesPage() {
                   href="tel:8879002525"
                   className="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 shrink-0 group/phone cursor-pointer"
                 >
-                  <div className="w-9 h-9 rounded-full bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 group-hover/phone:scale-105 transition-transform">
-                    <PhoneCall className="w-4 h-4 animate-pulse" />
+                  <div className="w-8 h-8 rounded bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 transition-colors duration-300">
+                    <PhoneCall className="w-3.5 h-3.5" />
                   </div>
                   <div className="flex flex-col text-left">
                     <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider">Direct Booking</span>
-                    <span className="text-xs sm:text-sm font-black text-navy-900 group-hover/phone:text-amber-500 font-mono transition-colors">
+                    <span className="text-xs sm:text-sm font-semibold text-slate-900 group-hover/phone:text-amber-600 font-mono transition-colors">
                       8879002525
                     </span>
                   </div>
@@ -965,7 +923,7 @@ export default function ServicesPage() {
                   href="https://calendly.com/kohinoorcityofficekhcom2/tranquiloasismassagelounge?month=2026-06"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_4px_12px_rgba(245,158,11,0.2)] hover:shadow-[0_6px_16px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 cursor-pointer text-center"
+                  className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs uppercase tracking-wider transition-all duration-350 shadow-xs cursor-pointer text-center"
                 >
                   <CalendarRange className="w-3.5 h-3.5" />
                   <span>Book Now</span>
@@ -1003,23 +961,23 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] bg-slate-50 border border-white/60 rounded-[20px] sm:rounded-[30px] md:rounded-[36px] shadow-2xl p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 overflow-y-auto"
+              className="relative w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] bg-white border border-slate-200/50 rounded-xl shadow-md p-4 sm:p-6 md:p-8 flex flex-col gap-6 overflow-y-auto"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsNurseryModalOpen(false)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50"
+                className="absolute top-4 right-4 md:top-6 md:right-6 p-1.5 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer z-50 bg-white border border-slate-200/40 shadow-xs"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
 
               {/* Modal Header */}
               <div className="flex flex-col gap-3 text-left pr-10 md:pr-0">
                 <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1.5">
-                  <Leaf className="w-4 h-4 text-emerald-500 animate-bounce" />
+                  <Leaf className="w-4 h-4 text-emerald-500" />
                   Kohinoor Commercial 2
                 </span>
-                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 font-display">
                   Kohinoor Green Nursery
                 </h2>
                 <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
@@ -1027,16 +985,16 @@ export default function ServicesPage() {
                 </p>
 
                 {/* Nursery Details strip */}
-                <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500">
-                  <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/50 shadow-sm">
+                <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
                     <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     <span>Location: <span className="font-semibold text-slate-800">{nursery.location}</span></span>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/50 shadow-sm">
+                  <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
                     <Clock className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     <span>Timings: <span className="font-semibold text-slate-800">{nursery.timing}</span></span>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/50 shadow-sm">
+                  <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
                     <PhoneCall className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     <span>Contact: <span className="font-semibold text-slate-800">{nursery.contact}</span></span>
                   </div>
@@ -1045,8 +1003,8 @@ export default function ServicesPage() {
 
               {/* Grid of Plants */}
               <div className="flex flex-col gap-6">
-                <h3 className="text-lg font-black text-navy-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-emerald-500" />
+                <h3 className="text-base font-bold text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
+                  <ShoppingBag className="w-4.5 h-4.5 text-emerald-500" />
                   <span>Available Plants for Purchase</span>
                 </h3>
 
@@ -1054,11 +1012,11 @@ export default function ServicesPage() {
                   {nursery.plants.map((plant) => (
                     <div
                       key={plant.id}
-                      className="bg-white border border-slate-200/60 rounded-3xl p-4 shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between group/plant"
+                      className="bg-white border border-slate-100 rounded-xl p-4 hover:shadow-xs transition-all duration-200 flex flex-col justify-between group/plant"
                     >
                       <div className="flex flex-col gap-4">
                         {/* Plant Image Container */}
-                        <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 relative shadow-inner">
+                        <div className="aspect-[4/3] w-full rounded-lg overflow-hidden bg-slate-100 border border-slate-100 relative shadow-inner">
                           {plant.imageSrc ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -1074,10 +1032,10 @@ export default function ServicesPage() {
 
                           {/* Stock status indicator */}
                           <div className={cn(
-                            "absolute top-3 right-3 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider border shadow-sm",
+                            "absolute top-3 right-3 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border shadow-sm",
                             plant.quantity > 0
-                              ? "bg-emerald-500/90 text-white border-emerald-400"
-                              : "bg-rose-500/90 text-white border-rose-400"
+                              ? "bg-emerald-500 text-white border-emerald-400"
+                              : "bg-rose-500 text-white border-rose-400"
                           )}>
                             {plant.quantity > 0 ? `${plant.quantity} In Stock` : "Out of Stock"}
                           </div>
@@ -1086,10 +1044,10 @@ export default function ServicesPage() {
                         {/* Plant details */}
                         <div className="flex flex-col gap-2 text-left">
                           <div className="flex items-center justify-between gap-2">
-                            <h4 className="font-extrabold text-navy-900 text-base leading-snug group-hover/plant:text-emerald-600 transition-colors">
+                            <h4 className="font-bold text-slate-900 text-sm leading-snug group-hover/plant:text-emerald-600 transition-colors">
                               {plant.name}
                             </h4>
-                            <span className="font-black text-emerald-600 text-lg shrink-0">
+                            <span className="font-bold text-emerald-600 text-base shrink-0">
                               ₹{plant.price}
                             </span>
                           </div>
@@ -1112,10 +1070,10 @@ export default function ServicesPage() {
                           setIsBuyModalOpen(true);
                         }}
                         className={cn(
-                          "w-full mt-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-sm",
+                          "w-full mt-4 py-2 rounded-lg font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shadow-xs",
                           plant.quantity > 0
-                            ? "bg-emerald-600 hover:bg-emerald-700 text-white hover:shadow-md"
-                            : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                            : "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100"
                         )}
                       >
                         <ShoppingBag className="w-3.5 h-3.5" />
@@ -1126,7 +1084,7 @@ export default function ServicesPage() {
                 </div>
 
                 {nursery.plants.length === 0 && (
-                  <div className="text-center py-12 border border-dashed border-slate-200 rounded-3xl text-slate-400 text-sm">
+                  <div className="text-center py-12 border border-dashed border-slate-200 rounded-xl text-slate-400 text-sm">
                     No plants currently available in the nursery database.
                   </div>
                 )}
@@ -1152,7 +1110,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md bg-white border border-white/60 rounded-[24px] sm:rounded-[32px] shadow-2xl p-5 sm:p-6 md:p-8 overflow-y-auto max-h-[90vh]"
+              className="relative w-full max-w-md bg-white border border-slate-200/50 rounded-xl shadow-md p-5 sm:p-6 md:p-8 overflow-y-auto max-h-[90vh]"
             >
               {/* Close Button */}
               <button

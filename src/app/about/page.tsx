@@ -51,18 +51,18 @@ const towersData = [
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col w-full pb-20 overflow-hidden">
+    <div className="flex flex-col w-full pb-12 overflow-hidden">
 
       {/* 1. HERO PAGE BANNER */}
-      <section className="relative pt-24 pb-8 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      <section className="relative pt-16 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
         {/* Decorative ambient neon circle */}
         <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-5 text-left relative z-10">
+        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-sky-400/20 bg-sky-500/5 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
+            className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-sky-50 border border-sky-100 text-sky-700 text-[10px] font-bold w-max uppercase tracking-wider"
           >
             <Compass className="w-3.5 h-3.5 text-sky-400 animate-spin-slow" />
             <span>Landmark Blueprint</span>
@@ -89,31 +89,28 @@ export default function AboutPage() {
       </section>
 
       {/* 2. VISION & MISSION CARDS */}
-      <section className="py-12 max-w-4xl mx-auto px-6 md:px-12 flex grid-cols-2 md:grid-cols-2 gap-8 w-full">
+      <section className="py-8 max-w-2xl mx-auto px-6 md:px-12 flex justify-center w-full">
         <motion.div
-        
           initial={{ opacity: 0, x: -25 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ type: "spring", damping: 25 }}
-          className="p-6 border border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-2xl"
+          className="p-5 border border-slate-100 bg-white shadow-xs hover:border-slate-200 hover:shadow-sm transition-all duration-200 rounded-xl w-full"
         >
-          <div className="w-12 h-12 rounded-xl bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-500 shrink-0">
-            <TrendingUp className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-lg bg-sky-500/5 border border-sky-400/20 flex items-center justify-center text-sky-500 shrink-0">
+            <TrendingUp className="w-5 h-5" />
           </div>
-          <h3 className="text-xl font-bold text-navy-900 mt-4">Our Vision</h3>
+          <h3 className="text-lg font-bold text-navy-900 mt-4">Our Vision</h3>
           <p className="text-slate-600 text-sm leading-relaxed mt-2">
             To create premium commercial environments that combine modern design, functionality, and sustainability, establishing a benchmark for corporate workspaces.
           </p>
         </motion.div>
-
-      
       </section>
 
       {/* 4. ARCHITECTURAL HIGHLIGHTS */}
-      <section className="py-12 md:py-32 border-y border-slate-200/50 bg-[#F8FAFC] w-full">
-        <div className="flex flex-col gap-12 max-w-[90rem] mx-auto px-6 md:px-12">
-          <div className="text-center max-w-2xl mx-auto flex flex-col gap-3">
+      <section className="py-10 md:py-16 border-y border-slate-200/50 bg-[#F8FAFC] w-full">
+        <div className="flex flex-col gap-8 max-w-[90rem] mx-auto px-6 md:px-12">
+          <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">Establishment & Location</span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
               Kohinoor Commercial-II
@@ -124,7 +121,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-4">
             {towersData.map((tower, idx) => (
               <motion.div
                 key={tower.id}
@@ -132,23 +129,23 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="relative overflow-hidden p-8 rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50/50 hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1 hover:border-sky-500/30 transition-all duration-300 ease-out flex flex-col justify-between"
+                className="relative overflow-hidden p-6 rounded-xl border border-slate-200/60 bg-gradient-to-b from-white to-slate-50/50 hover:shadow-sm hover:-translate-y-1 hover:border-sky-500/30 transition-all duration-300 flex flex-col justify-between"
               >
                 {/* Large watermark number on top right */}
-                <div className="absolute -top-1 -right-2 text-8xl font-black text-slate-200/50 select-none pointer-events-none font-display tracking-tighter">
+                <div className="absolute -top-1 -right-2 text-6xl font-black text-slate-200/50 select-none pointer-events-none font-display tracking-tighter">
                   0{idx + 1}
                 </div>
 
-                <div className="relative z-10 flex flex-col h-full justify-between gap-5">
+                <div className="relative z-10 flex flex-col h-full justify-between gap-4">
                   {tower.offices && tower.offices.length > 0 ? (
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-4">
                       <div>
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/10 to-blue-500/5 border border-sky-500/10 flex items-center justify-center text-sky-600 shrink-0 shadow-xs">
-                            <Building className="w-6 h-6" />
+                        <div className="flex items-center gap-4 mb-3">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500/10 to-blue-500/5 border border-sky-500/10 flex items-center justify-center text-sky-600 shrink-0 shadow-xs">
+                            <Building className="w-5 h-5" />
                           </div>
                           <div>
-                            <h4 className="text-xl font-black text-navy-900 leading-none">{tower.name}</h4>
+                            <h4 className="text-lg font-black text-navy-900 leading-none">{tower.name}</h4>
                             <p className="text-[10px] text-sky-600 font-bold tracking-widest uppercase mt-1">{tower.sub}</p>
                           </div>
                         </div>
@@ -160,15 +157,15 @@ export default function AboutPage() {
                         )}
                       </div>
 
-                      <div className="flex flex-col gap-1 border-t border-slate-300 pt-4">
-                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 text-center">
+                      <div className="flex flex-col gap-1 border-t border-slate-200 pt-3">
+                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1 text-center">
                           Associated Offices
                         </div>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-0.5">
                           {tower.offices.map((office, oIdx) => (
                             <div
                               key={oIdx}
-                              className="text-center text-slate-700 font-semibold text-xs md:text-sm tracking-wide leading-relaxed py-1"
+                              className="text-center text-slate-700 font-semibold text-xs tracking-wide leading-relaxed py-0.5"
                             >
                               {office}
                             </div>
@@ -177,14 +174,14 @@ export default function AboutPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col h-full justify-between gap-12">
+                    <div className="flex flex-col h-full justify-between gap-6">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/10 to-blue-500/5 border border-sky-500/10 flex items-center justify-center text-sky-600 shrink-0 shadow-xs">
-                            <Building className="w-6 h-6" />
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500/10 to-blue-500/5 border border-sky-500/10 flex items-center justify-center text-sky-600 shrink-0 shadow-xs">
+                            <Building className="w-5 h-5" />
                           </div>
                           <div>
-                            <h4 className="text-xl font-black text-navy-900 leading-none">{tower.name}</h4>
+                            <h4 className="text-lg font-black text-navy-900 leading-none">{tower.name}</h4>
                             <p className="text-[10px] text-sky-600 font-bold tracking-widest uppercase mt-1">{tower.sub}</p>
                           </div>
                         </div>
@@ -195,8 +192,6 @@ export default function AboutPage() {
                           </p>
                         )}
                       </div>
-
-                     
                     </div>
                   )}
                 </div>

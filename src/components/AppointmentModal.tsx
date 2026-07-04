@@ -39,77 +39,72 @@ export default function AppointmentModal({ isOpen, onClose, doctor }: Appointmen
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ type: "spring", damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-[340px] sm:max-w-md bg-white border border-white/60 rounded-[20px] sm:rounded-[32px] shadow-2xl p-4 sm:p-6 md:p-8 my-auto"
+            className="relative w-full max-w-[340px] sm:max-w-[360px] bg-white border border-slate-100 rounded-xl shadow-md p-5 my-auto"
           >
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full text-slate-400 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer"
+              className="absolute top-3.5 right-3.5 p-1 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-colors focus:outline-none cursor-pointer border border-slate-100/50 bg-white shadow-xs"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4.5 h-4.5" />
             </button>
 
             {/* Content Container */}
-            <div className="flex flex-col items-center text-center gap-4 sm:gap-6 mt-2">
+            <div className="flex flex-col items-center text-center gap-4 mt-2">
               {/* Header Info */}
-              <div className="flex flex-col gap-1 sm:gap-1.5 items-center">
-                <span className="text-[9px] sm:text-[10px] text-sky-600 font-extrabold uppercase tracking-widest px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-sky-50 border border-sky-100">
+              <div className="flex flex-col gap-1 items-center select-none">
+                <span className="text-[8.5px] text-sky-600 font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-sky-50 border border-sky-100">
                   Doctor Appointment
                 </span>
-                <h3 className="text-lg sm:text-xl font-black text-navy-900 mt-1.5 sm:mt-2">
+                <h3 className="text-base font-bold text-slate-950 mt-1.5">
                   Dr. {doctor.name}
                 </h3>
-                <span className="text-[10px] sm:text-xs font-bold text-sky-500 tracking-wide">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
                   {doctor.specialty}
                 </span>
               </div>
 
-              {/* Doctor Small Details Card */}
-              <div className="w-full p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex flex-col gap-2 sm:gap-2.5 text-left text-[11px] sm:text-xs">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 shrink-0" />
-                  <span className="text-slate-500">Visiting Hours:</span>
-                  <span className="font-bold text-navy-800 ml-auto text-right">{doctor.schedule}</span>
+              {/* Doctor Details Grid */}
+              <div className="w-full bg-slate-50 border border-slate-100/80 rounded-lg p-3 flex flex-col gap-2 text-[11px] select-none text-left">
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-slate-400 font-bold uppercase tracking-wider text-[8px] shrink-0">Hours</span>
+                  <span className="font-semibold text-slate-800 text-right">{doctor.schedule}</span>
                 </div>
                 {doctor.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 shrink-0" />
-                    <span className="text-slate-500">Contact:</span>
-                    <span className="font-mono text-slate-700 ml-auto">{doctor.phone}</span>
+                  <div className="flex justify-between items-center border-t border-slate-150 pt-1.5 gap-2">
+                    <span className="text-slate-400 font-bold uppercase tracking-wider text-[8px] shrink-0">Contact</span>
+                    <span className="font-mono font-semibold text-slate-700 text-right">{doctor.phone}</span>
                   </div>
                 )}
                 {doctor.email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 shrink-0" />
-                    <span className="text-slate-500">Email:</span>
-                    <span className="text-slate-700 ml-auto break-all text-right">{doctor.email}</span>
+                  <div className="flex justify-between items-center border-t border-slate-150 pt-1.5 gap-2">
+                    <span className="text-slate-400 font-bold uppercase tracking-wider text-[8px] shrink-0">Email</span>
+                    <span className="font-semibold text-slate-750 truncate max-w-[170px] text-right">{doctor.email}</span>
                   </div>
                 )}
               </div>
 
-              {/* Direct Booking Actions */}
-              <div className="flex flex-col gap-2 sm:gap-3 w-full">
-                {/* Send via WhatsApp */}
+              {/* Actions Grid */}
+              <div className="flex gap-2 w-full pt-1">
                 {doctor.phone && (
                   <a
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 sm:gap-2.5 w-full py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-[11px] sm:text-xs uppercase tracking-wider transition-colors shadow-md text-center cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold text-[10px] uppercase tracking-wider transition-colors shadow-xs text-center cursor-pointer"
                   >
-                    <MessageSquare className="w-4 h-4 fill-current" />
-                    <span>Open WhatsApp Chat</span>
+                    <MessageSquare className="w-3.5 h-3.5 fill-current" />
+                    <span>WhatsApp</span>
                   </a>
                 )}
 
-                {/* Send via Email */}
                 {doctor.email && (
                   <a
                     href={mailtoUrl}
-                    className="flex items-center justify-center gap-2 sm:gap-2.5 w-full py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-navy-900 hover:bg-sky-500 text-white font-extrabold text-[11px] sm:text-xs uppercase tracking-wider transition-colors shadow-md text-center cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg bg-slate-950 hover:bg-sky-600 text-white font-semibold text-[10px] uppercase tracking-wider transition-all duration-300 shadow-xs text-center cursor-pointer"
                   >
-                    <Mail className="w-4 h-4" />
-                    <span>Send Request Email</span>
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Email Direct</span>
                   </a>
                 )}
               </div>
