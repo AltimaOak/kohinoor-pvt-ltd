@@ -163,8 +163,6 @@ export default function ContactPage() {
               </motion.div>
             </div>
           </div>
-
-        </div>
       </section>
 
       {/* 2. EMERGENCY CONTACTS DIRECTORY */}
@@ -472,7 +470,6 @@ export default function ContactPage() {
             </motion.div>
           </div>
         </div>
-      </div>
     </section>
 
       {/* 4. ADMIN & OPERATIONS DIRECTORY SECTION */}
