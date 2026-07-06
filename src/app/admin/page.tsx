@@ -430,7 +430,7 @@ export default function AdminPage() {
   };
 
   // ==========================================
-  // GALLERY PHOTO OPERATIONS
+  // GALLERY PHOTO 
   // ==========================================
   const handleSavePhoto = async () => {
     if (!db || !editingPhoto) return;
