@@ -24,7 +24,12 @@ import {
   Soup,
   Plane,
   Building,
-  MoreVertical
+  MoreVertical,
+  Train,
+  ChevronRight,
+  ShoppingBag,
+  Utensils,
+  Building2,
 } from "lucide-react";
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
@@ -104,7 +109,7 @@ export default function LandingPage() {
     <div className="flex flex-col w-full pb-12 overflow-hidden">
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[75vh] w-full flex items-center overflow-hidden">
+      <section className="relative min-h-[65vh] w-full flex items-center overflow-hidden">
         {/* Background Image - Sharp and Un-blurred */}
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -181,46 +186,45 @@ export default function LandingPage() {
 
 
       {/* 3. ABOUT PREVIEW SECTION */}
-      <section id="about" className="pt-8 md:pt-10 pb-10 md:pb-12 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section id="about" className="pt-6 pb-6 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Side: Text Columns (7 Columns) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="lg:col-span-7 flex flex-col gap-4"
+          className="lg:col-span-7 flex flex-col gap-3"
         >
-          <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
+          <span className="text-[11px] font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
             <Award className="w-4 h-4 text-sky-500" />
             Establishment & Location
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 font-display leading-tight">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 font-display leading-tight">
             Kohinoor Commercial - II
           </h2>
-          <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+          <p className="text-slate-600 text-sm leading-relaxed">
             Kohinoor Commercial - II in Kurla West, Mumbai is a premier commercial destination that satisfactorily caters to the demands of its customer base. Built on a core belief of customer centricity, the business park has established long-term relationships and built an outstanding reputation.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-            <div className="flex gap-4 group">
-              <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:border-sky-200 group-hover:bg-sky-50/50 transition-colors duration-300">
-                <Compass className="w-5 h-5 text-slate-500 group-hover:text-sky-600 transition-colors" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+            <div className="flex gap-3 group">
+              <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:border-sky-200 group-hover:bg-sky-50/50 transition-colors duration-300">
+                <Compass className="w-4 h-4 text-slate-500 group-hover:text-sky-600 transition-colors" />
               </div>
               <div className="flex flex-col">
                 <h4 className="text-sm font-semibold text-slate-950">Kurla West Commercial Hub</h4>
-                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
+                <p className="text-slate-500 text-[11px] mt-0.5 leading-relaxed">
                   Ideally situated in Kurla West, Mumbai, providing prime business accessibility and connectivity.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-4 group">
-              <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:border-sky-200 group-hover:bg-sky-50/50 transition-colors duration-300">
-                <CheckCircle2 className="w-5 h-5 text-slate-500 group-hover:text-sky-600 transition-colors" />
+            <div className="flex gap-3 group">
+              <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:border-sky-200 group-hover:bg-sky-50/50 transition-colors duration-300">
+                <CheckCircle2 className="w-4 h-4 text-slate-500 group-hover:text-sky-600 transition-colors" />
               </div>
               <div className="flex flex-col">
                 <h4 className="text-sm font-semibold text-slate-950">Customer Centricity</h4>
-                <p className="text-slate-500 text-xs mt-1 leading-relaxed">
+                <p className="text-slate-500 text-[11px] mt-0.5 leading-relaxed">
                   Prioritizing a positive customer experience and top-notch quality for all business operations.
                 </p>
               </div>
@@ -239,14 +243,14 @@ export default function LandingPage() {
         </motion.div>
 
         {/* Right Side: Showcase Cards (5 Columns) */}
-        <div className="lg:col-span-5 flex flex-col gap-5">
+        <div className="lg:col-span-5 flex flex-col gap-4">
 
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="p-5 sm:p-6 rounded-3xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-xs transition-all duration-300 flex flex-col gap-4 group w-full relative overflow-hidden"
+            className="p-4 sm:p-5 rounded-2xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-xs transition-all duration-300 flex flex-col gap-3 group w-full relative overflow-hidden"
           >
             <style dangerouslySetInnerHTML={{ __html: `
               .reviews-scroll::-webkit-scrollbar {
@@ -286,7 +290,7 @@ export default function LandingPage() {
             </div>
 
             <div 
-              className="flex flex-col gap-3.5 max-h-[400px] overflow-y-auto pr-1.5 reviews-scroll"
+              className="flex flex-col gap-3.5 max-h-[220px] overflow-y-auto pr-1.5 reviews-scroll"
             >
               {[
                 {
@@ -378,8 +382,8 @@ export default function LandingPage() {
                   : rev.text;
 
                 return (
-                  <div key={idx} className="flex gap-3 pb-4 border-b border-slate-100 last:pb-0 last:border-b-0">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${rev.avatarBg}`}>
+                  <div key={idx} className="flex gap-2.5 pb-3 border-b border-slate-100 last:pb-0 last:border-b-0">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${rev.avatarBg}`}>
                       {rev.initial}
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
@@ -423,8 +427,8 @@ export default function LandingPage() {
       </section>
 
       {/* 4. CORE AMENITIES GRID */}
-      <section className="py-10 md:py-12 border-y border-slate-200/50 bg-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-10 w-full">
+      <section className="py-6 border-y border-slate-200/50 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-6 w-full">
           <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">PREMISES & AMENITIES</span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display">
@@ -472,7 +476,7 @@ export default function LandingPage() {
       </section>
 
       {/* 5. INTERACTIVE GALLERY SECTION */}
-      <section className="pt-10 md:pt-12 pb-6 md:pb-8 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-8">
+      <section className="pt-6 pb-4 max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-6">
         <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
           <span className="text-xs font-bold text-sky-600 uppercase tracking-widest">COMPLEX SHOWCASE</span>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
@@ -486,111 +490,246 @@ export default function LandingPage() {
         <InteractiveGallery />
       </section>
 
-      {/* 6. NEARBY LANDMARKS SECTION */}
-      <section className="pt-6 md:pt-8 pb-10 md:pb-12 bg-white text-slate-800 relative w-full">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left side: Header info */}
-            <div className="lg:col-span-5 flex flex-col gap-4 text-left">
-              <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
-                <Compass className="w-4.5 h-4.5 text-sky-500 animate-spin-slow" />
-                Connectivity & Location
-              </span>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-navy-900 font-display leading-tight">
-                Prime Location & <br className="hidden md:inline" /> Nearby Landmarks
-              </h2>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Kohinoor City Office Towers is strategically located in Kurla (West) with unparalleled proximity to public transit, healthcare, premium shopping malls, and elite dining options.
-              </p>
-      
-              <div className="flex items-center gap-6 text-slate-500">
-                <div className="w-px h-1 bg-slate-200" />
-                <div className="flex flex-col">
-                
-                </div>
-              </div>
-            </div>
+{/* 6. NEARBY LANDMARKS */}
+<section className="py-8 bg-gradient-to-b from-white to-slate-50">
+  <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
-            {/* Right side: Landmarks list widget styled like the image */}
-            <div className="lg:col-span-7 w-full max-w-lg mx-auto lg:ml-auto">
-              <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 flex flex-col gap-4">
-                <h3 className="text-base font-bold tracking-tight text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-2">
-                  <MapPin className="w-4.5 h-4.5 text-sky-500" />
-                  <span>Nearby Landmarks</span>
-                </h3>
+    <div className="grid lg:grid-cols-[1fr_520px] gap-8 items-center">
 
-                <div className="flex flex-col">
-                  {[
-                    {
-                      name: "Vidyavihar Station",
-                      distance: "1.0 km away",
-                      time: null,
-                      icon: MapPin,
-                    },
-                    {
-                      name: "CritiCare Asia Hospital",
-                      distance: "0.5 km away",
-                      time: null,
-                      icon: HeartPulse,
-                    },
-                    {
-                      name: "Phoenix Marketcity",
-                      distance: "0.6 km away",
-                      time: null,
-                      icon: ShoppingCart,
-                    },
-                    {
-                      name: "Kohinoor Elite",
-                      distance: "0.9 km away",
-                      time: null,
-                      icon: Soup,
-                    },
-                    {
-                      name: "Don Bosco Institute",
-                      distance: "250 m away",
-                      time: null,
-                      icon: Building,
-                    },
-                    {
-                      name: "Airport",
-                      distance: "5.9 km away",
-                      time: null,
-                      icon: Plane,
-                    },
-                  ].map((landmark, idx) => {
-                    const LandmarkIcon = landmark.icon;
-                    return (
-                      <div
-                        key={idx}
-                        className={`flex items-start gap-4 py-2 ${
-                          idx !== 5 ? "border-b border-slate-100" : ""
-                        } hover:bg-slate-50 px-2 rounded-lg transition-all duration-200`}
-                      >
-                        <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 text-slate-500">
-                          <LandmarkIcon className="w-4.5 h-4.5" />
-                        </div>
-                        <div className="flex flex-col text-left">
-                          <h4 className="text-sm font-semibold text-slate-900 leading-normal">{landmark.name}</h4>
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            <span className="font-semibold text-sky-600">{landmark.distance}</span>
-                            {landmark.time && (
-                              <span className="text-slate-400 font-medium"> ({landmark.time})</span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
+      {/* LEFT */}
+
+      <div>
+
+        <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-bold text-sky-600">
+
+          <Compass className="w-4 h-4" />
+
+          CONNECTIVITY & LOCATION
+
+        </span>
+
+        <h2 className="mt-2 text-3xl md:text-4xl leading-tight font-black text-slate-900">
+
+          Prime Location,
+
+          <br />
+
+          <span className="text-sky-600">
+
+            Every Convenience
+
+          </span>
+
+          <br />
+
+          Close By.
+
+        </h2>
+
+        <div className="mt-4 w-16 h-[3px] bg-sky-600 rounded-full" />
+
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
+
+          Kohinoor City Office Towers enjoys a strategic location in Kurla
+          (West), offering excellent access to transportation, healthcare,
+          premium shopping destinations and business hubs across Mumbai.
+
+        </p>
+
+        <div className="mt-6 grid sm:grid-cols-2 gap-4">
+
+          {[
+            {
+              title: "Excellent Connectivity",
+              desc: "Easy access to public transport",
+              icon: Train,
+            },
+            {
+              title: "Healthcare Access",
+              desc: "Leading hospitals nearby",
+              icon: HeartPulse,
+            },
+            {
+              title: "Shopping & Lifestyle",
+              desc: "Premium malls within minutes",
+              icon: ShoppingBag,
+            },
+            {
+              title: "Dining Options",
+              desc: "Restaurants & cafés nearby",
+              icon: Utensils,
+            },
+          ].map((item, index) => {
+
+            const Icon = item.icon;
+
+            return (
+
+              <div
+                key={index}
+                className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-sky-200 hover:shadow-md"
+              >
+
+                <div className="flex items-center gap-3">
+
+                  <div className="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center shrink-0">
+
+                    <Icon className="w-5 h-5 text-sky-600" />
+
+                  </div>
+
+                  <div>
+
+                    <h4 className="font-semibold text-slate-900 text-sm">
+
+                      {item.title}
+
+                    </h4>
+
+                    <p className="text-sm text-slate-500 mt-1">
+
+                      {item.desc}
+
+                    </p>
+
+                  </div>
+
                 </div>
+
               </div>
-            </div>
-          </div>
+
+            );
+
+          })}
+
         </div>
-      </section>
 
+      </div>
+
+      {/* RIGHT */}
+
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-3">
+
+          <div className="w-6 h-6 rounded-md bg-sky-600 text-white flex items-center justify-center">
+
+            <MapPin className="w-3 h-3" />
+
+          </div>
+
+          <h3 className="text-xl md:text-2xl font-bold text-slate-900">
+
+            Nearby Landmarks
+
+          </h3>
+
+        </div>
+
+        <div>
+
+          {[
+            {
+              name: "Vidyavihar Station",
+              distance: "1.0 km",
+              icon: Train,
+            },
+            {
+              name: "CritiCare Asia Hospital",
+              distance: "0.5 km",
+              icon: HeartPulse,
+            },
+            {
+              name: "Phoenix Marketcity",
+              distance: "0.6 km",
+              icon: ShoppingCart,
+            },
+            {
+              name: "Kohinoor Elite",
+              distance: "0.9 km",
+              icon: Building2,
+            },
+            {
+              name: "Don Bosco Institute",
+              distance: "250 m",
+              icon: Building,
+            },
+            {
+              name: "Airport",
+              distance: "5.9 km",
+              icon: Plane,
+            },
+          ].map((item, i) => {
+
+            const Icon = item.icon;
+
+            return (
+
+              <div
+                key={i}
+                className="flex items-center justify-between px-5 py-3 border-b last:border-0 border-slate-100 hover:bg-slate-50 transition"
+              >
+
+                <div className="flex items-center gap-3">
+
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+
+                    <Icon className="w-4 h-4 text-slate-600" />
+
+                  </div>
+
+                  <span className="font-medium text-slate-900 text-sm">
+
+                    {item.name}
+
+                  </span>
+
+                </div>
+
+                <div className="flex items-center gap-5">
+
+                  <span className="font-semibold text-sky-600">
+
+                    {item.distance} away
+
+                  </span>
+
+                  <ChevronRight className="w-5 h-5 text-slate-400" />
+
+                </div>
+
+              </div>
+
+            );
+
+          })}
+
+        </div>
+
+        <div className="px-5 py-4 bg-slate-50 flex items-center gap-3">
+
+          <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center border shrink-0">
+
+            <MapPin className="w-4 h-4 text-sky-600" />
+
+          </div>
+
+          <p className="text-sm text-slate-600">
+
+            Strategic location that keeps your business connected to
+
+            <span className="font-semibold text-slate-900">
+              {" "}what matters most.
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
       {/* 7. LEASING ENQUIRY & CONTACT SECTION */}
-      <section id="contact" className="py-10 md:py-12 max-w-7xl mx-auto px-6 md:px-12 w-full">
-        <div className="flex flex-col gap-8 text-center items-center">
+      <section id="contact" className="py-6 max-w-7xl mx-auto px-6 md:px-12 w-full">
+        <div className="flex flex-col gap-6 text-center items-center">
           <div className="flex flex-col gap-2 items-center">
             <span className="text-xs font-bold text-sky-600 uppercase tracking-widest flex items-center gap-1.5">
               <Mail className="w-4.5 h-4.5 text-sky-400" />
