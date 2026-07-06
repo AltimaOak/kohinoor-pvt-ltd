@@ -99,7 +99,7 @@ export default function AboutPage() {
   </div>
 </section>
 
-     {/* 2. OUR LANDMARK */}
+    {/* 2. OUR LANDMARK */}
 <section className="py-10 bg-[#FCFCFA] border-y border-[#ECEAE4]">
   <div className="max-w-6xl mx-auto px-6 lg:px-12">
     {/* Header */}
@@ -173,7 +173,7 @@ export default function AboutPage() {
     {/* Header */}
     <div className="max-w-2xl mb-10">
       <h2 className="mt-4 text-3xl md:text-4xl font-extrabold text-slate-900">
-        Businesses That Trust Us
+        Our Engaged Clients
       </h2>
 
       <p className="mt-3 text-slate-600 text-[15px] leading-7">
@@ -199,7 +199,7 @@ export default function AboutPage() {
         "Indian Institute of Banking and Finance",
         "Indepesca Overseas Pvt. Ltd.",
         "Rhythm House Pvt. Ltd.",
-        "Edelweiss",
+        "Edelweiss Head Office",
       ].map((company, index) => (
 
         <div

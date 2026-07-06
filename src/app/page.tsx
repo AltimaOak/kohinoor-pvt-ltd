@@ -510,19 +510,18 @@ export default function LandingPage() {
 
         <h2 className="mt-2 text-3xl md:text-4xl leading-tight font-black text-slate-900">
 
-          Prime Location,
+          Prime Location &
 
           <br />
 
           <span className="text-sky-600">
 
-            Every Convenience
+         Nearby Landmarks
 
           </span>
 
           <br />
 
-          Close By.
 
         </h2>
 
