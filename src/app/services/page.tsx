@@ -405,11 +405,11 @@ export default function ServicesPage() {
 
       </div>
       {/* Heading */}
-      <h1 className="mt-2 text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900">
+      <h1 className="mt-4 text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900">
 
-        Our{" "}
+      Essential Services That
         <span className="text-sky-600">
-          Services
+          <br></br>Keep Business Moving.
         </span>
 
       </h1>
