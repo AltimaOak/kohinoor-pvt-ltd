@@ -44,7 +44,8 @@ import {
   FileText,
   Send,
   Leaf,
-  Coffee
+  Coffee,
+  Menu
 } from "lucide-react";
 import {
   getDb,
@@ -124,6 +125,8 @@ export default function AdminPage() {
   const [isAddingPhoto, setIsAddingPhoto] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<DoctorItem | null>(null);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
+  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Doctor Camp Poster State
   const [cardSocietyName, setCardSocietyName] = useState("");
@@ -888,7 +891,7 @@ export default function AdminPage() {
 
   // Render Dashboard
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24 text-navy-900 font-sans relative">
+    <div className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-slate-50 text-navy-900 font-sans">
       {/* Dynamic Toast Notifications */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full">
         <AnimatePresence>
@@ -916,56 +919,81 @@ export default function AdminPage() {
       </div>
 
       {/* 1. TOP HEADER NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-md border-b border-slate-200/60 py-4 px-6 md:px-12 flex items-center justify-between shadow-[0_2px_15px_rgba(15,23,42,0.02)]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center bg-white">
-            <img src="/images/logo.png" alt="Kohinoor Logo" className="h-full w-full object-contain p-0.5" />
+      <header className="z-40 bg-[#0f172a] text-white py-2.5 md:py-3 px-4 md:px-6 flex items-center justify-between shrink-0 shadow-md relative">
+        <div className="flex items-center gap-3 md:gap-4">
+          <button 
+            className="md:hidden p-1.5 -ml-1.5 text-slate-300 hover:text-white transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+          <div className="hidden md:flex w-7 h-7 md:w-8 md:h-8 rounded bg-white items-center justify-center p-1 shrink-0">
+            <img src="/images/logo.png" alt="Kohinoor Logo" className="h-full w-full object-contain" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xs font-black uppercase text-navy-900 tracking-tight leading-none">
-              Kohinoor City Office Towers
-            </span>
-            <span className="text-[7.5px] uppercase tracking-wider text-sky-500 font-extrabold mt-0.5">
-              Admin Control Center
-            </span>
-          </div>
+          <span className="text-[14px] md:text-[15px] font-semibold tracking-tight truncate max-w-[150px] md:max-w-none">
+            Kohinoor Towers
+          </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4 shrink-0">
           {saving && (
-            <span className="text-xs text-sky-600 font-bold flex items-center gap-1.5">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-500" />
-              Saving changes...
+            <span className="text-[10px] md:text-xs text-sky-400 font-bold flex items-center gap-1.5 md:mr-4">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span className="hidden md:inline">Saving...</span>
             </span>
           )}
-          <button
+          <span className="hidden sm:inline text-[13px] font-medium text-slate-300">Welcome, Admin</span>
+          <button 
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-xs font-bold text-slate-600 hover:text-navy-900 transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 transition-all text-[12px] md:text-[13px] font-medium"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
+            <LogOut className="w-3.5 h-3.5 md:w-4 md:h-4" />
+            <span className="hidden md:inline">Logout</span>
           </button>
         </div>
       </header>
 
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-navy-950/40 z-30 md:hidden backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* 2. BODY CONTENT PANEL */}
-      <main className="max-w-7xl mx-auto px-6 md:px-12 pt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Left Panel Sidebar Links (3 Columns) */}
-          <div className="lg:col-span-3 flex flex-col gap-2 bg-white border border-slate-200/60 p-4 rounded-3xl shadow-sm">
-            <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest px-3 mb-2">
-              Database Sections
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
+        
+        {/* Left Panel Sidebar */}
+        <aside className={`absolute md:relative z-40 w-64 md:w-64 shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between h-full overflow-y-auto transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}>
+          <div className="flex flex-col p-4 gap-1">
+            <div className="md:hidden flex items-center gap-3 mb-6 px-2">
+              <div className="w-8 h-8 rounded border border-slate-200 bg-white flex items-center justify-center p-1 shrink-0">
+                <img src="/images/logo.png" alt="Kohinoor Logo" className="h-full w-full object-contain" />
+              </div>
+              <span className="text-[14px] font-bold text-navy-900 tracking-tight">
+                Kohinoor Towers
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">
+              MENU
             </span>
             {[
-              { id: "events", label: "Community Events", icon: Calendar, color: "text-amber-500 bg-amber-50" },
-              { id: "services", label: "Healthcare & Services", icon: Briefcase, color: "text-rose-500 bg-rose-50" },
-              { id: "doctors", label: "Visiting Doctors", icon: Heart, color: "text-rose-600 bg-red-50" },
-              { id: "photos", label: "Interactive Gallery", icon: ImageIcon, color: "text-sky-500 bg-sky-50" },
-              { id: "contacts", label: "Contacts & Directory", icon: PhoneCall, color: "text-emerald-500 bg-emerald-50" },
-              { id: "nursery", label: "Plant Nursery", icon: Leaf, color: "text-emerald-600 bg-emerald-50" },
-              { id: "cafeteria", label: "Cafeteria Menu", icon: Coffee, color: "text-amber-600 bg-amber-50" },
-              { id: "receipts", label: "Receipts & WhatsApp Logs", icon: FileText, color: "text-indigo-500 bg-indigo-50" },
+              { id: "events", label: "Community Events", icon: Calendar },
+              { id: "services", label: "Healthcare & Services", icon: Plus },
+              { id: "doctors", label: "Visiting Doctors", icon: Heart },
+              { id: "photos", label: "Interactive Gallery", icon: ImageIcon },
+              { id: "contacts", label: "Contacts & Directory", icon: PhoneCall },
+              { id: "nursery", label: "Plant Nursery", icon: Leaf },
+              { id: "cafeteria", label: "Cafeteria Menu", icon: Coffee },
+              { id: "receipts", label: "Receipts & WhatsApp Logs", icon: FileText },
             ].map((tab) => {
               const TabIcon = tab.icon;
               const isSelected = activeTab === tab.id;
@@ -984,53 +1012,78 @@ export default function AdminPage() {
                     setIsAddingPlant(false);
                     setEditingCafeItem(null);
                     setIsAddingCafeItem(false);
+                    // Close mobile menu
+                    setIsMobileMenuOpen(false);
                   }}
-                  className={`flex items-center gap-3.5 px-4.5 py-4 rounded-2xl w-full text-left transition-all ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg w-full text-left transition-all ${
                     isSelected
-                      ? "bg-sky-500 text-white shadow-md shadow-sky-500/10 font-bold"
-                      : "hover:bg-slate-50 text-slate-600 hover:text-navy-900 font-semibold"
+                      ? "bg-blue-50 text-blue-600 font-semibold"
+                      : "hover:bg-slate-50 text-slate-600 font-medium"
                   }`}
                 >
-                  <div className={`p-2 rounded-xl shrink-0 ${isSelected ? "bg-white/20 text-white" : tab.color}`}>
-                    <TabIcon className="w-4.5 h-4.5" />
-                  </div>
-                  <span className="text-xs">{tab.label}</span>
+                  <TabIcon className="w-4 h-4 shrink-0" />
+                  <span className="text-[13px]">{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Right Panel Main Data Dashboard (9 Columns) */}
-          <div className="lg:col-span-9 flex flex-col gap-6">
+          <div className="p-4 mt-auto">
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-slate-900 font-semibold text-[13px]">
+                <HelpCircle className="w-4 h-4 text-blue-600" />
+                Need Help?
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Refer to the user guide or contact support.
+              </p>
+              <a href="#" className="text-[11px] text-blue-600 font-semibold hover:underline mt-1">
+                View User Guide
+              </a>
+            </div>
+          </div>
+        </aside>
+
+        {/* Right Panel Main Data Dashboard */}
+        <main className="flex-1 overflow-y-auto bg-[#F8FAFC] p-4 md:p-8">
+          <div className="max-w-5xl mx-auto flex flex-col gap-5 md:gap-6">
             
             {/* ==============================================================
                 EVENTS TAB CONTENT
                 ============================================================== */}
             {activeTab === "events" && db && (
               <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
-                  <div className="flex flex-col gap-0.5">
-                    <h2 className="text-lg font-black text-navy-900 leading-none">Community Events</h2>
-                    <p className="text-xs text-slate-500">Manage celebrations, camps, and corporate challenges.</p>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                  <div className="flex flex-col gap-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Community Events</h2>
+                    <p className="text-[12px] md:text-[13px] text-slate-500">Manage celebrations, camps, and corporate challenges.</p>
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsAddingEvent(true);
-                      setEditingEvent({
-                        id: "",
-                        title: "",
-                        desc: "",
-                        iconName: "Calendar",
-                        imageSrc: "",
-                        images: [],
-                        highlights: []
-                      });
-                    }}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md shadow-sky-500/15 transition-all"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add Event</span>
-                  </button>
+                  <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
+                    <button
+                      onClick={handleLogout}
+                      className="flex-1 md:flex-none px-3 md:px-4 py-2.5 md:py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-[12px] md:text-[13px] font-medium hover:bg-slate-50 transition-colors text-center"
+                    >
+                      Logout
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsAddingEvent(true);
+                        setEditingEvent({
+                          id: "",
+                          title: "",
+                          desc: "",
+                          iconName: "Calendar",
+                          imageSrc: "",
+                          images: [],
+                          highlights: []
+                        });
+                      }}
+                      className="flex-1 md:flex-none flex justify-center items-center gap-1.5 px-3 md:px-4 py-2.5 md:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[12px] md:text-[13px] font-medium transition-colors"
+                    >
+                      <Plus className="w-4 h-4 shrink-0" />
+                      <span>Add Event</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Event Form (Add/Edit) */}
@@ -1223,73 +1276,78 @@ export default function AdminPage() {
                 )}
 
                 {/* Events list */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                   {db.events.length === 0 ? (
-                    <div className="text-center py-12 bg-white border border-slate-200 p-8 rounded-2xl text-slate-400 text-xs font-bold shadow-sm">
-                      No events currently listed. Click "Add Event" to add one!
+                    <div className="text-center py-12 text-slate-400 text-[13px] font-medium">
+                      No events currently listed.
                     </div>
                   ) : (
-                    db.events.map((evt) => (
+                    db.events.map((evt, idx) => (
                       <div
                         key={evt.id}
-                        className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex items-start justify-between gap-6 group hover:border-slate-300 transition-all duration-200"
+                        className={`p-4 md:p-5 flex flex-col md:flex-row items-start justify-between gap-4 md:gap-6 hover:bg-slate-50/50 transition-colors ${
+                          idx !== db.events.length - 1 ? 'border-b border-slate-100' : ''
+                        }`}
                       >
-                        <div className="flex items-start gap-5">
+                        <div className="flex items-start gap-3 md:gap-5 w-full">
                           {evt.images && evt.images.length > 0 ? (
-                            <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
                               <img src={evt.images[0]} alt={evt.title} className="w-full h-full object-cover" />
                               {evt.images.length > 1 && (
                                 <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-navy-950/80 border border-white/10 text-[7px] font-bold text-white leading-none">
                                   {evt.images.length} Photos
                                 </div>
                               )}
-                              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
-                                <IconPreview name={evt.iconName} className="w-3.5 h-3.5 stroke-[2.5]" />
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
+                                <IconPreview name={evt.iconName} className="w-3 h-3 md:w-3.5 md:h-3.5 stroke-[2.5]" />
                               </div>
                             </div>
                           ) : evt.imageSrc ? (
-                            <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
                               <img src={evt.imageSrc} alt={evt.title} className="w-full h-full object-cover" />
-                              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
-                                <IconPreview name={evt.iconName} className="w-3.5 h-3.5 stroke-[2.5]" />
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
+                                <IconPreview name={evt.iconName} className="w-3 h-3 md:w-3.5 md:h-3.5 stroke-[2.5]" />
                               </div>
                             </div>
                           ) : (
-                            <div className="w-12 h-12 bg-sky-500/5 border border-sky-400/20 rounded-2xl flex items-center justify-center shrink-0 text-sky-500">
-                              <IconPreview name={evt.iconName} className="w-5.5 h-5.5 stroke-[2]" />
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-sky-500/5 border border-sky-400/20 rounded-2xl flex items-center justify-center shrink-0 text-sky-500">
+                              <IconPreview name={evt.iconName} className="w-4.5 h-4.5 md:w-5.5 md:h-5.5 stroke-[2]" />
                             </div>
                           )}
-                          <div className="flex flex-col gap-1.5">
-                            <h4 className="text-sm font-extrabold text-navy-900 group-hover:text-sky-600 transition-colors leading-snug">
+                          <div className="flex flex-col gap-1 md:gap-1.5">
+                            <h4 className="text-[13px] md:text-sm font-extrabold text-navy-900 group-hover:text-sky-600 transition-colors leading-snug">
                               {evt.title}
                             </h4>
-                            <p className="text-slate-500 text-xs leading-relaxed max-w-2xl">{evt.desc}</p>
+                            <p className="text-slate-500 text-[11px] md:text-xs leading-relaxed max-w-2xl">{evt.desc}</p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center justify-end w-full md:w-auto gap-2 shrink-0 mt-2 md:mt-0 pt-3 md:pt-0 border-t border-slate-100 md:border-0">
                           <button
                             onClick={() => {
                               setIsAddingEvent(false);
                               setEditingEvent(evt);
                             }}
-                            className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-sky-600 transition-colors"
-                            title="Edit Event"
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-md text-[11px] md:text-[12px] font-medium text-slate-600 hover:bg-slate-50 transition-colors flex-1 md:flex-none text-center"
                           >
-                            <Edit className="w-4.5 h-4.5" />
+                            Edit
                           </button>
                           <button
                             onClick={() => handleDeleteEvent(evt.id)}
-                            className="p-2 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
-                            title="Delete Event"
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-md text-[11px] md:text-[12px] font-medium text-rose-600 hover:bg-rose-50 border-rose-100 transition-colors flex-1 md:flex-none text-center"
                           >
-                            <Trash2 className="w-4.5 h-4.5" />
+                            Delete
                           </button>
                         </div>
                       </div>
                     ))
                   )}
                 </div>
+                
+                <p className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-2">
+                  <span className="w-3.5 h-3.5 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-[8px]">i</span>
+                  Tip: Keep event descriptions clear and include timings.
+                </p>
               </div>
             )}
 
@@ -3246,9 +3304,8 @@ export default function AdminPage() {
             )}
 
           </div>
-
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
