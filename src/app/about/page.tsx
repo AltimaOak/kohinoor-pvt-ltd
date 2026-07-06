@@ -37,18 +37,6 @@ const towersData = [
       "4. Nahar Retail Trading Services Ltd",
       "5. Vishyam Estate Pvt.Ltd"
     ]
-  },
-  {
-    id: "tower-3",
-    name: "Tower 3",
-    sub: "Commercial - II",
-    description: "Tower 3 features ultra-modern executive workspace facilities, catering to leading technological enterprises and financial consultants. Built with advanced high-speed digital architecture and premium conference spaces."
-  },
-  {
-    id: "tower-4",
-    name: "Tower 4",
-    sub: "Commercial - II",
-    description: "Tower 4 serves as a state-of-the-art business landmark, housing multinational headquarters, corporate consulting boards, and upscale retail storefronts designed to meet world-class industry standards."
   }
 ];
 
@@ -187,7 +175,7 @@ export default function AboutPage() {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch max-w-5xl mx-auto w-full">
             {towersData.map((tower, idx) => (
               <motion.div
                 key={tower.id}
@@ -204,23 +192,9 @@ export default function AboutPage() {
                 <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-sky-200/5 blur-2xl group-hover:bg-[#0055d4]/5 transition-colors duration-500 pointer-events-none z-0" />
 
                 <div className="relative z-10 flex flex-col gap-5 h-full justify-between">
-                  <div>
-                    {/* Tower Name */}
-                    <h4 className="text-xl font-bold text-slate-900 tracking-tight mb-3 group-hover:text-[#0055d4] transition-colors duration-300">
-                      {tower.name}
-                    </h4>
-
-                    {/* Tower Description */}
-                    {tower.description && (
-                      <p className="text-slate-500 text-xs sm:text-[13px] leading-relaxed mb-1 font-medium">
-                        {tower.description}
-                      </p>
-                    )}
-                  </div>
-
                   {/* Associated Offices */}
                   {tower.offices && tower.offices.length > 0 && (
-                    <div className="flex flex-col gap-3 border-t border-slate-100/80 pt-5 mt-auto">
+                    <div className="flex flex-col gap-3 w-full">
                       <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#0055d4]/90 uppercase tracking-widest select-none">
                         <Building className="w-3.5 h-3.5 stroke-[2.5]" />
                         Associated Offices

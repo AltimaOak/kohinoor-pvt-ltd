@@ -376,28 +376,38 @@ export default function ServicesPage() {
         strategy="lazyOnload"
       />
 
-      {/* 1. HEADER SECTION */}
-      <section className="relative pt-16 pb-10 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)]">
+      {/* 1. HEADER PAGE BANNER */}
+      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
         {/* Glow backdrop */}
-        <div className="absolute top-0 left-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
+        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-        <div className="max-w-3xl flex flex-col gap-3 text-left relative z-10">
+        <div className="max-w-3xl flex flex-col gap-4 text-left relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-1.5 text-[#0055d4] text-[10px] font-bold uppercase tracking-wider select-none"
+          >
+            <Building2 className="w-3.5 h-3.5 shrink-0" />
+            <span>KOHINOOR SERVICES</span>
+          </motion.div>
+          
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black font-display text-gradient-sky tracking-tight leading-[1.1]"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15]"
           >
-            Our Services
+            Excellent Facilities & <br className="hidden sm:inline" />
+            <span className="text-[#0055d4]">Essential Services</span>
           </motion.h1>
-
+          
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-600 text-sm md:text-base leading-relaxed"
+            className="text-slate-500 text-sm md:text-base leading-relaxed max-w-2xl"
           >
-            Explore our facilities designed for all occupants.
+            Explore our comprehensive services designed for a smarter workplace.
           </motion.p>
         </div>
       </section>
