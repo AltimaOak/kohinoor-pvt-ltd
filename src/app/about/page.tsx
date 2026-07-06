@@ -43,7 +43,7 @@ const towersData = [
 export default function AboutPage() {
   return (
     <div className="flex flex-col w-full pb-12 overflow-hidden bg-white">
-     {/* 1. HERO PAGE BANNER & VISION SPLIT */}
+       {/* 1. HERO PAGE BANNER & VISION SPLIT */}
 <section className="relative py-10 md:py-12 px-6 md:px-12 max-w-7xl mx-auto w-full overflow-hidden">
   {/* Decorative Background */}
   <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-100/40 blur-3xl pointer-events-none" />
@@ -99,7 +99,7 @@ export default function AboutPage() {
   </div>
 </section>
 
-    {/* 2. OUR LANDMARK */}
+     {/* 2. OUR LANDMARK */}
 <section className="py-10 bg-[#FCFCFA] border-y border-[#ECEAE4]">
   <div className="max-w-6xl mx-auto px-6 lg:px-12">
     {/* Header */}
@@ -165,21 +165,13 @@ export default function AboutPage() {
     </div>
   </div>
 </section>
-     {/* 3. OUR CLIENTS */}
+
+      {/* 3. OUR CLIENTS */}
 <section className="py-12 bg-[#FCFCFA] border-t border-[#ECEAE4]">
   <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
     {/* Header */}
     <div className="max-w-2xl mb-10">
-
-      <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-sky-600">
-
-        <div className="w-8 h-[2px] bg-sky-500 rounded-full" />
-
-        OUR CLIENTS
-
-      </span>
-
       <h2 className="mt-4 text-3xl md:text-4xl font-extrabold text-slate-900">
         Our Engaged Clients
       </h2>

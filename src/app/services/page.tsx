@@ -376,54 +376,41 @@ export default function ServicesPage() {
         strategy="lazyOnload"
       />
 
-     {/* =======================================================
-    SERVICES HEADER
-======================================================= */}
+      {/* 1. HEADER PAGE BANNER */}
+      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
+        {/* Glow backdrop */}
+        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
 
-<section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-br from-white via-slate-50 to-sky-50/40">
-
-  {/* Decorative Background */}
-  <div className="absolute -right-32 -top-24 h-80 w-80 rounded-full bg-sky-100/40 blur-sm" />
-
-  {/* Dot Pattern */}
-  <div className="absolute right-20 top-10 grid grid-cols-6 gap-2 opacity-30">
-    {Array.from({ length: 36 }).map((_, i) => (
-      <span
-        key={i}
-        className="h-1.5 w-1.5 rounded-full bg-sky-400"
-      />
-    ))}
-  </div>
-
-  <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-8">
-    <div className="max-w-2xl">
-      {/* Small Label */}
-      <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-bold text-sky-600">
-        <Building2 className="w-3.5 h-3.5" />
-
-        OUR SERVICES
-
-      </div>
-      {/* Heading */}
-      <h1 className="mt-4 text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900">
-
-      Essential Services That
-        <span className="text-sky-600">
-          <br></br>Keep Business Moving.
-        </span>
-
-      </h1>
-
-      {/* Description */}
-
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
-        Discover thoughtfully designed workplace services and
-        premium facilities that enhance comfort, convenience,
-        safety and productivity throughout Kohinoor Commercial-II.
-      </p>
-    </div>
-  </div>
-</section>
+        <div className="max-w-3xl flex flex-col gap-4 text-left relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-1.5 text-[#0055d4] text-[10px] font-bold uppercase tracking-wider select-none"
+          >
+            <Building2 className="w-3.5 h-3.5 shrink-0" />
+            <span>KOHINOOR SERVICES</span>
+          </motion.div>
+          
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15]"
+          >
+            Excellent Facilities & <br className="hidden sm:inline" />
+            <span className="text-[#0055d4]">Essential Services</span>
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-slate-500 text-sm md:text-base leading-relaxed max-w-2xl"
+          >
+            Explore our comprehensive services designed for a smarter workplace.
+          </motion.p>
+        </div>
+      </section>
 
       {/* 2. SERVICES GRID */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
