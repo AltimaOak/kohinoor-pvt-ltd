@@ -66,7 +66,7 @@ export default function RsvpModal({ isOpen, onClose, eventName }: RsvpModalProps
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ type: "spring", damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg bg-white border border-white/60 glass-card rounded-[20px] sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 my-auto"
+            className="relative w-full max-w-lg bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg p-5 sm:p-8 md:p-10 my-auto"
           >
             {/* Close Trigger */}
             <button

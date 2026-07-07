@@ -717,7 +717,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-[480px] bg-white border border-slate-100 rounded-2xl shadow-xl p-6 sm:p-8 my-auto overflow-hidden flex flex-col gap-5 sm:gap-6"
+              className="relative w-full max-w-[480px] bg-white border border-slate-200 rounded-xl shadow-lg p-6 sm:p-8 my-auto overflow-hidden flex flex-col gap-5 sm:gap-6"
             >
               {/* Close Button */}
               <button

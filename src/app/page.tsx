@@ -250,7 +250,7 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="p-4 sm:p-5 rounded-2xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-xs transition-all duration-300 flex flex-col gap-3 group w-full relative overflow-hidden"
+            className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-white hover:shadow-sm transition-all duration-300 flex flex-col gap-3 group w-full relative overflow-hidden"
           >
             <style dangerouslySetInnerHTML={{ __html: `
               .reviews-scroll::-webkit-scrollbar {
@@ -608,7 +608,7 @@ export default function LandingPage() {
 
       {/* RIGHT */}
 
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
 
         <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-3">
 

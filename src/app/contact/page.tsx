@@ -48,7 +48,7 @@ export default function ContactPage() {
       {/* 1. UNIFIED GET IN TOUCH & MAP SPLIT */}
       <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10 bg-white">
         {/* Glow backdrop */}
-        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
+        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/5 blur-[80px] pointer-events-none" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative z-10">
           
@@ -150,7 +150,7 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="lg:col-span-6 w-full h-[280px] sm:h-[340px] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:border-sky-300 hover:shadow-md transition-all duration-300"
+                className="lg:col-span-6 w-full h-[280px] sm:h-[340px] rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:border-sky-300 hover:shadow-md transition-all duration-300"
               >
                 <iframe
                   title="Google Map showing corporate office address location"

@@ -51,14 +51,14 @@ export default function Navbar() {
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40 transition-all duration-500 glass-navbar-scrolled px-6 md:px-12",
-          scrolled ? "py-3.5" : "py-5"
+          "fixed top-0 left-0 right-0 z-40 transition-all duration-500 bg-[#0F172A] border-b border-slate-800 px-6 md:px-12",
+          scrolled ? "py-3.5 shadow-md" : "py-5"
         )}
       >
         <div className="max-w-[85rem] mx-auto flex items-center justify-between">
           {/* Logo with double-tower SVG */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative h-11 w-11 overflow-hidden rounded-xl shadow-md border border-slate-200/50 bg-white flex items-center justify-center group-hover:scale-105 group-hover:border-sky-400 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.25)] transition-all duration-300">
+            <div className="relative h-11 w-11 overflow-hidden rounded-lg border border-slate-200/80 bg-white flex items-center justify-center transition-colors duration-300 group-hover:border-sky-500">
               <Image
                 src="/images/logo.png"
                 alt="Kohinoor City Logo"
@@ -89,7 +89,7 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "relative px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-300 rounded-full focus:outline-none group",
+                    "relative px-4 py-2 text-[13px] font-semibold tracking-wide transition-all duration-300 focus:outline-none group",
                     isNavbarLightText
                       ? isActive
                         ? "text-sky-400"
@@ -99,23 +99,18 @@ export default function Navbar() {
                         : "text-slate-600 hover:text-sky-500"
                   )}
                 >
-                  {/* Active highlight container */}
+                  <span className="relative z-10">{item.name}</span>
+                  {/* Subtle underline for active item */}
                   {isActive && (
                     <motion.span
                       layoutId="activeNavIndicator"
-                      className={cn(
-                        "absolute inset-0 rounded-full border shadow-sm shadow-sky-500/5",
-                        isNavbarLightText
-                          ? "bg-sky-500/20 border-sky-400/40"
-                          : "bg-sky-500/10 border-sky-400/30"
-                      )}
+                      className="absolute bottom-1 left-4 right-4 h-[2px] bg-sky-500 rounded-t-sm"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-10">{item.name}</span>
                   {/* Subtle underline for non-active items */}
                   {!isActive && (
-                    <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-sky-400/60 rounded-full group-hover:w-1/2 transition-all duration-300" />
+                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-sky-400/60 rounded-t-sm group-hover:w-[calc(100%-2rem)] transition-all duration-300" />
                   )}
                 </Link>
               );

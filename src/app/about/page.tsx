@@ -46,7 +46,7 @@ export default function AboutPage() {
        {/* 1. HERO PAGE BANNER & VISION SPLIT */}
 <section className="relative py-10 md:py-12 px-6 md:px-12 max-w-7xl mx-auto w-full overflow-hidden">
   {/* Decorative Background */}
-  <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-100/40 blur-3xl pointer-events-none" />
+  <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-100/20 blur-[80px] pointer-events-none" />
   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
     {/* Left Content */}
     <div className="lg:col-span-7 flex flex-col">
@@ -74,7 +74,7 @@ export default function AboutPage() {
     </div>
     {/* Vision Card */}
     <div className="lg:col-span-5">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 border border-sky-100">
             <Eye className="w-5 h-5 text-sky-600" />
@@ -119,7 +119,7 @@ export default function AboutPage() {
       </p>
     </div>
     {/* Stats */}
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 rounded-2xl border border-[#ECEAE4] bg-white overflow-hidden">
+    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 rounded-xl border border-[#ECEAE4] bg-white overflow-hidden">
       {/* Towers */}
       <div className="flex items-center gap-4 px-6 py-5 border-b md:border-b-0 md:border-r border-[#ECEAE4]">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-600">

@@ -816,7 +816,7 @@ export default function AdminPage() {
           className="relative max-w-md w-full bg-white border border-slate-200 p-10 rounded-[32px] shadow-xl flex flex-col items-center text-center gap-6"
         >
           {/* Logo Icon */}
-          <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-white flex items-center justify-center">
+          <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 shadow-md bg-white flex items-center justify-center">
             <img
               src="/images/logo.png"
               alt="Kohinoor Logo"
@@ -844,7 +844,7 @@ export default function AdminPage() {
                 placeholder="Admin Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-sky-500 focus:bg-white transition-all font-sans"
+                className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-sky-500 focus:bg-white transition-all font-sans"
               />
               <button
                 type="button"
@@ -869,7 +869,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={submittingLogin}
-              className="w-full py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
+              className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-wait"
             >
               {submittingLogin ? (
                 <>
@@ -901,7 +901,7 @@ export default function AdminPage() {
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              className={`p-4 rounded-2xl border shadow-lg flex items-start gap-3 backdrop-blur-md ${
+              className={`p-4 rounded-xl border shadow-lg flex items-start gap-3 backdrop-blur-md ${
                 toast.type === "success"
                   ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-800"
                   : toast.type === "error"
@@ -970,7 +970,7 @@ export default function AdminPage() {
       <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
         
         {/* Left Panel Sidebar */}
-        <aside className={`absolute md:relative z-40 w-64 md:w-64 shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between h-full overflow-y-auto transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none ${
+        <aside className={`absolute md:relative z-40 w-64 md:w-64 shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between h-full overflow-y-auto transition-transform duration-300 ease-in-out shadow-lg md:shadow-none ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}>
           <div className="flex flex-col p-4 gap-1">
@@ -1091,7 +1091,7 @@ export default function AdminPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white border border-sky-300 p-8 rounded-3xl shadow-md flex flex-col gap-6"
+                    className="bg-white border border-sky-300 p-8 rounded-xl shadow-md flex flex-col gap-6"
                   >
                     <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-sky-600 flex items-center gap-2">
@@ -1160,7 +1160,7 @@ export default function AdminPage() {
                       {/* Display grid of current photos */}
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                         {(editingEvent.images || []).map((img, i) => (
-                          <div key={i} className="aspect-[16/10] w-full border border-slate-200 bg-slate-100 rounded-2xl overflow-hidden relative group">
+                          <div key={i} className="aspect-[16/10] w-full border border-slate-200 bg-slate-100 rounded-xl overflow-hidden relative group">
                             <img
                               src={img}
                               alt={`Event photo ${i + 1}`}
@@ -1189,7 +1189,7 @@ export default function AdminPage() {
                         {(editingEvent.images || []).length < 5 && (
                           <div
                             onClick={() => document.getElementById("event-file-upload")?.click()}
-                            className="border-2 border-dashed border-slate-200 hover:border-sky-400 hover:bg-sky-500/5 rounded-2xl aspect-[16/10] text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1 bg-slate-50/50"
+                            className="border-2 border-dashed border-slate-200 hover:border-sky-400 hover:bg-sky-500/5 rounded-xl aspect-[16/10] text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1 bg-slate-50/50"
                           >
                             {uploadingImage ? (
                               <Loader2 className="w-5 h-5 animate-spin text-sky-500" />
@@ -1204,7 +1204,7 @@ export default function AdminPage() {
 
                       {/* Manual Image URL Appending */}
                       {(editingEvent.images || []).length < 5 && (
-                        <div className="flex flex-col gap-2 p-4 border border-slate-200 rounded-2xl bg-white mt-2">
+                        <div className="flex flex-col gap-2 p-4 border border-slate-200 rounded-xl bg-white mt-2">
                           <label className="text-[9px] font-bold uppercase text-slate-400">Or append a web image link</label>
                           <div className="flex gap-2">
                             <input
@@ -1291,7 +1291,7 @@ export default function AdminPage() {
                       >
                         <div className="flex items-start gap-3 md:gap-5 w-full">
                           {evt.images && evt.images.length > 0 ? (
-                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
                               <img src={evt.images[0]} alt={evt.title} className="w-full h-full object-cover" />
                               {evt.images.length > 1 && (
                                 <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-navy-950/80 border border-white/10 text-[7px] font-bold text-white leading-none">
@@ -1303,14 +1303,14 @@ export default function AdminPage() {
                               </div>
                             </div>
                           ) : evt.imageSrc ? (
-                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl overflow-hidden border border-slate-200 shrink-0 relative bg-slate-50 shadow-sm flex items-center justify-center">
                               <img src={evt.imageSrc} alt={evt.title} className="w-full h-full object-cover" />
                               <div className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-sky-500 border border-white rounded-full flex items-center justify-center text-white p-1">
                                 <IconPreview name={evt.iconName} className="w-3 h-3 md:w-3.5 md:h-3.5 stroke-[2.5]" />
                               </div>
                             </div>
                           ) : (
-                            <div className="w-10 h-10 md:w-12 md:h-12 bg-sky-500/5 border border-sky-400/20 rounded-2xl flex items-center justify-center shrink-0 text-sky-500">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-sky-500/5 border border-sky-400/20 rounded-xl flex items-center justify-center shrink-0 text-sky-500">
                               <IconPreview name={evt.iconName} className="w-4.5 h-4.5 md:w-5.5 md:h-5.5 stroke-[2]" />
                             </div>
                           )}
@@ -1356,7 +1356,7 @@ export default function AdminPage() {
                 ============================================================== */}
             {activeTab === "services" && db && (
               <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Healthcare & Medical Services</h2>
                     <p className="text-xs text-slate-500">Manage standby response systems, clinics, or welfare schedules.</p>
@@ -1386,7 +1386,7 @@ export default function AdminPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white border border-sky-300 p-8 rounded-3xl shadow-md flex flex-col gap-6"
+                    className="bg-white border border-sky-300 p-8 rounded-xl shadow-md flex flex-col gap-6"
                   >
                     <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-sky-600 flex items-center gap-2">
@@ -1553,17 +1553,17 @@ export default function AdminPage() {
                 {/* Services list */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {db.services.length === 0 ? (
-                    <div className="col-span-2 text-center py-12 bg-white border border-slate-200 p-8 rounded-2xl text-slate-400 text-xs font-bold shadow-sm">
+                    <div className="col-span-2 text-center py-12 bg-white border border-slate-200 p-8 rounded-xl text-slate-400 text-xs font-bold shadow-sm">
                       No services currently listed. Click "Add Service" to create one!
                     </div>
                   ) : (
                     db.services.map((svc) => (
                       <div
                         key={svc.id}
-                        className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col gap-5 hover:border-slate-300 transition-all duration-200 group relative"
+                        className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm flex flex-col gap-5 hover:border-slate-300 transition-all duration-200 group relative"
                       >
                         <div className="flex justify-between items-start">
-                          <div className="w-12 h-12 bg-sky-500/10 border border-sky-400/20 text-sky-500 rounded-2xl flex items-center justify-center shrink-0">
+                          <div className="w-12 h-12 bg-sky-500/10 border border-sky-400/20 text-sky-500 rounded-xl flex items-center justify-center shrink-0">
                             <IconPreview name={svc.iconName} className="w-6 h-6 stroke-[2]" />
                           </div>
                           
@@ -1620,7 +1620,7 @@ export default function AdminPage() {
                 ============================================================== */}
             {activeTab === "photos" && db && (
               <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Interactive Photo Gallery</h2>
                     <p className="text-xs text-slate-500">Add interior, exterior, walkways or lounge photos of Tower 2.</p>
@@ -1649,7 +1649,7 @@ export default function AdminPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white border border-sky-300 p-8 rounded-3xl shadow-md flex flex-col gap-6"
+                    className="bg-white border border-sky-300 p-8 rounded-xl shadow-md flex flex-col gap-6"
                   >
                     <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-sky-600 flex items-center gap-2">
@@ -1728,7 +1728,7 @@ export default function AdminPage() {
                             {/* Visual upload click card */}
                             <div
                               onClick={() => document.getElementById("gallery-file-upload")?.click()}
-                              className="border-2 border-dashed border-slate-200 hover:border-sky-400 hover:bg-sky-500/5 rounded-2xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 bg-slate-50/50"
+                              className="border-2 border-dashed border-slate-200 hover:border-sky-400 hover:bg-sky-500/5 rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 bg-slate-50/50"
                             >
                               <div className="w-10 h-10 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-600 flex items-center justify-center">
                                 {uploadingImage ? (
@@ -1744,7 +1744,7 @@ export default function AdminPage() {
                             </div>
 
                             {/* Manual URL input card */}
-                            <div className="flex flex-col justify-center gap-2.5 p-5 border border-slate-200 rounded-2xl bg-white">
+                            <div className="flex flex-col justify-center gap-2.5 p-5 border border-slate-200 rounded-xl bg-white">
                               <span className="text-[9px] font-bold uppercase text-slate-400">Or use a web image link</span>
                               <input
                                 type="text"
@@ -1772,7 +1772,7 @@ export default function AdminPage() {
                       {/* Preview Image Column (4 cols) */}
                       <div className="md:col-span-4 flex flex-col gap-2">
                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Image Preview</label>
-                        <div className="aspect-[4/3] w-full border border-slate-200 bg-slate-100 rounded-2xl overflow-hidden flex items-center justify-center relative">
+                        <div className="aspect-[4/3] w-full border border-slate-200 bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center relative">
                           {editingPhoto.src ? (
                             <img
                               src={editingPhoto.src}
@@ -1818,14 +1818,14 @@ export default function AdminPage() {
                 {/* Photo Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {db.photos.length === 0 ? (
-                    <div className="col-span-3 text-center py-12 bg-white border border-slate-200 p-8 rounded-3xl text-slate-400 text-xs font-bold">
+                    <div className="col-span-3 text-center py-12 bg-white border border-slate-200 p-8 rounded-xl text-slate-400 text-xs font-bold">
                       No gallery photos currently uploaded. Click "Add Photo" to begin!
                     </div>
                   ) : (
                     db.photos.map((p) => (
                       <div
                         key={p.id}
-                        className="bg-white border border-slate-200/50 rounded-3xl overflow-hidden shadow-sm hover:border-sky-300 transition-all duration-300 group flex flex-col justify-between"
+                        className="bg-white border border-slate-200/50 rounded-xl overflow-hidden shadow-sm hover:border-sky-300 transition-all duration-300 group flex flex-col justify-between"
                       >
                         <div className="relative aspect-[4/3] bg-slate-50 overflow-hidden border-b border-slate-100">
                           <img
@@ -1885,7 +1885,7 @@ export default function AdminPage() {
                 ============================================================== */}
             {activeTab === "contacts" && db && (
               <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Contacts & Corporate Directory</h2>
                     <p className="text-xs text-slate-500">Update site physical coordinates and property facility hotlines.</p>
@@ -1902,7 +1902,7 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   
                   {/* Left Column: HQ Address Details */}
-                  <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                  <div className="bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-5">
                     <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
                       <MapPin className="w-4.5 h-4.5" />
                       <span>Corporate HQ Coordinates</span>
@@ -1943,7 +1943,7 @@ export default function AdminPage() {
                   </div>
 
                   {/* Right Column: Contact Managers List */}
-                  <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                  <div className="bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-5">
                     <div className="flex justify-between items-center">
                       <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
                         <PhoneCall className="w-4.5 h-4.5" />
@@ -1967,7 +1967,7 @@ export default function AdminPage() {
                         db.contacts.managers.map((mgr) => (
                           <div
                             key={mgr.id}
-                            className="p-4 border border-slate-200/60 rounded-2xl flex flex-col gap-4 bg-slate-50/40 relative group/card"
+                            className="p-4 border border-slate-200/60 rounded-xl flex flex-col gap-4 bg-slate-50/40 relative group/card"
                           >
                             <button
                               onClick={() => handleDeleteManager(mgr.id)}
@@ -2056,7 +2056,7 @@ export default function AdminPage() {
 
             {activeTab === "doctors" && db && (
               <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Visiting Doctors & Specialists</h2>
                     <p className="text-xs text-slate-500">Manage names, schedules, contact details, and booking redirects.</p>
@@ -2083,7 +2083,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Doctor Camp Poster Settings Form */}
-                <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                <div className="bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-5">
                   <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
                     <Settings className="w-4.5 h-4.5" />
                     <span>Doctor Camp Poster Card Settings</span>
@@ -2188,7 +2188,7 @@ export default function AdminPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white border border-sky-300 p-8 rounded-3xl shadow-md flex flex-col gap-6"
+                    className="bg-white border border-sky-300 p-8 rounded-xl shadow-md flex flex-col gap-6"
                   >
                     <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-sky-600 flex items-center gap-2">
@@ -2327,10 +2327,10 @@ export default function AdminPage() {
                   {(db.doctors || []).map((dr) => (
                     <div
                       key={dr.id}
-                      className="bg-white border border-slate-200/60 p-6 rounded-3xl shadow-sm flex flex-col justify-between gap-6 hover:shadow-md transition-shadow relative group/card"
+                      className="bg-white border border-slate-200/60 p-6 rounded-xl shadow-sm flex flex-col justify-between gap-6 hover:shadow-md transition-shadow relative group/card"
                     >
                       <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border shrink-0 font-bold ${dr.avatarColor}`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 font-bold ${dr.avatarColor}`}>
                           <LucideIcons.Stethoscope className="w-6 h-6" />
                         </div>
                         <div className="flex flex-col gap-1">
@@ -2389,7 +2389,7 @@ export default function AdminPage() {
                   ))}
                   
                   {(db.doctors || []).length === 0 && (
-                    <div className="col-span-full text-center py-12 border border-dashed border-slate-200 rounded-3xl bg-white text-slate-400 text-xs font-bold">
+                    <div className="col-span-full text-center py-12 border border-dashed border-slate-200 rounded-xl bg-white text-slate-400 text-xs font-bold">
                       No doctors currently registered in database.
                     </div>
                   )}
@@ -2399,7 +2399,7 @@ export default function AdminPage() {
 
             {activeTab === "receipts" && db && (
               <div className="flex flex-col gap-6">
-                <div className="bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Receipts & Email Delivery</h2>
                     <p className="text-xs text-slate-500">Track occupant service orders, view email receipt statuses, and trigger manual delivery retries.</p>
@@ -2426,7 +2426,7 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left Column: Receipts List */}
-                  <div className={`bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5 ${selectedReceiptId ? 'lg:col-span-7' : 'lg:col-span-12'}`}>
+                  <div className={`bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-5 ${selectedReceiptId ? 'lg:col-span-7' : 'lg:col-span-12'}`}>
                     {(() => {
                       const ordersList = db.orders || [];
                       const filteredOrders = ordersList.filter((order) => {
@@ -2574,7 +2574,7 @@ export default function AdminPage() {
                     if (!order) return null;
                     const log = db.receiptLogs?.find(l => l.receiptId === order.receiptNumber);
                     return (
-                      <div className="lg:col-span-5 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-6 sticky top-24">
+                      <div className="lg:col-span-5 bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-6 sticky top-24">
                         <div className="flex justify-between items-start border-b border-slate-100 pb-4">
                           <div>
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Selected Receipt</span>
@@ -2591,7 +2591,7 @@ export default function AdminPage() {
                         {/* Customer Information */}
                         <div className="flex flex-col gap-2">
                           <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Customer Details</h4>
-                          <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl flex flex-col gap-2">
+                          <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-xl flex flex-col gap-2">
                             <div className="flex justify-between text-xs">
                               <span className="text-slate-500 font-medium">Name:</span>
                               <span className="font-semibold text-slate-800">{order.customerName}</span>
@@ -2629,7 +2629,7 @@ export default function AdminPage() {
                         {/* Ordered Items */}
                         <div className="flex flex-col gap-2">
                           <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Line Items</h4>
-                          <div className="border border-slate-100 rounded-2xl overflow-hidden text-xs">
+                          <div className="border border-slate-100 rounded-xl overflow-hidden text-xs">
                             <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 font-bold text-slate-500 grid grid-cols-12">
                               <span className="col-span-6">Item</span>
                               <span className="col-span-2 text-center">Qty</span>
@@ -2654,7 +2654,7 @@ export default function AdminPage() {
                         {/* Live Order Status (Zomato/Swiggy style) */}
                         <div className="flex flex-col gap-2">
                           <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Live Order Status (Swiggy / Zomato)</h4>
-                          <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl flex flex-col gap-3 text-xs">
+                          <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-xl flex flex-col gap-3 text-xs">
                             <div className="flex justify-between items-center">
                               <span className="text-slate-500 font-medium">Current Status:</span>
                               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
@@ -2708,7 +2708,7 @@ export default function AdminPage() {
                               <span>Send Receipt</span>
                             </button>
                           </div>
-                          <div className="border border-slate-100 rounded-2xl p-4 flex flex-col gap-3 text-xs">
+                          <div className="border border-slate-100 rounded-xl p-4 flex flex-col gap-3 text-xs">
                             <div className="flex justify-between">
                               <span className="text-slate-500 font-medium">Email Status:</span>
                               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -2743,7 +2743,7 @@ export default function AdminPage() {
             {activeTab === "nursery" && db && db.nursery && (
               <div className="flex flex-col gap-6">
                 {/* Header */}
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Plant Nursery Management</h2>
                     <p className="text-xs text-slate-500">Edit Nursery contact info, description, and manage the plant catalog.</p>
@@ -2769,7 +2769,7 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left Column: Nursery Configuration Details */}
-                  <div className="lg:col-span-4 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                  <div className="lg:col-span-4 bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-5">
                     <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
                       <Settings className="w-4.5 h-4.5" />
                       <span>Nursery Details</span>
@@ -2843,7 +2843,7 @@ export default function AdminPage() {
                       <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white border border-sky-300 p-6 rounded-3xl shadow-md flex flex-col gap-5"
+                        className="bg-white border border-sky-300 p-6 rounded-xl shadow-md flex flex-col gap-5"
                       >
                         <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                           <h3 className="text-xs font-bold uppercase tracking-wider text-sky-600 flex items-center gap-1.5">
@@ -2960,9 +2960,9 @@ export default function AdminPage() {
                       {db.nursery.plants.map((plant) => (
                         <div
                           key={plant.id}
-                          className="bg-white border border-slate-200/50 p-4 rounded-3xl shadow-sm flex gap-4 hover:border-emerald-300 transition-all duration-300 relative group/plant"
+                          className="bg-white border border-slate-200/50 p-4 rounded-xl shadow-sm flex gap-4 hover:border-emerald-300 transition-all duration-300 relative group/plant"
                         >
-                          <div className="w-20 h-20 border border-slate-100 rounded-2xl overflow-hidden bg-slate-50 shrink-0 relative">
+                          <div className="w-20 h-20 border border-slate-100 rounded-xl overflow-hidden bg-slate-50 shrink-0 relative">
                             <img src={plant.imageSrc} alt={plant.name} className="w-full h-full object-cover" />
                           </div>
 
@@ -3012,7 +3012,7 @@ export default function AdminPage() {
             {activeTab === "cafeteria" && db && db.cafeteria && (
               <div className="flex flex-col gap-6">
                 {/* Header */}
-                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm">
+                <div className="flex justify-between items-center bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm">
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-black text-navy-900 leading-none">Cafeteria Menu Management</h2>
                     <p className="text-xs text-slate-500">Edit Cafeteria physical details, location info, and configure breakfast / lunch thalis.</p>
@@ -3039,7 +3039,7 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left Column: Cafeteria configuration coordinates */}
-                  <div className="lg:col-span-4 bg-white border border-slate-200/50 p-6 rounded-3xl shadow-sm flex flex-col gap-5">
+                  <div className="lg:col-span-4 bg-white border border-slate-200/50 p-6 rounded-xl shadow-sm flex flex-col gap-5">
                     <h3 className="text-xs font-black uppercase text-sky-600 tracking-wider flex items-center gap-1.5">
                       <Settings className="w-4.5 h-4.5" />
                       <span>Cafeteria Settings</span>
@@ -3113,7 +3113,7 @@ export default function AdminPage() {
                       <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white border border-sky-300 p-6 rounded-3xl shadow-md flex flex-col gap-5"
+                        className="bg-white border border-sky-300 p-6 rounded-xl shadow-md flex flex-col gap-5"
                       >
                         <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                           <h3 className="text-xs font-bold uppercase tracking-wider text-sky-600 flex items-center gap-1.5">
@@ -3243,9 +3243,9 @@ export default function AdminPage() {
                       {db.cafeteria.menu.map((item) => (
                         <div
                           key={item.id}
-                          className="bg-white border border-slate-200/50 p-4 rounded-3xl shadow-sm flex gap-4 hover:border-amber-300 transition-all duration-300 relative group/cafe"
+                          className="bg-white border border-slate-200/50 p-4 rounded-xl shadow-sm flex gap-4 hover:border-amber-300 transition-all duration-300 relative group/cafe"
                         >
-                          <div className="w-20 h-20 border border-slate-100 rounded-2xl overflow-hidden bg-slate-50 shrink-0 relative">
+                          <div className="w-20 h-20 border border-slate-100 rounded-xl overflow-hidden bg-slate-50 shrink-0 relative">
                             <img src={item.imageSrc} alt={item.name} className="w-full h-full object-cover" />
                           </div>
 

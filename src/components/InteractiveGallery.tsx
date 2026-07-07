@@ -39,7 +39,7 @@ export default function InteractiveGallery() {
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               key={item.id}
               onClick={() => setSelectedItem(item)}
-              className="group cursor-pointer relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/50 bg-white shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500"
+              className="group cursor-pointer relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300"
             >
               {/* Overlay Glass Highlights */}
               <div className="absolute top-4 left-4 z-10 px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-md border border-white/40 text-[9px] font-extrabold uppercase tracking-widest text-sky-600 shadow-sm">
@@ -99,7 +99,7 @@ export default function InteractiveGallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", damping: 30 }}
-              className="relative w-full max-w-4xl bg-white border border-white/20 rounded-[20px] sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[85vh] md:max-h-none"
+              className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row max-h-[85vh] md:max-h-none"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
