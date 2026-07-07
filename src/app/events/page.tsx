@@ -78,7 +78,7 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
             exit={{ scale: 0.95, opacity: 0, y: 15 }}
             transition={{ type: "spring", damping: 28, stiffness: 220 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl bg-white border border-slate-150 rounded-[20px] overflow-hidden shadow-xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] my-auto animate-in fade-in-50 duration-200"
+            className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] my-auto animate-in fade-in-50 duration-200"
           >
             {/* Close button */}
             <button
@@ -104,7 +104,7 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="max-w-full max-h-full object-contain rounded-[14px] shadow-xs hover:shadow-md border border-[#ECECEC] bg-white select-none cursor-zoom-in transition-all duration-355"
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-xs hover:shadow-sm border border-[#ECECEC] bg-white select-none cursor-zoom-in transition-all duration-300"
                         loading="lazy"
                         onClick={() => setIsLightboxOpen(true)}
                       />
@@ -145,7 +145,7 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                         <button
                           key={idx}
                           onClick={() => setActiveImageIndex(idx)}
-                          className={`relative rounded-[14px] overflow-hidden shrink-0 border border-[#ECECEC] transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs
+                          className={`relative rounded-lg overflow-hidden shrink-0 border border-[#ECECEC] transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs
                             w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[90px] md:h-[90px]
                             ${
                               idx === activeImageIndex
@@ -276,7 +276,7 @@ function EventDetailModal({ isOpen, onClose, event }: EventDetailModalProps) {
                 transition={{ type: "spring", damping: 28, stiffness: 220 }}
                 src={currentImage}
                 alt={`${event.title} - Fullscreen view`}
-                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10 select-none bg-slate-900/30"
+                className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-lg border border-white/10 select-none bg-slate-900/30"
               />
 
               {/* Navigation buttons inside lightbox */}
@@ -397,12 +397,11 @@ export default function EventsPage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full pb-12 overflow-hidden">
+    <div className="flex flex-col w-full pb-8 overflow-hidden">
       
       {/* 1. HEADER PAGE BANNER */}
-      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
-        {/* Glow backdrop */}
-        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
+      <section className="relative pt-10 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
+        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/5 blur-[80px] pointer-events-none" />
 
         <div className="max-w-3xl flex flex-col gap-4 text-left relative z-10">
           <motion.div
@@ -436,7 +435,7 @@ export default function EventsPage() {
       </section>
 
       {/* 2. EVENTS GRID */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
+      <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10 -mt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map((evt, idx) => {
             const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[evt.iconName] || LucideIcons.HelpCircle;
@@ -448,7 +447,7 @@ export default function EventsPage() {
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 key={evt.id}
                 onClick={() => setSelectedEvent(evt)}
-                className="rounded-xl border border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col overflow-hidden group h-full cursor-pointer shadow-xs"
+                className="rounded-2xl border border-slate-200/80 bg-white hover:border-sky-300 hover:shadow-lg hover:shadow-sky-500/5 transition-all duration-300 flex flex-col overflow-hidden group h-full cursor-pointer shadow-sm"
               >
                 {/* Event Image Banner on Card */}
                 {evt.imageSrc ? (
@@ -458,32 +457,42 @@ export default function EventsPage() {
                       alt={evt.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 ) : (
                   <div className="aspect-[16/10] w-full overflow-hidden relative border-b border-slate-100 bg-gradient-to-br from-sky-50 to-indigo-50/30 flex items-center justify-center shrink-0">
-                    <Icon className="w-10 h-10 text-sky-300 opacity-60" />
+                    <Icon className="w-12 h-12 text-sky-400 opacity-50 group-hover:scale-110 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-sky-900/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 )}
 
-                <div className="p-4 sm:p-5 flex flex-col gap-3 flex-grow">
+                <div className="p-5 flex flex-col gap-3 flex-grow relative bg-white">
                   <div className="flex justify-between items-center">
-                    <div className="w-8 h-8 rounded-lg bg-sky-500/5 border border-sky-400/10 text-sky-500 flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4 stroke-[2]" />
+                    <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0 shadow-sm">
+                      <Icon className="w-5 h-5 stroke-[2]" />
                     </div>
                     {evt.images && evt.images.length > 1 && (
-                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider bg-slate-100 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
                         +{evt.images.length - 1} Photos
                       </span>
                     )}
                   </div>
                   
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="text-sm font-bold text-navy-900 leading-tight group-hover:text-sky-500 transition-colors">
+                  <div className="flex flex-col gap-2 mt-1">
+                    <h3 className="text-base font-bold text-slate-900 leading-tight group-hover:text-sky-600 transition-colors">
                       {evt.title}
                     </h3>
-                    <p className="text-slate-500 text-[11px] leading-relaxed line-clamp-3">
+                    <p className="text-slate-500 text-xs leading-relaxed line-clamp-2">
                       {evt.desc}
                     </p>
+                  </div>
+                </div>
+
+                {/* Card Footer CTA */}
+                <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/80 flex justify-between items-center group-hover:bg-sky-50/50 transition-colors">
+                  <span className="text-xs font-bold text-sky-600 uppercase tracking-wider">Explore Event</span>
+                  <div className="w-6 h-6 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center group-hover:border-sky-300 transition-colors">
+                    <LucideIcons.ArrowRight className="w-3 h-3 text-sky-600 transform group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </div>
               </motion.div>

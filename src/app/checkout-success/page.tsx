@@ -68,7 +68,7 @@ export default async function CheckoutSuccessPage({
         </div>
 
         {/* Metadata Details Card */}
-        <div className="w-full bg-slate-50 border border-slate-200/60 p-5 rounded-2xl flex flex-col gap-3 text-xs text-left mb-8 font-mono">
+        <div className="w-full bg-slate-50 border border-slate-200/60 p-5 rounded-xl flex flex-col gap-3 text-xs text-left mb-8 font-mono">
           <div className="flex justify-between">
             <span className="text-slate-500 font-sans font-semibold">Receipt Number</span>
             <span className="font-bold text-slate-900 text-right">{order.receiptNumber}</span>
