@@ -30,6 +30,9 @@ import {
   ShoppingBag,
   Utensils,
   Building2,
+  Droplet,
+  Trash2,
+  Leaf,
 } from "lucide-react";
 import InteractiveGallery from "@/components/InteractiveGallery";
 import { getDb, ContactsData } from "@/app/actions";
@@ -439,7 +442,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
               { label: "Tranquil Massage Room", icon: MassageChairIcon, desc: "Re-energize your mind and body with our massage chair therapy" },
@@ -450,6 +453,9 @@ export default function LandingPage() {
               { label: "Power", icon: Zap, desc: "Dual grid feeds for consistent electricity" },
               { label: "Power Backup", icon: BatteryCharging, desc: "Heavy-duty generator backup power support" },
               { label: "Fire Fighting Equipment", icon: Flame, desc: "Advanced localized sprinkler & detector systems" },
+              { label: "Water & Drainage", icon: Droplet, desc: "24/7 water supply, rainwater harvesting, and STP" },
+              { label: "Waste Management", icon: Trash2, desc: "Efficient waste segregation and disposal systems" },
+              { label: "Green Building", icon: Leaf, desc: "Sustainable architecture and eco-friendly infrastructure" },
             ].map((item, idx) => {
               const IconComp = item.icon;
               return (
@@ -459,14 +465,14 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
-                  className="p-4 sm:p-5 rounded-xl border border-slate-100 bg-white hover:border-slate-200 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
+                  className="p-3 sm:p-3.5 rounded-lg border border-slate-100 bg-white hover:border-slate-200 transition-all duration-200 flex flex-col items-center text-center gap-2 group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-sky-50 group-hover:border-sky-200 group-hover:text-sky-600 transition-all duration-300 shrink-0">
-                    <IconComp className="w-5.5 h-5.5 stroke-[1.8]" />
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-sky-50 group-hover:border-sky-200 group-hover:text-sky-600 transition-all duration-300 shrink-0">
+                    <IconComp className="w-4 h-4 stroke-[1.8]" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-xs font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">{item.label}</h4>
-                    <p className="text-[10px] text-slate-500 leading-normal">{item.desc}</p>
+                    <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900 group-hover:text-sky-600 transition-colors leading-tight">{item.label}</h4>
+                    <p className="text-[9px] sm:text-[10px] text-slate-500 leading-normal">{item.desc}</p>
                   </div>
                 </motion.div>
               );

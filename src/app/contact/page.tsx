@@ -154,7 +154,7 @@ export default function ContactPage() {
               >
                 <iframe
                   title="Google Map showing corporate office address location"
-                  src="https://maps.google.com/maps?q=19.081129,72.886431&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                  src="https://maps.google.com/maps?q=19.081217639276872,72.88618379404903&t=&z=17&ie=UTF8&iwloc=&output=embed"
                   className="w-full h-full border-0"
                   allowFullScreen
                   loading="lazy"

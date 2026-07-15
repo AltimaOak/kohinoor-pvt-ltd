@@ -11,34 +11,6 @@ import {
   ShieldCheck
 } from "lucide-react";
 
-const towersData = [
-  {
-    id: "tower-1",
-    name: "Tower 1",
-    sub: "Commercial - II",
-    description: "Tower 1 is a premium financial gateway and corporate hub, hosting key departments of the National Stock Exchange of India and top financial training institutions.",
-    offices: [
-      " 1. National Stock Exchange of India Limited",
-      " 2. The Clearing Corporation of India Ltd",
-      " 3. Indian Institute of Banking and Finance",
-      " 4. Indepesca Overseas Pvt. Ltd",
-      " 5. Rhythm House Pvt. Ltd"
-    ]
-  },
-  {
-    id: "tower-2",
-    name: "Tower 2",
-    sub: "Commercial - II",
-    description: "Tower 2 stands as a major administrative, logistics, and engineering centerpiece, hosting key consultancy partners and commercial service entities.",
-    offices: [
-      "1. Sterling Engineering Consultancy Services Pvt.Ltd",
-      "2. M. Pallonji Logistics Pvt.Ltd",
-      "3. Ashoka Sthapathya Pvt.Ltd",
-      "4. Nahar Retail Trading Services Ltd",
-      "5. Vishyam Estate Pvt.Ltd"
-    ]
-  }
-];
 
 export default function AboutPage() {
   return (
@@ -173,7 +145,7 @@ export default function AboutPage() {
     {/* Header */}
     <div className="max-w-2xl mb-10">
       <h2 className="mt-4 text-3xl md:text-4xl font-extrabold text-slate-900">
-        Our Engaged Clients
+        Our Prestigious Engaged Clients
       </h2>
 
       <p className="mt-3 text-slate-600 text-[15px] leading-7">
@@ -199,7 +171,10 @@ export default function AboutPage() {
         "Indian Institute of Banking and Finance",
         "Indepesca Overseas Pvt. Ltd.",
         "Rhythm House Pvt. Ltd.",
-        "Edelweiss Head Office",
+        "Edelweiss Group",
+        "American School of Bombay",
+        "Safe Pro Fire Services",
+        "Carnival Support Services India Pvt. Ltd.",
       ].map((company, index) => (
 
         <div
