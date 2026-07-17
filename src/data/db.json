@@ -624,7 +624,7 @@
         "description": "Freshly brewed premium espresso with textured milk, or authentic South Indian filter coffee.",
         "price": 80,
         "imageSrc": "/images/coffee.png",
-        "quantity": 93
+        "quantity": 92
       },
       {
         "id": "cafe-tea",
@@ -633,7 +633,7 @@
         "description": "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
         "price": 50,
         "imageSrc": "/images/tea.png",
-        "quantity": 91
+        "quantity": 90
       },
       {
         "id": "cafe-sandwich",
@@ -1635,6 +1635,74 @@
       "emailSentTimestamp": "2026-07-04T09:11:53.638Z",
       "whatsAppSentTimestamp": "2026-07-04T09:11:53.707Z",
       "whatsAppMessageId": "sim_meta_1783156313686"
+    },
+    {
+      "id": "KOH-CAF-20260717-00001",
+      "orderId": "order_mock_1784303172409",
+      "serviceType": "Cafeteria",
+      "date": "2026-07-17T15:46:26.894Z",
+      "customerName": "Aditya yadav",
+      "customerPhone": "9867561346",
+      "customerEmail": "adi144.yadav@gmail.com",
+      "items": [
+        {
+          "itemId": "cafe-coffee",
+          "name": "Cappuccino / Filter Coffee",
+          "price": 80,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 80,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "sent",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-07-17T15:46:33.221Z",
+          "status": "success",
+          "messageId": "sim_meta_1784303193138"
+        },
+        {
+          "timestamp": "2026-07-17T15:46:57.801Z",
+          "status": "success",
+          "messageId": "sim_meta_1784303217800"
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-07-17T15:46:33.027Z",
+      "whatsAppSentTimestamp": "2026-07-17T15:46:57.801Z",
+      "whatsAppMessageId": "sim_meta_1784303217800"
+    },
+    {
+      "id": "KOH-CAF-20260717-00002",
+      "orderId": "order_mock_1784303575110",
+      "serviceType": "Cafeteria",
+      "date": "2026-07-17T15:53:02.445Z",
+      "customerName": "Aditya yadav",
+      "customerPhone": "9867561346",
+      "customerEmail": "adi144.yadav@gmail.com",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 1
+        }
+      ],
+      "totalAmountPaid": 50,
+      "paymentStatus": "completed",
+      "paymentMethod": "Card / Online",
+      "whatsAppSentStatus": "failed",
+      "whatsAppDeliveryLogs": [
+        {
+          "timestamp": "2026-07-17T15:53:06.896Z",
+          "status": "failure",
+          "error": "No WhatsApp API credentials (Meta or Twilio) configured."
+        }
+      ],
+      "emailSentStatus": "sent",
+      "emailSentTimestamp": "2026-07-17T15:53:06.834Z",
+      "whatsAppSentTimestamp": "2026-07-17T15:53:06.896Z"
     }
   ],
   "orders": [
@@ -2085,6 +2153,48 @@
       "receiptNumber": "KOH-NUR-20260704-00003",
       "createdAt": "2026-07-04T09:11:48.426Z",
       "orderStatus": "placed"
+    },
+    {
+      "orderId": "order_mock_1784303172409",
+      "customerName": "Aditya yadav",
+      "customerEmail": "adi144.yadav@gmail.com",
+      "customerPhone": "9867561346",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-coffee",
+          "name": "Cappuccino / Filter Coffee",
+          "price": 80,
+          "quantity": 1
+        }
+      ],
+      "amount": 80,
+      "transactionId": "pay_sim_1784303179409",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-CAF-20260717-00001",
+      "createdAt": "2026-07-17T15:46:26.894Z",
+      "orderStatus": "completed"
+    },
+    {
+      "orderId": "order_mock_1784303575110",
+      "customerName": "Aditya yadav",
+      "customerEmail": "adi144.yadav@gmail.com",
+      "customerPhone": "9867561346",
+      "serviceType": "Cafeteria",
+      "items": [
+        {
+          "itemId": "cafe-tea",
+          "name": "Adrak Masala Chai",
+          "price": 50,
+          "quantity": 1
+        }
+      ],
+      "amount": 50,
+      "transactionId": "pay_sim_1784303581646",
+      "paymentStatus": "completed",
+      "receiptNumber": "KOH-CAF-20260717-00002",
+      "createdAt": "2026-07-17T15:53:02.445Z",
+      "orderStatus": "placed"
     }
   ],
   "receiptLogs": [
@@ -2240,6 +2350,20 @@
       "orderId": "order_mock_1783156303587",
       "emailStatus": "sent",
       "emailSentAt": "2026-07-04T09:11:53.638Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-CAF-20260717-00001",
+      "orderId": "order_mock_1784303172409",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-07-17T15:46:33.027Z",
+      "resendCount": 0
+    },
+    {
+      "receiptId": "KOH-CAF-20260717-00002",
+      "orderId": "order_mock_1784303575110",
+      "emailStatus": "sent",
+      "emailSentAt": "2026-07-17T15:53:06.834Z",
       "resendCount": 0
     }
   ],
