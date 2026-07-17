@@ -1714,29 +1714,18 @@ export default function ServicesPage() {
                   </p>
 
                   {/* Cafeteria Details strip */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1 select-none">
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
-                      <MapPin className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
-                      <div className="text-xs text-left leading-normal">
-                        <span className="text-slate-500">Location: </span>
-                        <span className="font-semibold text-slate-800">{cafeteria.location}</span>
-                      </div>
+                  <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
+                      <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>Location: <span className="font-semibold text-slate-800">{cafeteria.location}</span></span>
                     </div>
-                    
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
-                      <Clock className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
-                      <div className="text-xs text-left leading-normal">
-                        <span className="text-slate-500">Timings: </span>
-                        <span className="font-semibold text-slate-800">{cafeteria.timing}</span>
-                      </div>
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
+                      <Clock className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>Timings: <span className="font-semibold text-slate-800">{cafeteria.timing}</span></span>
                     </div>
-
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
-                      <PhoneCall className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
-                      <div className="text-xs text-left leading-normal">
-                        <span className="text-slate-500">Contact: </span>
-                        <span className="font-semibold text-slate-800">{cafeteria.contact}</span>
-                      </div>
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
+                      <PhoneCall className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>Contact: <span className="font-semibold text-slate-800">{cafeteria.contact}</span></span>
                     </div>
                   </div>
                 </div>
