@@ -3,6 +3,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { cookies, headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
 import { sendReceiptEmail, sendSellerOrderNotification } from "./utils/emailSender";
 import { sendWhatsAppReceipt, sendWhatsAppMessage } from "./utils/whatsAppSender";
@@ -611,6 +612,7 @@ export async function updateDb(data: DatabaseSchema): Promise<{ success: boolean
   try {
     await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
     await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     console.error("Error writing database:", error);
@@ -928,6 +930,7 @@ _Kohinoor Facilities Automation_`;
     console.log(`PDF URL: ${newReceipt.pdfUrl}`);
     console.log(`========================================\n`);
 
+    revalidatePath("/", "layout");
     return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus, emailSentStatus: newReceipt.emailSentStatus, pdfUrl: newReceipt.pdfUrl };
   } catch (error) {
     console.error("Error creating nursery purchase order:", error);
@@ -1089,6 +1092,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     console.log(`PDF URL: ${newReceipt.pdfUrl}`);
     console.log(`========================================\n`);
 
+    revalidatePath("/", "layout");
     return { success: true, orderId, receiptId, whatsAppSentStatus: newReceipt.whatsAppSentStatus, emailSentStatus: newReceipt.emailSentStatus, pdfUrl: newReceipt.pdfUrl };
   } catch (error) {
     console.error("Error creating cafeteria order:", error);
@@ -1557,6 +1561,7 @@ _Kohinoor Facilities Automation_`;
       sameSite: "strict",
     });
 
+    revalidatePath("/", "layout");
     return { success: true, receiptNumber };
   } catch (err: any) {
     console.error("[PAYMENT VERIFICATION ERROR] Failed:", err);
@@ -1677,6 +1682,7 @@ export async function updateOrderStatusAction(
     console.log(`Body:\nDear Customer and Managers,\n\nYour order #${order.orderId} for ${order.serviceType} is now ${status.toUpperCase()}.\n\nThank you for using Kohinoor Services Hub.`);
     console.log(`========================================\n`);
 
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (err: any) {
     console.error("Error updating order status:", err);
