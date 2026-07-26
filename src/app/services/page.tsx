@@ -21,6 +21,7 @@ import {
   Clock,
   CalendarRange,
   PhoneCall,
+  Phone,
   MessageSquare,
   QrCode,
   Leaf,
@@ -39,7 +40,9 @@ import {
   Volume2,
   Building2,
   HeartPulse,
-  ShoppingCart
+  ShoppingCart,
+  Droplet,
+  Trash2
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -369,6 +372,36 @@ export default function ServicesPage() {
     loadData();
   }, []);
 
+  const isAnyModalOpen =
+    isModalOpen ||
+    isCampModalOpen ||
+    isMassageModalOpen ||
+    isNurseryModalOpen ||
+    isBuyModalOpen ||
+    isCafeteriaModalOpen ||
+    isPaymentSimOpen;
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.style.overflow = "hidden";
+      if ((window as any).lenis) {
+        (window as any).lenis.stop();
+      }
+    } else {
+      document.body.style.overflow = "";
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+    }
+    return () => {
+      document.body.style.overflow = "";
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+    };
+  }, [isAnyModalOpen]);
+
+
   return (
     <div className="flex flex-col w-full pb-20 overflow-hidden">
       <Script
@@ -376,41 +409,54 @@ export default function ServicesPage() {
         strategy="lazyOnload"
       />
 
-      {/* 1. HEADER PAGE BANNER */}
-      <section className="relative pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_60%)] z-10">
-        {/* Glow backdrop */}
-        <div className="absolute top-0 right-10 w-96 h-96 rounded-full bg-sky-200/10 blur-[80px] pointer-events-none" />
+     {/* =======================================================
+    SERVICES HEADER
+======================================================= */}
 
-        <div className="max-w-3xl flex flex-col gap-4 text-left relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-1.5 text-[#0055d4] text-[10px] font-bold uppercase tracking-wider select-none"
-          >
-            <Building2 className="w-3.5 h-3.5 shrink-0" />
-            <span>KOHINOOR SERVICES</span>
-          </motion.div>
-          
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15]"
-          >
-            Excellent Facilities & <br className="hidden sm:inline" />
-            <span className="text-[#0055d4]">Essential Services</span>
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-500 text-sm md:text-base leading-relaxed max-w-2xl"
-          >
-            Explore our comprehensive services designed for a smarter workplace.
-          </motion.p>
-        </div>
-      </section>
+<section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-br from-white via-slate-50 to-sky-50/40">
+
+  {/* Decorative Background */}
+  <div className="absolute -right-32 -top-24 h-80 w-80 rounded-full bg-sky-100/40 blur-sm" />
+
+  {/* Dot Pattern */}
+  <div className="absolute right-20 top-10 grid grid-cols-6 gap-2 opacity-30">
+    {Array.from({ length: 36 }).map((_, i) => (
+      <span
+        key={i}
+        className="h-1.5 w-1.5 rounded-full bg-sky-400"
+      />
+    ))}
+  </div>
+
+  <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-8">
+    <div className="max-w-2xl">
+      {/* Small Label */}
+      <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-bold text-sky-600">
+        <Building2 className="w-3.5 h-3.5" />
+
+        OUR SERVICES
+
+      </div>
+      {/* Heading */}
+      <h1 className="mt-4 text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900">
+
+      Essential Services That
+        <span className="text-sky-600">
+          <br></br>Keep Business Moving.
+        </span>
+
+      </h1>
+
+      {/* Description */}
+
+      <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
+        Discover thoughtfully designed workplace services and
+        premium facilities that enhance comfort, convenience,
+        safety and productivity throughout Kohinoor Commercial-II.
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* 2. SERVICES GRID */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
@@ -529,43 +575,52 @@ export default function ServicesPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: services.length * 0.15, ease: "easeOut" }}
               onClick={() => setIsNurseryModalOpen(true)}
-              className="bg-white border border-slate-100 p-4 sm:p-5 hover:shadow-xs hover:border-emerald-300 transition-all duration-200 rounded-xl flex flex-col justify-between cursor-pointer group"
+              className="bg-white border border-emerald-100/70 p-3.5 sm:p-5 hover:shadow-md hover:border-emerald-300 hover:bg-emerald-50/10 transition-all duration-300 rounded-xl flex flex-col justify-between cursor-pointer group"
             >
-
-              <div className="flex flex-col gap-4 h-full justify-between">
-                <div className="flex flex-col gap-3">
-                  {/* Icon Wrapper */}
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 shrink-0">
-                    <Leaf className="w-4 h-4 stroke-[1.8]" />
+              <div className="flex flex-col gap-2.5 sm:gap-3 h-full justify-between">
+                <div className="flex flex-col gap-2.5 sm:gap-3">
+                  {/* Top Row: Icon & Browse link */}
+                  <div className="flex items-center justify-between">
+                    <div className="w-7 h-7 sm:w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 shrink-0">
+                      <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[1.8]" />
+                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded border border-emerald-100/50 flex items-center gap-0.5 sm:gap-1 transition-all group-hover:bg-emerald-100">
+                      Browse & Order Online →
+                    </span>
                   </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="text-base font-bold text-slate-900 tracking-tight">
+ 
+                  <div className="flex flex-col gap-1">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                       Kohinoor Green Nursery
                     </h3>
-                    <p className="text-slate-600 text-xs leading-relaxed">
-                      {nursery.description}
+                    <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
+                      A lush green oasis within Kohinoor Complex offering a wide variety of premium plants, decorative pots, and expert gardening solutions for homes, offices, and commercial spaces.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2.5 sm:gap-3">
                   <div className="h-px bg-slate-100 w-full" />
 
-                  {/* Features checklist */}
-                  <div className="flex flex-col gap-4">
-                    <span className="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold">
-                      Nursery Amenities
+                  {/* Section Title & Features (2 Columns) */}
+                  <div className="flex flex-col gap-1.5 sm:gap-2">
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-emerald-600 font-extrabold">
+                      PLANTS & SPECIALITIES
                     </span>
-                    <ul className="flex flex-col gap-3">
+                    <ul className="grid grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-1">
                       {[
-                        "Lush Indoor & Outdoor Plants",
-                        "Convenient Self-Pickup at Plaza",
-                        "Expert Botanical Care Advice"
+                        "Exotic Plants",
+                        "Herbal Plants",
+                        "Medicinal Plants",
+                        "Indoor & Outdoor Plants",
+                        "Flowering Plants",
+                        "Fruit Plants",
+                        "Decorative Garden Plants",
+                        "Unique Marble Pots Available"
                       ].map((feature, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                          <span className="text-xs font-semibold text-slate-700 leading-tight">
+                        <li key={i} className="flex items-center gap-1.5">
+                          <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600 shrink-0" />
+                          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-700 leading-tight">
                             {feature}
                           </span>
                         </li>
@@ -573,9 +628,50 @@ export default function ServicesPage() {
                     </ul>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
-                    <ShoppingBag className="w-4 h-4 shrink-0" />
-                    <span>Browse & Buy Plants</span>
+                  <div className="h-px bg-slate-100 w-full" />
+
+                  {/* Location Info */}
+                  <div className="flex items-start gap-1.5 text-slate-600">
+                    <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-slate-800 text-[10px] sm:text-[11px]">T-1 Backside, Ground Floor</p>
+                      <p className="text-[9px] sm:text-[10px] text-slate-500">Kohinoor Complex</p>
+                    </div>
+                  </div>
+
+                  {/* Contact Section & Two Action Buttons */}
+                  <div 
+                    className="mt-1 p-2.5 sm:p-3 bg-emerald-50/50 border border-emerald-100/70 rounded-lg flex flex-col gap-2 sm:gap-2.5"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center gap-2 text-slate-700">
+                      <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[9px] sm:text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider leading-none">To Buy Plants, Contact Us</span>
+                        <span className="text-xs sm:text-sm font-black text-slate-900 leading-tight">+91 9372025677</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                      <a
+                        href="tel:+919372025677"
+                        className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] sm:text-xs transition-colors shadow-xs"
+                      >
+                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        <span>Call Now</span>
+                      </a>
+                      <a
+                        href={getWhatsAppUrl("+919372025677", "Hello! I am interested in buying plants from Kohinoor Green Nursery. Please share the details.")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] sm:text-xs transition-all shadow-xs"
+                      >
+                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.736.001-2.599-1.013-5.047-2.856-6.89C16.638 2.132 14.192 1.117 11.6 1.117 6.162 1.117 1.74 5.485 1.737 10.852c0 1.701.452 3.364 1.309 4.806l-.989 3.612 3.733-.966zM17.47 14.85c-.322-.16-.1.688-.847-1.127-.088-.207-.24-.307-.358-.307-.118 0-.295.041-.5.247-.2.207-.791.782-.969.967-.178.186-.356.207-.678.047-.322-.16-1.36-.501-2.59-1.6-.957-.855-1.602-1.91-1.79-2.228-.188-.318-.02-.49.141-.649.145-.143.32-.374.48-.562.16-.188.214-.321.322-.536.11-.214.055-.4-.027-.562-.082-.16-.723-1.748-.99-2.392-.26-.628-.526-.543-.723-.553-.186-.01-.399-.012-.613-.012-.214 0-.562.08-.857.4-.294.32-1.125 1.1-1.125 2.68 0 1.58 1.152 3.106 1.312 3.32.16.215 2.268 3.463 5.49 4.854.766.331 1.365.528 1.83.676.77.244 1.472.21 2.027.128.618-.092 1.898-.776 2.166-1.49.268-.713.268-1.325.188-1.45-.08-.124-.294-.205-.615-.366z"/>
+                        </svg>
+                        <span>WhatsApp</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -597,44 +693,52 @@ export default function ServicesPage() {
                 setReadyAlertVisible(false);
                 setIsCafeteriaModalOpen(true);
               }}
-              className="bg-white border border-slate-100 p-4 sm:p-5 hover:shadow-xs hover:border-amber-400 transition-all duration-200 rounded-xl flex flex-col justify-between cursor-pointer group"
+              className="bg-white border border-amber-100/70 p-3.5 sm:p-5 hover:shadow-md hover:border-amber-300 hover:bg-amber-50/10 transition-all duration-300 rounded-xl flex flex-col justify-between cursor-pointer group"
             >
-
-              <div className="flex flex-col gap-4 h-full justify-between">
-                <div className="flex flex-col gap-3">
-                  {/* Icon Wrapper */}
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 shrink-0">
-                    <Coffee className="w-4 h-4 stroke-[1.8]" />
+              <div className="flex flex-col gap-2.5 sm:gap-3 h-full justify-between">
+                <div className="flex flex-col gap-2.5 sm:gap-3">
+                  {/* Top Row: Icon & Browse link */}
+                  <div className="flex items-center justify-between">
+                    <div className="w-7 h-7 sm:w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 shrink-0">
+                      <Coffee className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[1.8]" />
+                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-1.5 sm:px-2 py-0.5 rounded border border-amber-100/50 flex items-center gap-0.5 sm:gap-1 transition-all group-hover:bg-amber-100">
+                      View Menu & Order Online →
+                    </span>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="text-base font-bold text-slate-900 tracking-tight">
+                  <div className="flex flex-col gap-1">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                       Kohinoor Cafeteria
                     </h3>
-                    <p className="text-slate-600 text-xs leading-relaxed">
+                    <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
                       {cafeteria.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2.5 sm:gap-3">
                   <div className="h-px bg-slate-100 w-full" />
 
-                  {/* Features checklist */}
-                  <div className="flex flex-col gap-4">
-                    <span className="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold">
-                      Cafeteria Amenities
+                  {/* Section Title & Features (2 Columns) */}
+                  <div className="flex flex-col gap-1.5 sm:gap-2">
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-amber-600 font-extrabold">
+                      CAFETERIA SPECIALITIES
                     </span>
-                    <ul className="flex flex-col gap-3">
+                    <ul className="grid grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-1">
                       {[
-                        "Freshly Brewed Hot Coffee & Tea",
-                        "Delicious Breakfast & Lunch Options",
-                        "Quick Digital Payment & Instant Setup",
-                        "Counter Collection Alerts"
+                        "Hot Coffee & Tea",
+                        "Breakfast & Lunch",
+                        "Digital Payments",
+                        "Instant Order Setup",
+                        "Counter Collection",
+                        "Executive Veg Thali",
+                        "Chinese Delicacies",
+                        "Freshly Prepared Daily"
                       ].map((feature, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <Check className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                          <span className="text-xs font-semibold text-slate-700 leading-tight">
+                        <li key={i} className="flex items-center gap-1.5">
+                          <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-600 shrink-0" />
+                          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-700 leading-tight">
                             {feature}
                           </span>
                         </li>
@@ -642,9 +746,50 @@ export default function ServicesPage() {
                     </ul>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 transition-all duration-300 font-bold text-xs uppercase tracking-wider">
-                    <Utensils className="w-4 h-4 shrink-0" />
-                    <span>View Menu & Order</span>
+                  <div className="h-px bg-slate-100 w-full" />
+
+                  {/* Location Info */}
+                  <div className="flex items-start gap-1.5 text-slate-600">
+                    <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-slate-800 text-[10px] sm:text-[11px]">{cafeteria.location}</p>
+                      <p className="text-[9px] sm:text-[10px] text-slate-500">Kohinoor Complex</p>
+                    </div>
+                  </div>
+
+                  {/* Contact Section & Two Action Buttons */}
+                  <div 
+                    className="mt-1 p-2.5 sm:p-3 bg-amber-50/50 border border-amber-100/70 rounded-lg flex flex-col gap-2 sm:gap-2.5"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center gap-2 text-slate-700">
+                      <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[9px] sm:text-[10px] font-extrabold text-amber-700 uppercase tracking-wider leading-none">To Order Food, Contact Us</span>
+                        <span className="text-xs sm:text-sm font-black text-slate-900 leading-tight">{cafeteria.contact}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                      <a
+                        href={`tel:${cafeteria.contact}`}
+                        className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-amber-600 hover:bg-amber-700 text-white font-bold text-[10px] sm:text-xs transition-colors shadow-xs"
+                      >
+                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        <span>Call Now</span>
+                      </a>
+                      <a
+                        href={getWhatsAppUrl(cafeteria.contact, "Hello! I am interested in ordering food from Kohinoor Cafeteria. Please share the details.")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[10px] sm:text-xs transition-all shadow-xs"
+                      >
+                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.736.001-2.599-1.013-5.047-2.856-6.89C16.638 2.132 14.192 1.117 11.6 1.117 6.162 1.117 1.74 5.485 1.737 10.852c0 1.701.452 3.364 1.309 4.806l-.989 3.612 3.733-.966zM17.47 14.85c-.322-.16-.1.688-.847-1.127-.088-.207-.24-.307-.358-.307-.118 0-.295.041-.5.247-.2.207-.791.782-.969.967-.178.186-.356.207-.678.047-.322-.16-1.36-.501-2.59-1.6-.957-.855-1.602-1.91-1.79-2.228-.188-.318-.02-.49.141-.649.145-.143.32-.374.48-.562.16-.188.214-.321.322-.536.11-.214.055-.4-.027-.562-.082-.16-.723-1.748-.99-2.392-.26-.628-.526-.543-.723-.553-.186-.01-.399-.012-.613-.012-.214 0-.562.08-.857.4-.294.32-1.125 1.1-1.125 2.68 0 1.58 1.152 3.106 1.312 3.32.16.215 2.268 3.463 5.49 4.854.766.331 1.365.528 1.83.676.77.244 1.472.21 2.027.128.618-.092 1.898-.776 2.166-1.49.268-.713.268-1.325.188-1.45-.08-.124-.294-.205-.615-.366z"/>
+                        </svg>
+                        <span>WhatsApp</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -665,7 +810,7 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
             {[
               { label: "24x7 Security", icon: Shield, desc: "Continuous perimeter patrol and visitor management" },
               { label: "Tranquil Massage Room", icon: MassageChairIcon, desc: "Re-energize your mind and body with our massage chair therapy" },
@@ -676,6 +821,9 @@ export default function ServicesPage() {
               { label: "Power", icon: Zap, desc: "Dual grid feeds for consistent electricity" },
               { label: "Power Backup", icon: BatteryCharging, desc: "Heavy-duty generator backup power support" },
               { label: "Fire Fighting Equipment", icon: Flame, desc: "Advanced localized sprinkler & detector systems" },
+              { label: "Water & Drainage", icon: Droplet, desc: "24/7 water supply, rainwater harvesting, and STP" },
+              { label: "Waste Management", icon: Trash2, desc: "Efficient waste segregation and disposal systems" },
+              { label: "Green Building", icon: Leaf, desc: "Sustainable architecture and eco-friendly infrastructure" },
             ].map((item, idx) => {
               const IconComp = item.icon;
               return (
@@ -685,14 +833,14 @@ export default function ServicesPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
-                  className="p-4 sm:p-5 rounded-xl border border-slate-100 bg-white hover:border-slate-200 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
+                  className="p-3 sm:p-3.5 rounded-lg border border-slate-100 bg-white hover:border-slate-200 transition-all duration-200 flex flex-col items-center text-center gap-2 group"
                 >
                   <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-sky-50 group-hover:border-sky-200 group-hover:text-sky-600 transition-all duration-300 shrink-0">
                     <IconComp className="w-4 h-4 stroke-[1.8]" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-xs font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">{item.label}</h4>
-                    <p className="text-[10px] text-slate-500 leading-normal">{item.desc}</p>
+                    <h4 className="text-[11px] sm:text-xs font-semibold text-slate-900 group-hover:text-sky-600 transition-colors leading-tight">{item.label}</h4>
+                    <p className="text-[9px] sm:text-[10px] text-slate-500 leading-normal">{item.desc}</p>
                   </div>
                 </motion.div>
               );
@@ -710,6 +858,7 @@ export default function ServicesPage() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6 md:p-10"
             onClick={() => setIsCampModalOpen(false)}
+            data-lenis-prevent
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -717,7 +866,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-[480px] bg-white border border-slate-100 rounded-2xl shadow-xl p-6 sm:p-8 my-auto overflow-hidden flex flex-col gap-5 sm:gap-6"
+              className="relative w-full max-w-[480px] bg-white border border-slate-200 rounded-xl shadow-lg p-6 sm:p-8 my-auto overflow-hidden flex flex-col gap-5 sm:gap-6"
             >
               {/* Close Button */}
               <button
@@ -822,6 +971,7 @@ export default function ServicesPage() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md overflow-y-auto flex justify-center items-start sm:items-center p-4 sm:p-6"
             onClick={() => setIsMassageModalOpen(false)}
+            data-lenis-prevent
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -965,6 +1115,7 @@ export default function ServicesPage() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md p-4 md:p-6 flex items-center justify-center"
             onClick={() => setIsNurseryModalOpen(false)}
+            data-lenis-prevent
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -973,6 +1124,7 @@ export default function ServicesPage() {
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
               className="relative w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] bg-white border border-slate-200/50 rounded-xl shadow-md p-4 sm:p-6 md:p-8 flex flex-col gap-6 overflow-y-auto"
+              data-lenis-prevent
             >
               {/* Close Button */}
               <button
@@ -1114,6 +1266,7 @@ export default function ServicesPage() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/75 backdrop-blur-md p-4"
             onClick={() => setIsBuyModalOpen(false)}
+            data-lenis-prevent
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -1122,6 +1275,7 @@ export default function ServicesPage() {
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
               className="relative w-full max-w-md bg-white border border-slate-200/50 rounded-xl shadow-md p-5 sm:p-6 md:p-8 overflow-y-auto max-h-[90vh]"
+              data-lenis-prevent
             >
               {/* Close Button */}
               <button
@@ -1525,6 +1679,7 @@ export default function ServicesPage() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-md p-4 md:p-6 flex items-center justify-center"
             onClick={() => setIsCafeteriaModalOpen(false)}
+            data-lenis-prevent
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -1533,6 +1688,7 @@ export default function ServicesPage() {
               transition={{ type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
               className="relative w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] bg-white border border-slate-150 rounded-[24px] shadow-2xl p-6 flex flex-col gap-6 overflow-y-auto"
+              data-lenis-prevent
             >
               {/* Close Button */}
               <button
@@ -1558,29 +1714,18 @@ export default function ServicesPage() {
                   </p>
 
                   {/* Cafeteria Details strip */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-1 select-none">
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
-                      <MapPin className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
-                      <div className="text-xs text-left leading-normal">
-                        <span className="text-slate-500">Location: </span>
-                        <span className="font-semibold text-slate-800">{cafeteria.location}</span>
-                      </div>
+                  <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
+                      <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>Location: <span className="font-semibold text-slate-800">{cafeteria.location}</span></span>
                     </div>
-                    
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
-                      <Clock className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
-                      <div className="text-xs text-left leading-normal">
-                        <span className="text-slate-500">Timings: </span>
-                        <span className="font-semibold text-slate-800">{cafeteria.timing}</span>
-                      </div>
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
+                      <Clock className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>Timings: <span className="font-semibold text-slate-800">{cafeteria.timing}</span></span>
                     </div>
-
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150 shadow-2xs">
-                      <PhoneCall className="w-4.5 h-4.5 text-orange-600 shrink-0 ml-1" />
-                      <div className="text-xs text-left leading-normal">
-                        <span className="text-slate-500">Contact: </span>
-                        <span className="font-semibold text-slate-800">{cafeteria.contact}</span>
-                      </div>
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 shadow-xs">
+                      <PhoneCall className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>Contact: <span className="font-semibold text-slate-800">{cafeteria.contact}</span></span>
                     </div>
                   </div>
                 </div>
@@ -2175,6 +2320,7 @@ export default function ServicesPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/75 backdrop-blur-md p-4"
+            data-lenis-prevent
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -2182,6 +2328,7 @@ export default function ServicesPage() {
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
               transition={{ type: "spring", damping: 30 }}
               className="relative w-full max-w-md bg-white border border-slate-200/50 rounded-[32px] shadow-2xl p-6 sm:p-8 overflow-y-auto max-h-[90vh] text-left animate-none"
+              data-lenis-prevent
             >
               {/* Header */}
               <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-5">

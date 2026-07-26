@@ -123,7 +123,7 @@ export default function OrderStatusTracker({
   const currentIdx = getStepIndex(status);
 
   return (
-    <div className="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-5 sm:p-7 shadow-sm flex flex-col gap-6 select-none relative overflow-hidden">
+    <div className="w-full bg-white border border-slate-200 rounded-xl p-5 sm:p-7 shadow-sm flex flex-col gap-6 select-none relative overflow-hidden">
       {/* Decorative gradient overlay */}
       <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/[0.02] rounded-full blur-2xl pointer-events-none" />
 

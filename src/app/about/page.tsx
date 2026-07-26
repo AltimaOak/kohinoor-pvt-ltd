@@ -11,34 +11,6 @@ import {
   ShieldCheck
 } from "lucide-react";
 
-const towersData = [
-  {
-    id: "tower-1",
-    name: "Tower 1",
-    sub: "Commercial - II",
-    description: "Tower 1 is a premium financial gateway and corporate hub, hosting key departments of the National Stock Exchange of India and top financial training institutions.",
-    offices: [
-      " 1. National Stock Exchange of India Limited",
-      " 2. The Clearing Corporation of India Ltd",
-      " 3. Indian Institute of Banking and Finance",
-      " 4. Indepesca Overseas Pvt. Ltd",
-      " 5. Rhythm House Pvt. Ltd"
-    ]
-  },
-  {
-    id: "tower-2",
-    name: "Tower 2",
-    sub: "Commercial - II",
-    description: "Tower 2 stands as a major administrative, logistics, and engineering centerpiece, hosting key consultancy partners and commercial service entities.",
-    offices: [
-      "1. Sterling Engineering Consultancy Services Pvt.Ltd",
-      "2. M. Pallonji Logistics Pvt.Ltd",
-      "3. Ashoka Sthapathya Pvt.Ltd",
-      "4. Nahar Retail Trading Services Ltd",
-      "5. Vishyam Estate Pvt.Ltd"
-    ]
-  }
-];
 
 export default function AboutPage() {
   return (
@@ -46,7 +18,7 @@ export default function AboutPage() {
        {/* 1. HERO PAGE BANNER & VISION SPLIT */}
 <section className="relative py-10 md:py-12 px-6 md:px-12 max-w-7xl mx-auto w-full overflow-hidden">
   {/* Decorative Background */}
-  <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-100/40 blur-3xl pointer-events-none" />
+  <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-100/20 blur-[80px] pointer-events-none" />
   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
     {/* Left Content */}
     <div className="lg:col-span-7 flex flex-col">
@@ -74,7 +46,7 @@ export default function AboutPage() {
     </div>
     {/* Vision Card */}
     <div className="lg:col-span-5">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 border border-sky-100">
             <Eye className="w-5 h-5 text-sky-600" />
@@ -99,7 +71,7 @@ export default function AboutPage() {
   </div>
 </section>
 
-     {/* 2. OUR LANDMARK */}
+    {/* 2. OUR LANDMARK */}
 <section className="py-10 bg-[#FCFCFA] border-y border-[#ECEAE4]">
   <div className="max-w-6xl mx-auto px-6 lg:px-12">
     {/* Header */}
@@ -119,7 +91,7 @@ export default function AboutPage() {
       </p>
     </div>
     {/* Stats */}
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 rounded-2xl border border-[#ECEAE4] bg-white overflow-hidden">
+    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 rounded-xl border border-[#ECEAE4] bg-white overflow-hidden">
       {/* Towers */}
       <div className="flex items-center gap-4 px-6 py-5 border-b md:border-b-0 md:border-r border-[#ECEAE4]">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
@@ -173,7 +145,7 @@ export default function AboutPage() {
     {/* Header */}
     <div className="max-w-2xl mb-10">
       <h2 className="mt-4 text-3xl md:text-4xl font-extrabold text-slate-900">
-        Our Engaged Clients
+        Our Prestigious Engaged Clients
       </h2>
 
       <p className="mt-3 text-slate-600 text-[15px] leading-7">
@@ -199,7 +171,10 @@ export default function AboutPage() {
         "Indian Institute of Banking and Finance",
         "Indepesca Overseas Pvt. Ltd.",
         "Rhythm House Pvt. Ltd.",
-        "Edelweiss Head Office",
+        "Edelweiss Group",
+        "American School of Bombay",
+        "Safe Pro Fire Services",
+        "Carnival Support Services India Pvt. Ltd.",
       ].map((company, index) => (
 
         <div

@@ -9,8 +9,6 @@ export default async function Footer() {
   const managerEmails = Array.from(new Set(contacts.managers.map(m => m.email)));
   return (
     <footer className="relative border-t border-slate-800 bg-[#0F172A] pt-12 pb-8 overflow-hidden text-slate-400">
-      {/* Decorative Blur Dot */}
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 pb-10 border-b border-slate-800">
