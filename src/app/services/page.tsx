@@ -634,7 +634,7 @@ export default function ServicesPage() {
                   <div className="flex items-start gap-1.5 text-slate-600">
                     <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-slate-800 text-[10px] sm:text-[11px]">T-1 Backside, Ground Floor</p>
+                      <p className="font-bold text-slate-800 text-[10px] sm:text-[11px]">{nursery.location}</p>
                       <p className="text-[9px] sm:text-[10px] text-slate-500">Kohinoor Complex</p>
                     </div>
                   </div>
@@ -648,20 +648,20 @@ export default function ServicesPage() {
                       <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
                       <div className="flex flex-col">
                         <span className="text-[9px] sm:text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider leading-none">To Buy Plants, Contact Us</span>
-                        <span className="text-xs sm:text-sm font-black text-slate-900 leading-tight">+91 9372025677</span>
+                        <span className="text-xs sm:text-sm font-black text-slate-900 leading-tight">{nursery.contact}</span>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                       <a
-                        href="tel:+919372025677"
+                        href={`tel:${nursery.contact}`}
                         className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] sm:text-xs transition-colors shadow-xs"
                       >
                         <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         <span>Call Now</span>
                       </a>
                       <a
-                        href={getWhatsAppUrl("+919372025677", "Hello! I am interested in buying plants from Kohinoor Green Nursery. Please share the details.")}
+                        href={getWhatsAppUrl(nursery.contact, "Hello! I am interested in buying plants from Kohinoor Green Nursery. Please share the details.")}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] sm:text-xs transition-all shadow-xs"
