@@ -409,54 +409,54 @@ export default function ServicesPage() {
         strategy="lazyOnload"
       />
 
-     {/* =======================================================
+      {/* =======================================================
     SERVICES HEADER
 ======================================================= */}
 
-<section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-br from-white via-slate-50 to-sky-50/40">
+      <section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-br from-white via-slate-50 to-sky-50/40">
 
-  {/* Decorative Background */}
-  <div className="absolute -right-32 -top-24 h-80 w-80 rounded-full bg-sky-100/40 blur-sm" />
+        {/* Decorative Background */}
+        <div className="absolute -right-32 -top-24 h-80 w-80 rounded-full bg-sky-100/40 blur-sm" />
 
-  {/* Dot Pattern */}
-  <div className="absolute right-20 top-10 grid grid-cols-6 gap-2 opacity-30">
-    {Array.from({ length: 36 }).map((_, i) => (
-      <span
-        key={i}
-        className="h-1.5 w-1.5 rounded-full bg-sky-400"
-      />
-    ))}
-  </div>
+        {/* Dot Pattern */}
+        <div className="absolute right-20 top-10 grid grid-cols-6 gap-2 opacity-30">
+          {Array.from({ length: 36 }).map((_, i) => (
+            <span
+              key={i}
+              className="h-1.5 w-1.5 rounded-full bg-sky-400"
+            />
+          ))}
+        </div>
 
-  <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-8">
-    <div className="max-w-2xl">
-      {/* Small Label */}
-      <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-bold text-sky-600">
-        <Building2 className="w-3.5 h-3.5" />
+        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-8">
+          <div className="max-w-2xl">
+            {/* Small Label */}
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-bold text-sky-600">
+              <Building2 className="w-3.5 h-3.5" />
 
-        OUR SERVICES
+              OUR SERVICES
 
-      </div>
-      {/* Heading */}
-      <h1 className="mt-4 text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900">
+            </div>
+            {/* Heading */}
+            <h1 className="mt-4 text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900">
 
-      Essential Services That
-        <span className="text-sky-600">
-          <br></br>Keep Business Moving.
-        </span>
+              Essential Services That
+              <span className="text-sky-600">
+                <br></br>Keep Business Moving.
+              </span>
 
-      </h1>
+            </h1>
 
-      {/* Description */}
+            {/* Description */}
 
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
-        Discover thoughtfully designed workplace services and
-        premium facilities that enhance comfort, convenience,
-        safety and productivity throughout Kohinoor Commercial-II.
-      </p>
-    </div>
-  </div>
-</section>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
+              Discover thoughtfully designed workplace services and
+              premium facilities that enhance comfort, convenience,
+              safety and productivity throughout Kohinoor Commercial-II.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* 2. SERVICES GRID */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
@@ -588,7 +588,7 @@ export default function ServicesPage() {
                       Browse & Order Online →
                     </span>
                   </div>
- 
+
                   <div className="flex flex-col gap-1">
                     <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                       Kohinoor Green Nursery
@@ -640,7 +640,7 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Contact Section & Two Action Buttons */}
-                  <div 
+                  <div
                     className="mt-1 p-2.5 sm:p-3 bg-emerald-50/50 border border-emerald-100/70 rounded-lg flex flex-col gap-2 sm:gap-2.5"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -667,7 +667,7 @@ export default function ServicesPage() {
                         className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] sm:text-xs transition-all shadow-xs"
                       >
                         <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24">
-                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.736.001-2.599-1.013-5.047-2.856-6.89C16.638 2.132 14.192 1.117 11.6 1.117 6.162 1.117 1.74 5.485 1.737 10.852c0 1.701.452 3.364 1.309 4.806l-.989 3.612 3.733-.966zM17.47 14.85c-.322-.16-.1.688-.847-1.127-.088-.207-.24-.307-.358-.307-.118 0-.295.041-.5.247-.2.207-.791.782-.969.967-.178.186-.356.207-.678.047-.322-.16-1.36-.501-2.59-1.6-.957-.855-1.602-1.91-1.79-2.228-.188-.318-.02-.49.141-.649.145-.143.32-.374.48-.562.16-.188.214-.321.322-.536.11-.214.055-.4-.027-.562-.082-.16-.723-1.748-.99-2.392-.26-.628-.526-.543-.723-.553-.186-.01-.399-.012-.613-.012-.214 0-.562.08-.857.4-.294.32-1.125 1.1-1.125 2.68 0 1.58 1.152 3.106 1.312 3.32.16.215 2.268 3.463 5.49 4.854.766.331 1.365.528 1.83.676.77.244 1.472.21 2.027.128.618-.092 1.898-.776 2.166-1.49.268-.713.268-1.325.188-1.45-.08-.124-.294-.205-.615-.366z"/>
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.736.001-2.599-1.013-5.047-2.856-6.89C16.638 2.132 14.192 1.117 11.6 1.117 6.162 1.117 1.74 5.485 1.737 10.852c0 1.701.452 3.364 1.309 4.806l-.989 3.612 3.733-.966zM17.47 14.85c-.322-.16-.1.688-.847-1.127-.088-.207-.24-.307-.358-.307-.118 0-.295.041-.5.247-.2.207-.791.782-.969.967-.178.186-.356.207-.678.047-.322-.16-1.36-.501-2.59-1.6-.957-.855-1.602-1.91-1.79-2.228-.188-.318-.02-.49.141-.649.145-.143.32-.374.48-.562.16-.188.214-.321.322-.536.11-.214.055-.4-.027-.562-.082-.16-.723-1.748-.99-2.392-.26-.628-.526-.543-.723-.553-.186-.01-.399-.012-.613-.012-.214 0-.562.08-.857.4-.294.32-1.125 1.1-1.125 2.68 0 1.58 1.152 3.106 1.312 3.32.16.215 2.268 3.463 5.49 4.854.766.331 1.365.528 1.83.676.77.244 1.472.21 2.027.128.618-.092 1.898-.776 2.166-1.49.268-.713.268-1.325.188-1.45-.08-.124-.294-.205-.615-.366z" />
                         </svg>
                         <span>WhatsApp</span>
                       </a>
@@ -758,7 +758,7 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Contact Section & Two Action Buttons */}
-                  <div 
+                  <div
                     className="mt-1 p-2.5 sm:p-3 bg-amber-50/50 border border-amber-100/70 rounded-lg flex flex-col gap-2 sm:gap-2.5"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -785,7 +785,7 @@ export default function ServicesPage() {
                         className="flex items-center justify-center gap-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[10px] sm:text-xs transition-all shadow-xs"
                       >
                         <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24">
-                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.736.001-2.599-1.013-5.047-2.856-6.89C16.638 2.132 14.192 1.117 11.6 1.117 6.162 1.117 1.74 5.485 1.737 10.852c0 1.701.452 3.364 1.309 4.806l-.989 3.612 3.733-.966zM17.47 14.85c-.322-.16-.1.688-.847-1.127-.088-.207-.24-.307-.358-.307-.118 0-.295.041-.5.247-.2.207-.791.782-.969.967-.178.186-.356.207-.678.047-.322-.16-1.36-.501-2.59-1.6-.957-.855-1.602-1.91-1.79-2.228-.188-.318-.02-.49.141-.649.145-.143.32-.374.48-.562.16-.188.214-.321.322-.536.11-.214.055-.4-.027-.562-.082-.16-.723-1.748-.99-2.392-.26-.628-.526-.543-.723-.553-.186-.01-.399-.012-.613-.012-.214 0-.562.08-.857.4-.294.32-1.125 1.1-1.125 2.68 0 1.58 1.152 3.106 1.312 3.32.16.215 2.268 3.463 5.49 4.854.766.331 1.365.528 1.83.676.77.244 1.472.21 2.027.128.618-.092 1.898-.776 2.166-1.49.268-.713.268-1.325.188-1.45-.08-.124-.294-.205-.615-.366z"/>
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.736.001-2.599-1.013-5.047-2.856-6.89C16.638 2.132 14.192 1.117 11.6 1.117 6.162 1.117 1.74 5.485 1.737 10.852c0 1.701.452 3.364 1.309 4.806l-.989 3.612 3.733-.966zM17.47 14.85c-.322-.16-.1.688-.847-1.127-.088-.207-.24-.307-.358-.307-.118 0-.295.041-.5.247-.2.207-.791.782-.969.967-.178.186-.356.207-.678.047-.322-.16-1.36-.501-2.59-1.6-.957-.855-1.602-1.91-1.79-2.228-.188-.318-.02-.49.141-.649.145-.143.32-.374.48-.562.16-.188.214-.321.322-.536.11-.214.055-.4-.027-.562-.082-.16-.723-1.748-.99-2.392-.26-.628-.526-.543-.723-.553-.186-.01-.399-.012-.613-.012-.214 0-.562.08-.857.4-.294.32-1.125 1.1-1.125 2.68 0 1.58 1.152 3.106 1.312 3.32.16.215 2.268 3.463 5.49 4.854.766.331 1.365.528 1.83.676.77.244 1.472.21 2.027.128.618-.092 1.898-.776 2.166-1.49.268-.713.268-1.325.188-1.45-.08-.124-.294-.205-.615-.366z" />
                         </svg>
                         <span>WhatsApp</span>
                       </a>
@@ -1568,7 +1568,7 @@ export default function ServicesPage() {
                           </a>
                         )}
 
-                         <button
+                        <button
                           type="button"
                           disabled={isResendingNurseryReceipt}
                           onClick={async () => {
