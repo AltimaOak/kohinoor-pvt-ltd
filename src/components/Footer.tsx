@@ -97,7 +97,7 @@ export default async function Footer() {
                   rel="noopener noreferrer"
                   className="leading-relaxed hover:text-sky-400 transition-colors whitespace-pre-line"
                 >
-                  Kohinoor City, B-2,Commercial-2,Kirol Road,Kurla(W),Mumbai-400070
+                  Kohinoor Commercial 2, B-2, Kirol Road Kurla (West) Mumbai- 400070
                 </a>
               </li>
             </ul>
@@ -130,9 +130,7 @@ export default async function Footer() {
             © {new Date().getFullYear()} KOHINOOR CITY OFFICE TOWERS INDUSTRIAL ESTATE & PREMISES CO-OP SOCIETY LTD. All rights reserved.
           </span>
           <div className="flex items-center gap-6">
-            <span className="hover:text-sky-400 cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-sky-400 cursor-pointer transition-colors">Terms of Lease</span>
-            <span className="hover:text-sky-400 cursor-pointer transition-colors">Security Standards</span>
+            <Link href="/terms" className="hover:text-sky-400 cursor-pointer transition-colors">Terms &amp; Conditions</Link>
             <span className="text-slate-700">|</span>
             <Link href="/admin" className="hover:text-sky-400 cursor-pointer transition-colors">
               Admin Portal
