@@ -7,8 +7,8 @@ import { revalidatePath } from "next/cache";
 import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
 import { sendReceiptEmail, sendSellerOrderNotification } from "./utils/emailSender";
 import { sendWhatsAppReceipt, sendWhatsAppMessage } from "./utils/whatsAppSender";
+import { getDbFromFirestore, writeDbToFirestore } from "@/lib/db";
 
-const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
 // Password hashing is not strictly required for local default, but env password or fallback
@@ -279,294 +279,43 @@ export interface DatabaseSchema {
   healthCheckupCard?: HealthCheckupCard;
 }
 
-// Ensure database file exists
-async function ensureDbExists() {
-  try {
-    await fs.access(DB_PATH);
-  } catch {
-    // If db.json doesn't exist, create it with empty structure
-    const initialData: DatabaseSchema = {
-      events: [],
-      services: [],
-      photos: [],
-      contacts: {
-        siteAddress: "",
-        siteAddressMapLink: "",
-        managers: [],
-      },
-      doctors: [],
-      bookings: [],
-      nursery: {
-        description: "Lush green oasis within the Kohinoor complex offering a wide selection of indoor and outdoor plants to brighten your workspace and improve air quality.",
-        location: "Ground Floor, Tower B Plaza Area",
-        timing: "9:00 AM - 6:00 PM (Monday - Saturday)",
-        contact: "+91 8657902809",
-        plants: [
-          {
-            id: "plant-snake",
-            name: "Snake Plant (Sansevieria)",
-            description: "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
-            price: 250,
-            imageSrc: "/images/snake_plant.png",
-            quantity: 20
-          },
-          {
-            id: "plant-areca",
-            name: "Areca Palm",
-            description: "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
-            price: 350,
-            imageSrc: "/images/areca_palm.png",
-            quantity: 15
-          },
-          {
-            id: "plant-peace",
-            name: "Peace Lily",
-            description: "Features dark green leaves and brilliant white spathes, ideal for low-light office desks.",
-            price: 180,
-            imageSrc: "/images/peace_lily.png",
-            quantity: 10
-          }
-        ],
-        orders: []
-      },
-      cafeteria: {
-        description: "Premium corporate cafeteria offering freshly brewed hot beverages, delicious breakfast selections, and corporate lunch thalis.",
-        location: "Ground Floor, Tower A Plaza Area",
-        timing: "8:00 AM - 8:30 PM (Monday - Saturday)",
-        contact: "+91 8657902811",
-        menu: [
-          {
-            id: "cafe-coffee",
-            name: "Cappuccino / Filter Coffee",
-            category: "Drinks",
-            description: "Freshly brewed premium espresso with textured milk, or authentic South Indian filter coffee.",
-            price: 80,
-            imageSrc: "/images/coffee.png",
-            quantity: 100
-          },
-          {
-            id: "cafe-tea",
-            name: "Adrak Masala Chai",
-            category: "Drinks",
-            description: "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
-            price: 50,
-            imageSrc: "/images/tea.png",
-            quantity: 100
-          },
-          {
-            id: "cafe-sandwich",
-            name: "Classic Club Sandwich",
-            category: "Breakfast",
-            description: "Triple-layered toasted bread with crisp veggies, cheese, and seasoned herb spread.",
-            price: 120,
-            imageSrc: "/images/sandwich.png",
-            quantity: 50
-          },
-          {
-            id: "cafe-poha",
-            name: "Indori Kanda Poha",
-            category: "Breakfast",
-            description: "Flattened rice tempered with mustard, curry leaves, roasted peanuts, onion, and topped with sev.",
-            price: 70,
-            imageSrc: "/images/poha.png",
-            quantity: 60
-          },
-          {
-            id: "cafe-thali",
-            name: "Executive Veg Thali",
-            category: "Lunch",
-            description: "A premium lunch containing Paneer Subzi, Dal Tadka, Seasonal Dry Veg, Roti, Rice, Papad, Raita, and Sweet.",
-            price: 220,
-            imageSrc: "/images/thali.png",
-            quantity: 40
-          },
-          {
-            id: "cafe-friedrice",
-            name: "Schezwan Veg Fried Rice",
-            category: "Lunch",
-            description: "Spicy wok-tossed long grain rice with finely chopped farm-fresh vegetables and Schezwan sauce.",
-            price: 150,
-            imageSrc: "/images/friedrice.png",
-            quantity: 50
-          }
-        ],
-        orders: []
-      },
-      receipts: [],
-      healthCheckupCard: {
-        societyName: "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
-        availabilityText: "DOCTOR",
-        frequencyText: "EVERY MONTH",
-        daysText: "2ND & 4TH WEDNESDAY",
-        timingsText: "12.00 pm - 02.00 pm",
-        bookingLink: "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
-        footerText: "Your health is our priority",
-        doctorName: "Dr. Reshma Nikam"
-      }
-    };
-    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-    await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
-  }
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Database layer — backed by Firebase Firestore (replaces local db.json)
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Get raw DB contents
+// Get raw DB contents from Firestore
 export async function getDb(): Promise<DatabaseSchema> {
-  await ensureDbExists();
   try {
-    const data = await fs.readFile(DB_PATH, "utf-8");
-    const db = JSON.parse(data) as DatabaseSchema;
+    const db = await getDbFromFirestore();
 
-    // Auto-migrate if nursery is missing
+    let hasUpdates = false;
+
+    // Auto-migrate missing fields
     if (!db.nursery) {
       db.nursery = {
-        description: "Lush green oasis within the Kohinoor complex offering a wide selection of indoor and outdoor plants to brighten your workspace and improve air quality.",
+        description: "Lush green oasis within the Kohinoor complex.",
         location: "Ground Floor, Tower B Plaza Area",
         timing: "9:00 AM - 6:00 PM (Monday - Saturday)",
         contact: "+91 8657902809",
-        plants: [
-          {
-            id: "plant-snake",
-            name: "Snake Plant (Sansevieria)",
-            description: "A popular low-maintenance indoor plant known for its air-purifying qualities and structural beauty.",
-            price: 250,
-            imageSrc: "/images/snake_plant.png",
-            quantity: 20
-          },
-          {
-            id: "plant-areca",
-            name: "Areca Palm",
-            description: "Beautiful feathery fronds that add a tropical touch to corporate cabins and lobbies.",
-            price: 350,
-            imageSrc: "/images/areca_palm.png",
-            quantity: 15
-          },
-          {
-            id: "plant-peace",
-            name: "Peace Lily",
-            description: "Features dark green leaves and brilliant white spathes, ideal for low-light office desks.",
-            price: 180,
-            imageSrc: "/images/peace_lily.png",
-            quantity: 10
-          }
-        ],
-        orders: []
+        plants: [],
+        orders: [],
       };
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      hasUpdates = true;
     }
-
-    // Auto-migrate if cafeteria is missing
     if (!db.cafeteria) {
       db.cafeteria = {
-        description: "Premium corporate cafeteria offering freshly brewed hot beverages, delicious breakfast selections, and corporate lunch thalis.",
+        description: "Corporate cafeteria offering beverages, breakfast, and lunch.",
         location: "Ground Floor, Tower A Plaza Area",
         timing: "8:00 AM - 8:30 PM (Monday - Saturday)",
         contact: "+91 8657902811",
-        menu: [
-          {
-            id: "cafe-coffee",
-            name: "Cappuccino / Filter Coffee",
-            category: "Drinks",
-            description: "Freshly brewed premium espresso with textured milk, or authentic South Indian filter coffee.",
-            price: 80,
-            imageSrc: "/images/coffee.png",
-            quantity: 100
-          },
-          {
-            id: "cafe-tea",
-            name: "Adrak Masala Chai",
-            category: "Drinks",
-            description: "Traditional hot tea brewed with fresh ginger, cardamom, and premium tea leaves.",
-            price: 50,
-            imageSrc: "/images/tea.png",
-            quantity: 100
-          },
-          {
-            id: "cafe-sandwich",
-            name: "Classic Club Sandwich",
-            category: "Breakfast",
-            description: "Triple-layered toasted bread with crisp veggies, cheese, and seasoned herb spread.",
-            price: 120,
-            imageSrc: "/images/sandwich.png",
-            quantity: 50
-          },
-          {
-            id: "cafe-poha",
-            name: "Indori Kanda Poha",
-            category: "Breakfast",
-            description: "Flattened rice tempered with mustard, curry leaves, roasted peanuts, onion, and topped with sev.",
-            price: 70,
-            imageSrc: "/images/poha.png",
-            quantity: 60
-          },
-          {
-            id: "cafe-thali",
-            name: "Executive Veg Thali",
-            category: "Lunch",
-            description: "A premium lunch containing Paneer Subzi, Dal Tadka, Seasonal Dry Veg, Roti, Rice, Papad, Raita, and Sweet.",
-            price: 220,
-            imageSrc: "/images/thali.png",
-            quantity: 40
-          },
-          {
-            id: "cafe-friedrice",
-            name: "Schezwan Veg Fried Rice",
-            category: "Lunch",
-            description: "Spicy wok-tossed long grain rice with finely chopped farm-fresh vegetables and Schezwan sauce.",
-            price: 150,
-            imageSrc: "/images/friedrice.png",
-            quantity: 50
-          }
-        ],
-        orders: []
+        menu: [],
+        orders: [],
       };
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
-    }
-
-    // Auto-migrate if receipts is missing
-    if (!db.receipts) {
-      db.receipts = [];
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
-    }
-
-    // Auto-migrate if orders or receiptLogs are missing
-    let hasUpdates = false;
-    if (!db.orders) {
-      db.orders = [];
       hasUpdates = true;
     }
-    if (!db.receiptLogs) {
-      db.receiptLogs = [];
-      hasUpdates = true;
-    }
-
-    // If there are existing receipts but no orders, migrate them
-    if (db.receipts.length > 0 && db.orders.length === 0) {
-      for (const receipt of db.receipts) {
-        db.orders.push({
-          orderId: receipt.orderId,
-          customerName: receipt.customerName,
-          customerEmail: receipt.customerEmail || "",
-          customerPhone: receipt.customerPhone,
-          serviceType: receipt.serviceType,
-          items: receipt.items,
-          amount: receipt.totalAmountPaid,
-          transactionId: receipt.orderId, // fallback
-          paymentStatus: receipt.paymentStatus === "completed" ? "completed" : "pending",
-          receiptNumber: receipt.id,
-          createdAt: receipt.date,
-        });
-
-        db.receiptLogs.push({
-          receiptId: receipt.id,
-          orderId: receipt.orderId,
-          emailStatus: receipt.emailSentStatus === "sent" ? "sent" : (receipt.emailSentStatus === "failed" ? "failed" : "pending"),
-          emailSentAt: receipt.emailSentTimestamp || null,
-          resendCount: 1,
-        });
-      }
-      hasUpdates = true;
-    }
-
+    if (!db.receipts) { db.receipts = []; hasUpdates = true; }
+    if (!db.orders) { db.orders = []; hasUpdates = true; }
+    if (!db.receiptLogs) { db.receiptLogs = []; hasUpdates = true; }
     if (!db.healthCheckupCard) {
       db.healthCheckupCard = {
         societyName: "Kohinoor City Office Towers Industrial Estate and Premises Co-op Society Ltd",
@@ -576,21 +325,21 @@ export async function getDb(): Promise<DatabaseSchema> {
         timingsText: "12.00 pm - 02.00 pm",
         bookingLink: "https://docs.google.com/forms/d/e/1FAIpQLSfjv_Ie_0LPzeMBiFArfdcsh6bJG2raICoITfB3Ca02oCIMtQ/viewform",
         footerText: "Your health is our priority",
-        doctorName: "Dr. Reshma Nikam"
+        doctorName: "Dr. Reshma Nikam",
       };
       hasUpdates = true;
-    } else if (db.healthCheckupCard && !db.healthCheckupCard.hasOwnProperty("doctorName")) {
+    } else if (!db.healthCheckupCard.doctorName) {
       db.healthCheckupCard.doctorName = "Dr. Reshma Nikam";
       hasUpdates = true;
     }
 
     if (hasUpdates) {
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      await writeDbToFirestore(db);
     }
 
     return db;
   } catch (error) {
-    console.error("Error reading database:", error);
+    console.error("Error reading database from Firestore:", error);
     throw new Error("Failed to read database");
   }
 }
@@ -610,12 +359,11 @@ export async function updateDb(data: DatabaseSchema): Promise<{ success: boolean
   }
 
   try {
-    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-    await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+    await writeDbToFirestore(data);
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
-    console.error("Error writing database:", error);
+    console.error("Error writing database to Firestore:", error);
     return { success: false, error: "Failed to write data to database" };
   }
 }
@@ -701,7 +449,7 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
     }
     db.bookings.push(newBooking);
     
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
     
     const doctor = db.doctors?.find(d => d.id === booking.doctorId);
     const doctorEmail = doctor ? doctor.email : "clinic@kohinoorcommercial2.in";
@@ -861,7 +609,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     db.receipts.push(newReceipt);
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
 
     // Trigger WhatsApp notification to the Seller (Nursery Contact)
     try {
@@ -1070,7 +818,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     db.receipts.push(newReceipt);
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
 
     // Asynchronously trigger background retry worker for any failed receipts
     Promise.resolve().then(() => retryFailedWhatsAppSends());
@@ -1157,7 +905,7 @@ export async function retryFailedWhatsAppSends(): Promise<void> {
     }
 
     if (updatedAny) {
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      await writeDbToFirestore(db);
     }
   } catch (err) {
     console.error(`[AUTO-RETRY WORKER ERROR] Unexpected error in retry background job:`, err);
@@ -1221,7 +969,7 @@ export async function resendEmailReceiptAction(receiptNumber: string): Promise<{
     }
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
 
     if (!emailRes.success) {
       return { success: false, error: emailRes.error || "Failed to deliver email." };
@@ -1272,7 +1020,7 @@ export async function resendWhatsAppReceiptAction(receiptNumber: string): Promis
     }
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
 
     if (!waRes.success) {
       return { success: false, error: waRes.error || "Failed to deliver WhatsApp message." };
@@ -1455,7 +1203,7 @@ export async function verifyRazorpayPaymentAction({
     db.receipts.push(legacyReceipt);
 
     // Write database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
 
     // 7. Dynamic PDF & Email Delivery
     try {
@@ -1478,7 +1226,7 @@ export async function verifyRazorpayPaymentAction({
           legacyToUpdate.emailSentTimestamp = logToUpdate.emailSentAt || undefined;
         }
 
-        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+        await writeDbToFirestore(latestDb);
       }
     } catch (deliveryErr) {
       console.error("[DELIVERY ERROR] Failed to send receipt email after payment success:", deliveryErr);
@@ -1502,7 +1250,7 @@ export async function verifyRazorpayPaymentAction({
           messageId: waRes.messageId
         });
         legacyToUpdate.whatsAppMessageId = waRes.messageId;
-        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+        await writeDbToFirestore(latestDb);
       }
     } catch (waErr) {
       console.error("[DELIVERY ERROR] Failed to send receipt WhatsApp after payment success:", waErr);
@@ -1670,7 +1418,7 @@ export async function updateOrderStatusAction(
     }
 
     // 3. Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await writeDbToFirestore(db);
 
     // Simulate sending status update message to managers and customer
     console.log(`\n========================================`);
