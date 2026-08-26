@@ -31,28 +31,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self' https: data: blob:;",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https: http:;",
-              "style-src 'self' 'unsafe-inline' https:;",
-              "img-src 'self' blob: data: https: http:;",
-              "font-src 'self' data: https:;",
-              "connect-src 'self' https: wss: http:;",
-              "frame-src 'self' https: http:;",
-              "object-src 'none';",
-            ].join(" "),
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;
