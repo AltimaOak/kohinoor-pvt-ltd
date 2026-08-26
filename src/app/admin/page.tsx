@@ -54,6 +54,7 @@ import {
   logoutAction,
   checkAuth,
   uploadPhotoAction,
+  getCloudStatusAction,
   resendReceiptAction,
   resendEmailReceiptAction,
   updateOrderStatusAction,
@@ -68,6 +69,65 @@ import {
   HealthCheckupCard
 } from "@/app/actions";
 import * as LucideIcons from "lucide-react";
+
+// Client-side image compressor for instant, lightweight uploads
+async function compressImageFile(file: File, maxWidth = 1600, maxHeight = 1600, quality = 0.85): Promise<File> {
+  if (!file.type.startsWith("image/") || file.type === "image/svg+xml" || file.type === "image/gif") {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = readerEvent.target?.result as string;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
 
 // Curated list of popular Lucide Icons for selection
 const POPULAR_ICONS = [
@@ -159,6 +219,9 @@ export default function AdminPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Cloud backend status (Firebase vs local mode)
+  const [cloudStatus, setCloudStatus] = useState<{ firebaseConfigured: boolean; storageConfigured: boolean } | null>(null);
+
   // Fetch auth & database on load
   useEffect(() => {
     async function init() {
@@ -166,8 +229,12 @@ export default function AdminPage() {
         const isAuth = await checkAuth();
         setAuthenticated(isAuth);
         if (isAuth) {
-          const data = await getDb();
+          const [data, status] = await Promise.all([
+            getDb(),
+            getCloudStatusAction()
+          ]);
           setDb(data);
+          setCloudStatus(status);
         }
       } catch (err) {
         showToast("error", "Failed to connect to the database");
@@ -246,7 +313,7 @@ export default function AdminPage() {
     }
   };
 
-  // Image Upload handler
+  // Image Upload handler (with automatic client-side compression & cloud sync)
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, forEdit: "new" | "edit" | "event" | "plant" | "cafe") => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -265,12 +332,14 @@ export default function AdminPage() {
       }
 
       const filesToUpload = filesArray.slice(0, remainingSlots);
-      showToast("info", `Uploading ${filesToUpload.length} image(s)...`);
+      showToast("info", `Optimizing & uploading ${filesToUpload.length} image(s)...`);
 
       try {
         const uploadPromises = filesToUpload.map(async (file) => {
+          // 1. Client-side compress image for fast, reliable upload
+          const optimizedFile = await compressImageFile(file);
           const formData = new FormData();
-          formData.append("file", file);
+          formData.append("file", optimizedFile);
           const res = await uploadPhotoAction(formData);
           return res;
         });
@@ -309,11 +378,14 @@ export default function AdminPage() {
       }
     } else {
       const file = files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-      showToast("info", "Uploading image...");
+      showToast("info", "Optimizing & uploading image...");
 
       try {
+        // 1. Client-side compress image for fast, reliable upload
+        const optimizedFile = await compressImageFile(file);
+        const formData = new FormData();
+        formData.append("file", optimizedFile);
+
         const res = await uploadPhotoAction(formData);
         if (res.success && res.url) {
           showToast("success", "Image uploaded successfully");
@@ -933,6 +1005,22 @@ export default function AdminPage() {
           <span className="text-[14px] md:text-[15px] font-semibold tracking-tight truncate max-w-[150px] md:max-w-none">
             Kohinoor Towers
           </span>
+
+          {cloudStatus && (
+            <div className="hidden sm:flex items-center">
+              {cloudStatus.firebaseConfigured ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  Firebase Cloud Active
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-800 text-slate-400 border border-slate-700">
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  Local / Serverless Mode
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-3 md:gap-4 shrink-0">

@@ -6,9 +6,21 @@ import { cookies, headers } from "next/headers";
 import { generateReceiptPdfBuffer } from "./utils/receiptGenerator";
 import { sendReceiptEmail, sendSellerOrderNotification } from "./utils/emailSender";
 import { sendWhatsAppReceipt, sendWhatsAppMessage } from "./utils/whatsAppSender";
+import {
+  isFirebaseConfigured,
+  isFirebaseStorageConfigured,
+  readFromFirebaseDb,
+  writeToFirebaseDb,
+  uploadToFirebaseStorage,
+} from "@/lib/firebase";
 
 const DB_PATH = path.join(process.cwd(), "src", "data", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+
+// In-memory cache for serverless runtimes
+declare global {
+  var __kohinoorDbCache: DatabaseSchema | undefined;
+}
 
 // Password hashing is not strictly required for local default, but env password or fallback
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "kohinoor-admin";
@@ -403,17 +415,78 @@ async function ensureDbExists() {
         doctorName: "Dr. Reshma Nikam"
       }
     };
-    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-    await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
+    try {
+      await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
+      await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2), "utf-8");
+    } catch {}
   }
+}
+
+// Helper: Save DB to Firebase and local/tmp cache
+export async function saveDb(data: DatabaseSchema): Promise<boolean> {
+  global.__kohinoorDbCache = data;
+
+  // 1. Sync to Firebase Realtime Database
+  if (isFirebaseConfigured()) {
+    try {
+      await writeToFirebaseDb("database", data);
+    } catch (fbErr) {
+      console.error("[FIREBASE SAVE WARNING]:", fbErr);
+    }
+  }
+
+  // 2. Local disk write (for development / persistent environments)
+  try {
+    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
+    await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch {
+    // 3. Fallback to /tmp in serverless environments
+    try {
+      const tmpPath = path.join("/tmp", "kohinoor_db.json");
+      await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), "utf-8");
+    } catch {}
+  }
+
+  return true;
 }
 
 // Get raw DB contents
 export async function getDb(): Promise<DatabaseSchema> {
+  // 1. Check Firebase Realtime Database first if configured
+  if (isFirebaseConfigured()) {
+    try {
+      const remoteDb = await readFromFirebaseDb<DatabaseSchema>("database");
+      if (remoteDb && remoteDb.events && Array.isArray(remoteDb.events)) {
+        global.__kohinoorDbCache = remoteDb;
+        return remoteDb;
+      }
+    } catch (fbErr) {
+      console.warn("[FIREBASE READ FAILED, FALLING BACK]:", fbErr);
+    }
+  }
+
+  // 2. Check In-Memory Cache
+  if (global.__kohinoorDbCache && global.__kohinoorDbCache.events) {
+    return global.__kohinoorDbCache;
+  }
+
+  // 3. Check /tmp cache
+  try {
+    const tmpData = await fs.readFile(path.join("/tmp", "kohinoor_db.json"), "utf-8");
+    const parsed = JSON.parse(tmpData) as DatabaseSchema;
+    if (parsed && parsed.events) {
+      global.__kohinoorDbCache = parsed;
+      return parsed;
+    }
+  } catch {}
+
+  // 4. Fallback to local DB_PATH file
   await ensureDbExists();
   try {
     const data = await fs.readFile(DB_PATH, "utf-8");
     const db = JSON.parse(data) as DatabaseSchema;
+
+    let hasUpdates = false;
 
     // Auto-migrate if nursery is missing
     if (!db.nursery) {
@@ -450,7 +523,7 @@ export async function getDb(): Promise<DatabaseSchema> {
         ],
         orders: []
       };
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      hasUpdates = true;
     }
 
     // Auto-migrate if cafeteria is missing
@@ -518,17 +591,16 @@ export async function getDb(): Promise<DatabaseSchema> {
         ],
         orders: []
       };
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      hasUpdates = true;
     }
 
     // Auto-migrate if receipts is missing
     if (!db.receipts) {
       db.receipts = [];
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      hasUpdates = true;
     }
 
     // Auto-migrate if orders or receiptLogs are missing
-    let hasUpdates = false;
     if (!db.orders) {
       db.orders = [];
       hasUpdates = true;
@@ -584,12 +656,19 @@ export async function getDb(): Promise<DatabaseSchema> {
     }
 
     if (hasUpdates) {
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      await saveDb(db);
+    } else {
+      global.__kohinoorDbCache = db;
+      // Auto-seed Firebase if it is configured
+      if (isFirebaseConfigured()) {
+        writeToFirebaseDb("database", db).catch(() => {});
+      }
     }
 
     return db;
   } catch (error) {
     console.error("Error reading database:", error);
+    if (global.__kohinoorDbCache) return global.__kohinoorDbCache;
     throw new Error("Failed to read database");
   }
 }
@@ -609,8 +688,7 @@ export async function updateDb(data: DatabaseSchema): Promise<{ success: boolean
   }
 
   try {
-    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-    await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+    await saveDb(data);
     return { success: true };
   } catch (error) {
     console.error("Error writing database:", error);
@@ -643,6 +721,17 @@ export async function logoutAction(): Promise<{ success: boolean }> {
   return { success: true };
 }
 
+// Cloud status check action
+export async function getCloudStatusAction(): Promise<{
+  firebaseConfigured: boolean;
+  storageConfigured: boolean;
+}> {
+  return {
+    firebaseConfigured: isFirebaseConfigured(),
+    storageConfigured: isFirebaseStorageConfigured(),
+  };
+}
+
 // Admin photo upload action
 export async function uploadPhotoAction(formData: FormData): Promise<{ success: boolean; url?: string; error?: string }> {
   const isAuthenticated = await checkAuth();
@@ -661,27 +750,49 @@ export async function uploadPhotoAction(formData: FormData): Promise<{ success: 
   }
 
   try {
-    // Ensure uploads directory exists
-    await fs.mkdir(UPLOADS_DIR, { recursive: true });
-
-    // Generate unique file name
-    const timestamp = Date.now();
-    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const filename = `${timestamp}_${safeName}`;
-    const filePath = path.join(UPLOADS_DIR, filename);
-
-    // Write file to disk
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    await fs.writeFile(filePath, buffer);
 
-    return {
-      success: true,
-      url: `/uploads/${filename}`,
-    };
+    // Strategy 1: Firebase Storage (Primary Cloud CDN)
+    if (isFirebaseStorageConfigured()) {
+      try {
+        const fbRes = await uploadToFirebaseStorage(buffer, file.name, file.type, "admin");
+        if (fbRes.success && fbRes.url) {
+          return {
+            success: true,
+            url: fbRes.url,
+          };
+        }
+        console.warn("[FIREBASE STORAGE UPLOAD FAILED, FALLING BACK]:", fbRes.error);
+      } catch (fbErr) {
+        console.warn("[FIREBASE STORAGE EXCEPTION, FALLING BACK]:", fbErr);
+      }
+    }
+
+    // Strategy 2: Local disk write (for local development)
+    try {
+      await fs.mkdir(UPLOADS_DIR, { recursive: true });
+      const timestamp = Date.now();
+      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const filename = `${timestamp}_${safeName}`;
+      const filePath = path.join(UPLOADS_DIR, filename);
+      await fs.writeFile(filePath, buffer);
+      return {
+        success: true,
+        url: `/uploads/${filename}`,
+      };
+    } catch {
+      // Strategy 3: Optimized Base64 Data URL (serverless read-only safe fallback)
+      const base64 = buffer.toString("base64");
+      const dataUrl = `data:${file.type || "image/jpeg"};base64,${base64}`;
+      return {
+        success: true,
+        url: dataUrl,
+      };
+    }
   } catch (error) {
     console.error("Error during file upload:", error);
-    return { success: false, error: "Failed to save uploaded file" };
+    return { success: false, error: "Failed to process uploaded file" };
   }
 }
 
@@ -699,7 +810,7 @@ export async function bookAppointmentAction(booking: Omit<BookingItem, "id" | "c
     }
     db.bookings.push(newBooking);
     
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
     
     const doctor = db.doctors?.find(d => d.id === booking.doctorId);
     const doctorEmail = doctor ? doctor.email : "clinic@kohinoorcommercial2.in";
@@ -792,13 +903,17 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     try {
       pdfBuffer = await generateReceiptPdfBuffer(newReceipt as any);
       
-      // Save it to disk for static public receipt access
-      const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
-      await fs.mkdir(receiptsDir, { recursive: true });
-      const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
-      const filePath = path.join(receiptsDir, filename);
-      await fs.writeFile(filePath, pdfBuffer);
-      pdfUrl = `/uploads/receipts/${filename}`;
+      // Save it to disk for static public receipt access (fallback to dynamic route on serverless)
+      try {
+        const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
+        await fs.mkdir(receiptsDir, { recursive: true });
+        const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
+        const filePath = path.join(receiptsDir, filename);
+        await fs.writeFile(filePath, pdfBuffer);
+        pdfUrl = `/uploads/receipts/${filename}`;
+      } catch {
+        pdfUrl = `/api/receipts/${newReceipt.id}/pdf`;
+      }
       newReceipt.pdfUrl = pdfUrl;
     } catch (pdfErr) {
       console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF:", pdfErr);
@@ -859,7 +974,7 @@ export async function buyPlantAction(order: Omit<PlantOrder, "id" | "createdAt" 
     db.receipts.push(newReceipt);
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
 
     // Trigger WhatsApp notification to the Seller (Nursery Contact)
     try {
@@ -1000,13 +1115,17 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     try {
       pdfBuffer = await generateReceiptPdfBuffer(newReceipt as any);
       
-      // Save it to disk for static public receipt access
-      const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
-      await fs.mkdir(receiptsDir, { recursive: true });
-      const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
-      const filePath = path.join(receiptsDir, filename);
-      await fs.writeFile(filePath, pdfBuffer);
-      pdfUrl = `/uploads/receipts/${filename}`;
+      // Save it to disk for static public receipt access (fallback to dynamic route on serverless)
+      try {
+        const receiptsDir = path.join(process.cwd(), "public", "uploads", "receipts");
+        await fs.mkdir(receiptsDir, { recursive: true });
+        const filename = `Kohinoor_Receipt_${newReceipt.id}.pdf`;
+        const filePath = path.join(receiptsDir, filename);
+        await fs.writeFile(filePath, pdfBuffer);
+        pdfUrl = `/uploads/receipts/${filename}`;
+      } catch {
+        pdfUrl = `/api/receipts/${newReceipt.id}/pdf`;
+      }
       newReceipt.pdfUrl = pdfUrl;
     } catch (pdfErr) {
       console.error("[PDF GENERATION ERROR] Failed to generate e-receipt PDF:", pdfErr);
@@ -1067,7 +1186,7 @@ export async function buyCafeteriaAction(order: Omit<CafeOrder, "id" | "createdA
     db.receipts.push(newReceipt);
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
 
     // Asynchronously trigger background retry worker for any failed receipts
     Promise.resolve().then(() => retryFailedWhatsAppSends());
@@ -1153,7 +1272,7 @@ export async function retryFailedWhatsAppSends(): Promise<void> {
     }
 
     if (updatedAny) {
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+      await saveDb(db);
     }
   } catch (err) {
     console.error(`[AUTO-RETRY WORKER ERROR] Unexpected error in retry background job:`, err);
@@ -1217,7 +1336,7 @@ export async function resendEmailReceiptAction(receiptNumber: string): Promise<{
     }
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
 
     if (!emailRes.success) {
       return { success: false, error: emailRes.error || "Failed to deliver email." };
@@ -1268,7 +1387,7 @@ export async function resendWhatsAppReceiptAction(receiptNumber: string): Promis
     }
 
     // Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
 
     if (!waRes.success) {
       return { success: false, error: waRes.error || "Failed to deliver WhatsApp message." };
@@ -1451,7 +1570,7 @@ export async function verifyRazorpayPaymentAction({
     db.receipts.push(legacyReceipt);
 
     // Write database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
 
     // 7. Dynamic PDF & Email Delivery
     try {
@@ -1474,7 +1593,7 @@ export async function verifyRazorpayPaymentAction({
           legacyToUpdate.emailSentTimestamp = logToUpdate.emailSentAt || undefined;
         }
 
-        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+        await saveDb(latestDb);
       }
     } catch (deliveryErr) {
       console.error("[DELIVERY ERROR] Failed to send receipt email after payment success:", deliveryErr);
@@ -1498,7 +1617,7 @@ export async function verifyRazorpayPaymentAction({
           messageId: waRes.messageId
         });
         legacyToUpdate.whatsAppMessageId = waRes.messageId;
-        await fs.writeFile(DB_PATH, JSON.stringify(latestDb, null, 2), "utf-8");
+        await saveDb(latestDb);
       }
     } catch (waErr) {
       console.error("[DELIVERY ERROR] Failed to send receipt WhatsApp after payment success:", waErr);
@@ -1665,7 +1784,7 @@ export async function updateOrderStatusAction(
     }
 
     // 3. Save database
-    await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+    await saveDb(db);
 
     // Simulate sending status update message to managers and customer
     console.log(`\n========================================`);
